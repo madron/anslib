@@ -1,0 +1,53 @@
+# Virtual machine
+
+- name: create vm
+  command: >
+    lxc-create -t ubuntu -n {{ item.name }} {% if item.release is defined %}-- --release {{ item.release }}{% endif %}
+    creates=/var/lib/lxc/{{ item.name }}
+  register: create_vm
+  with_items: lxc_host_instances
+
+- name: config
+  template: >
+    src=vm.conf
+    dest=/var/lib/lxc/{{ item.name }}/config
+    mode=0644
+    owner=root
+    group=root
+  register: config
+  with_items: lxc_host_instances
+
+- name: automatic start symbolic link
+  file: >
+    src=/var/lib/lxc/{{ item.name }}/config path=/etc/lxc/auto/{{ item.name }}
+    state=link
+  with_items: lxc_host_instances
+
+- name: authorized keys
+  authorized_key: >
+    path=/var/lib/lxc/{{ item.0.name }}/rootfs/root/.ssh/authorized_keys
+    user=root
+    key="{{ item.1 }}"
+  with_nested:
+    - lxc_host_instances
+    - lxc_host_authorized_keys
+
+- name: remove resolvconf tail
+  file: >
+    path=/var/lib/lxc/{{ item.name }}/rootfs/etc/resolvconf/resolv.conf.d/tail
+    state=absent
+  with_items: lxc_host_instances
+
+- name: stop vm
+  command: lxc-shutdown -w -t 15 -n {{ item.0.item.name }}
+  with_together:
+    - create_vm.results
+    - config.results
+  when: item.1.changed and not item.0.changed
+
+- name: start vm
+  command: lxc-start -d -n {{ item.0.item.name }}
+  with_together:
+    - create_vm.results
+    - config.results
+  when: item.0.changed or item.1.changed

@@ -1,0 +1,22 @@
+- name: Role lxc_host - install required packages
+  apt: name=lxc state=present
+
+- name: Role lxc_host - lxc.conf
+  template: src=lxc.conf dest=/etc/lxc/lxc.conf owner=root group=root mode=0644
+
+# Generate a random mac address (ensure that first number is even)
+# openssl rand -hex 6 | sed 's/\(..\)/\1:/g; s/.$//'
+
+# Clone a vm
+# lxc-clone -o play_fresh -n play1
+#
+# Destroy and recreate a vm from scratch
+# lxc-kill -n play1; lxc-wait -n play1 -s 'STOPPED'; lxc-destroy -n play1; lxc-create -t ubuntu -n play1
+#
+# Regen ansible config and then start the vm
+# lxc-start -d -n play1
+
+
+- include: instance_remove.yml
+
+- include: instance.yml

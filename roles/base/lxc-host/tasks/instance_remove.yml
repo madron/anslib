@@ -1,0 +1,26 @@
+- name: Remove - kill
+  command: lxc-kill -n  {{ item.name }}
+  ignore_errors: yes
+  with_items: lxc_host_instances_remove
+
+- name: Remove - wait
+  command: lxc-wait -n {{ item.name }} -s 'STOPPED'
+  ignore_errors: yes
+  with_items: lxc_host_instances_remove
+
+- name: Remove - destroy
+  command: lxc-destroy -n {{ item.name }} -s 'STOPPED'
+  ignore_errors: yes
+  with_items: lxc_host_instances_remove
+
+- name: Remove - vm directory
+  file: >
+    path=/var/lib/lxc/{{ item.name }}
+    state=absent
+  with_items: lxc_host_instances_remove
+
+- name: Remove - automatic start symbolic link
+  file: >
+    path=/etc/lxc/auto/{{ item.name }}
+    state=absent
+  with_items: lxc_host_instances_remove
