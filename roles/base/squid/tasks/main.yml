@@ -1,0 +1,18 @@
+- name: Role squid - requirements
+  apt: >
+    name={{ item }}
+    state=latest
+  with_items:
+  - squid
+
+- name: Role squid - configuration
+  template: >
+    src=squid.conf
+    dest=/etc/squid3/
+    mode=0644
+    owner=root
+    group=root
+  notify: restart squid3
+
+- name: Role squid - ensure service started
+  service: name=squid3 state=started
