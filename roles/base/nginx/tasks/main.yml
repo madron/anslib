@@ -1,0 +1,16 @@
+- name: Role nginx - ppa repository
+  apt_repository: repo=ppa:nginx/stable state=present
+
+- name: Role nginx - remove old repository
+  apt_repository: repo='deb http://nginx.org/packages/ubuntu/ precise nginx' state=absent
+
+- name: Role nginx - install package
+  apt: pkg=nginx state=latest
+
+- name: Role nginx - disable default site
+  file: path=/etc/nginx/sites-enabled/default state=absent
+  notify:
+  - restart nginx
+
+- name: Role nginx - start server
+  service: name=nginx state=started
