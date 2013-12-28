@@ -1,7 +1,7 @@
-- name: Role lxc_host - install required packages
+- name: required packages
   apt: name=lxc state=present
 
-- name: Role lxc_host - lxc.conf
+- name: lxc.conf
   template: src=lxc.conf dest=/etc/lxc/lxc.conf owner=root group=root mode=0644
 
 # Generate a random mac address (ensure that first number is even)
