@@ -1,0 +1,1 @@
+Acquire::http::proxy "http://{{ apt_proxy_host }}:{{ apt_proxy_port|default('3128') }}/";

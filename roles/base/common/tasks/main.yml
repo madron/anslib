@@ -1,0 +1,42 @@
+---
+# This playbook contains common plays that will be run on all nodes.
+
+# https://help.ubuntu.com/community/Locale
+- name: set locale
+  template: src=default_locale dest=/etc/default/locale
+
+- name: apt repository proxy
+  template: >
+    src=01proxy
+    dest=/etc/apt/apt.conf.d/01proxy
+    mode=0644
+    owner=root
+    group=root
+  when: apt_proxy_host is defined
+  notify: apt-get update
+
+- name: install python-apt package
+  command: apt-get -y install python-apt  creates=/usr/share/doc/python-apt/README
+
+- name: install utility packages
+  apt: name={{ item }} update_cache={{ update_cache|default('no')}} state=present
+  with_items:
+  - python-software-properties
+  - aptitude
+  - language-pack-en
+  - pwgen
+  - sysstat
+  - dnsutils
+  - iftop
+  - htop
+  - wget
+  - vim
+  - nano
+  - mc
+  - debfoster
+
+- name: install new utility packages
+  apt: name={{ item }} update_cache={{ update_cache|default('no')}} state=present
+  with_items:
+  - python-keyczar
+  when: ansible_distribution_version >= '12.04'
