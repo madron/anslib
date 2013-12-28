@@ -1,0 +1,8 @@
+- name: restart supervisor
+  service: name=supervisor state=restarted
+
+- name: reread supervisor
+  command: supervisorctl reread
+
+- name: reload supervisor
+  command: supervisorctl reload

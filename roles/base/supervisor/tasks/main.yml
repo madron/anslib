@@ -1,0 +1,7 @@
+- name: Role supervisor - requirements
+  apt: name={{ item }} state=present
+  with_items:
+  - supervisor
+
+- name: Role supervisor - Start supervisor
+  service: name=supervisor state=started
