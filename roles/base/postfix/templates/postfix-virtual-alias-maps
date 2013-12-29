@@ -1,0 +1,6 @@
+# {{ ansible_managed }}
+{% for domain in mail_server_domains %}
+{% for alias in domain.aliases %}
+{{ alias.name }}@{{ domain.name }} {{ alias.to }}
+{% endfor %}
+{% endfor %}

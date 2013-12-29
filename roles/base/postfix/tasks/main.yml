@@ -1,0 +1,38 @@
+- name: Role postfix - required packages
+  apt: name={{ item }} state=present
+  with_items:
+  - postfix
+  - mailutils
+
+- name: Role postfix - /etc/mailname
+  template: >
+    src=etc_mailname
+    dest=/etc/mailname
+  notify: reload postfix
+
+#
+# Postfix
+#
+- name: Role postfix - main.cf
+  template: >
+    src=postfix-main.cf
+    dest=/etc/postfix/main.cf
+  notify: reload postfix
+  tags: mail-user
+
+- name: Role postfix - virtual-mailbox-maps
+  template: >
+    src=postfix-virtual-mailbox-maps
+    dest=/etc/postfix/virtual-mailbox-maps
+  notify: reload postfix
+  tags: mail-user
+
+- name: Role postfix - virtual-alias-maps
+  template: >
+    src=postfix-virtual-alias-maps
+    dest=/etc/postfix/virtual-alias-maps
+  notify: reload postfix
+  tags: mail-user
+
+- name: Role postfix - start service
+  service: name=postfix state=started
