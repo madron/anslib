@@ -1,0 +1,248 @@
+#
+# Common
+#
+- name: 'Common - required packages'
+  apt: name={{ item }} state=present
+  with_items:
+  - python-pip
+  - python-virtualenv
+  - python-dev
+  - build-essential
+  - mercurial
+
+#
+# Database
+#
+- name: '{{ site_slug }} - Database - required packages'
+  apt: name={{ item }} state=present
+  with_items:
+  - postgresql
+  - python-psycopg2
+  - libpq-dev       # pip needs it to compile psycopg2
+  when: site_db_name is defined
+
+- name: '{{ site_slug }} - Database - create user'
+  postgresql_user: user={{ site_db_user }} password={{ site_db_pass }}
+  sudo: True
+  sudo_user: postgres
+  when: site_db_user is defined
+  when: site_db_pass is defined
+
+- name: '{{ site_slug }} - Database - create database'
+  postgresql_db: name={{ site_db_name }} owner='{{ site_db_user }}' encoding='UTF-8' template='template0'
+  sudo: True
+  sudo_user: postgres
+  register: create_database
+  when: site_db_name is defined
+  when: site_db_user is defined
+  when: site_db_pass is defined
+
+
+#
+# Application
+#
+- name: '{{ site_slug }} - Application - root directories'
+  file: >
+    path={{ item }}
+    state=directory
+    mode=0755
+    owner=root
+    group=root
+  with_items:
+  - /var/www/{{ site_slug }}/conf
+  - /var/www/{{ site_slug }}/log
+  - /var/www/{{ site_slug }}/website
+  - /var/www/{{ site_slug }}/website/website
+
+- name: '{{ site_slug }} - Application - static directory'
+  file: >
+    path={{ site_user_base|default('/var/www') }}/{{ site_slug }}/static/
+    state=directory
+    mode=0755
+    owner={{ site_user|default('root') }}
+    group={{ site_group|default('root') }}
+  with_items:
+  - /var/www/{{ site_slug }}/log/uwsgi
+
+- name: '{{ site_slug }} - Application - www-data directories'
+  file: >
+    path={{ item }}
+    state=directory
+    mode=0755
+    owner=www-data
+    group=www-data
+  with_items:
+  - /var/www/{{ site_slug }}/log/uwsgi
+
+### Add bitbucket.org to known hosts
+
+- name: '{{ site_slug }} - Application - hg repository'
+  hg: >
+    repo={{ site_hg_repo }}
+    dest={{ site_user_base|default('/var/www') }}/{{ site_slug }}/src
+    revision={{ site_hg_rev|default('default') }}
+    purge=no
+  register: hg_repository
+  when: site_hg_repo is defined
+
+- name: '{{ site_slug }} - Application - install psycopg2'
+  pip: >
+    name=psycopg2
+    version=2.5.1
+    virtualenv={{ site_user_base|default('/var/www') }}/{{ site_slug }}/env
+
+- name: '{{ site_slug }} - Application - requirements file'
+  pip: >
+    requirements={{ site_user_base|default('/var/www') }}/{{ site_slug }}/src/{{ site_requirements_file }}
+    virtualenv={{ site_user_base|default('/var/www') }}/{{ site_slug }}/env
+  when: site_requirements_file is defined and hg_repository.changed
+
+
+#
+# Site
+#
+- name: '{{ site_slug }} - Site - directories'
+  file: >
+    path={{ item }}
+    state=directory
+    mode=0755
+    owner=root
+    group=root
+  with_items:
+  - /var/www/{{ site_slug }}/website
+  - /var/www/{{ site_slug }}/website/website
+  - /var/www/{{ site_slug }}/website/website/fragments
+
+- name: '{{ site_slug }} - Site - manage.py'
+  template: >
+    src=website/manage.py
+    dest=/var/www/{{ site_slug }}/website/
+    mode=0755
+
+- name: '{{ site_slug }} - Site - __init__.py'
+  template: >
+    src=website/website/__init__.py
+    dest=/var/www/{{ site_slug }}/website/website/
+
+- name: '{{ site_slug }} - Site - settings fragment 1 warning'
+  template: >
+    src=website/website/fragments/settings_1_warning.py
+    dest=/var/www/{{ site_slug }}/website/website/fragments/settings_1_warning.py
+
+- name: '{{ site_slug }} - Site - settings fragment 2 custom'
+  template: >
+    src={{ item }}
+    dest=/var/www/{{ site_slug }}/website/website/fragments/settings_2_custom.py
+  with_first_found:
+    - '{{ inventory_dir }}/files/django/{{ site_slug }}/settings.py'
+    - ../templates/website/website/fragments/settings_2_custom.py
+
+- name: '{{ site_slug }} - Site - settings fragment 3 auto'
+  template: >
+    src={{ item }}
+    dest=/var/www/{{ site_slug }}/website/website/fragments/settings_3_auto.py
+  with_first_found:
+    - '{{ inventory_dir }}/files/django/{{ site_slug }}/settings_override.py'
+    - ../templates/website/website/fragments/settings_3_auto.py
+
+- name: '{{ site_slug }} - Site - compose settings file'
+  assemble: >
+    src=/var/www/{{ site_slug }}/website/website/fragments
+    dest=/var/www/{{ site_slug }}/website/website/settings.py
+    mode=644
+    owner=root
+    group=root
+  register: settings
+
+- name: '{{ site_slug }} - Site - syncdb'
+  django_manage: >
+    command=syncdb
+    virtualenv={{ site_user_base|default('/var/www') }}/{{ site_slug }}/env
+    app_path=/var/www/{{ site_slug }}/website
+
+- name: '{{ site_slug }} - Site - migrate'
+  django_manage: >
+    command=migrate
+    virtualenv={{ site_user_base|default('/var/www') }}/{{ site_slug }}/env
+    app_path=/var/www/{{ site_slug }}/website
+  when: site_use_south|default('yes')
+
+- name: '{{ site_slug }} - Site - initial fixtures'
+  django_manage: >
+    command=loaddata
+    virtualenv={{ site_user_base|default('/var/www') }}/{{ site_slug }}/env
+    app_path=/var/www/{{ site_slug }}/website
+    fixtures='{{ site_initial_fixtures }}'
+  when: create_database.changed and site_initial_fixtures is defined
+
+- name: '{{ site_slug }} - Site - collect static'
+  django_manage: >
+    command=collectstatic
+    virtualenv={{ site_user_base|default('/var/www') }}/{{ site_slug }}/env
+    app_path=/var/www/{{ site_slug }}/website
+
+
+#
+# Permission
+#
+- name: '{{ site_slug }} - Permission - user_base directories owner'
+  file: >
+    path={{ item }}
+    state=directory
+    recurse=yes
+    owner={{ site_user|default('root') }}
+    group={{ site_group|default('root') }}
+  with_items:
+  - '{{ site_user_base }}/{{ site_slug }}/env'
+  - '{{ site_user_base }}/{{ site_slug }}/src'
+  - '{{ site_user_base }}/{{ site_slug }}/static'
+  when: site_user_base is defined
+
+
+#
+# uwsgi
+#
+- name: '{{ site_slug }} - uwsgi - touch-to-reload file'
+  template: >
+    src=touch-to-reload
+    dest=/var/www/{{ site_slug }}/conf/
+    mode=0644
+    owner={{ site_user|default('root') }}
+    group={{ site_group|default('root') }}
+
+- name: '{{ site_slug }} - uwsgi - config'
+  template: >
+    src=uwsgi.ini
+    dest=/var/www/{{ site_slug }}/conf/uwsgi.ini
+    mode=0644
+    owner=root
+    group=root
+  register: uwsgi_config
+
+- name: '{{ site_slug }} - uwsgi - reload uwsgi'
+  command: touch /var/www/{{ site_slug }}/conf/touch-to-reload
+  when: hg_repository is defined and hg_repository.changed
+  when: uwsgi_config.changed or settings.changed
+
+
+#
+# Nginx
+#
+- name: '{{ site_slug }} - Nginx - config'
+  template: >
+    src={{ item }}
+    dest=/var/www/{{ site_slug }}/conf/nginx.conf
+  with_first_found:
+    - ../../../files/django_sites/{{ site_slug }}/nginx.conf
+    - ../templates/nginx.conf
+  notify:
+  - reload nginx
+
+- name: '{{ site_slug }} - Nginx - nginx config symlink'
+  file: >
+    src=/var/www/{{ site_slug }}/conf/nginx.conf
+    dest=/etc/nginx/sites-enabled/{{ site_slug }}.conf
+    state=link
+    force=yes
+  notify:
+  - reload nginx

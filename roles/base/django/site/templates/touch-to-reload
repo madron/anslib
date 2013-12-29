@@ -1,0 +1,3 @@
+# {{ ansible_managed }}
+
+Touch this file to reload {{ site_slug }} uwsgi workers
