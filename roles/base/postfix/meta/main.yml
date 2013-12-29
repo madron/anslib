@@ -1,2 +1,2 @@
 dependencies:
-  - { role: base/os_ubuntu_12_04 }
+  - { role: base/os-ubuntu-12-04 }
