@@ -1,0 +1,10 @@
+- name: '{{ ssh_private_key_name }}'
+  copy: >
+    src={{ item }}
+    dest=/root/.ssh
+    mode=0600
+    owner=root
+    group=root
+  with_items:
+  - '{{ inventory_dir }}/files/ssh_private_key/{{ ssh_private_key_name }}/id_rsa'
+  - '{{ inventory_dir }}/files/ssh_private_key/{{ ssh_private_key_name }}/id_rsa.pub'
