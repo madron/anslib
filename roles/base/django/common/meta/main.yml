@@ -1,3 +1,4 @@
 dependencies:
   - { role: base/nginx }
   - { role: base/uwsgi-emperor }
+  - { role: base/virtualenv }
