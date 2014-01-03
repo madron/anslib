@@ -1,0 +1,9 @@
+# Site location and owner
+django_site_base_dir: /var/www
+django_site_user: root
+django_site_group: root
+
+# Repository
+django_site_hg_rev: default
+
+django_site_use_south: no

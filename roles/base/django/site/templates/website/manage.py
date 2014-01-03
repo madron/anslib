@@ -1,4 +1,4 @@
-#!{{ site_user_base|default('/var/www') }}/{{ site_slug }}/env/bin/python
+#!{{ django_site_base_dir }}/{{ django_site_slug }}/env/bin/python
 
 # {{ ansible_managed }}
 
@@ -8,7 +8,7 @@ import sys
 {% for path in site_python_path|default([]) %}
 sys.path.insert(0, '{{ path }}')
 {% else %}
-sys.path.insert(0, '{{ site_user_base|default('/var/www') }}/{{ site_slug }}/src')
+sys.path.insert(0, '{{ django_site_base_dir }}/{{ django_site_slug }}/src')
 {% endfor %}
 
 if __name__ == "__main__":

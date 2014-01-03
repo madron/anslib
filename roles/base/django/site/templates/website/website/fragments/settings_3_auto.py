@@ -1,14 +1,14 @@
 
 
 # You can override this settings fragment in
-# files/django_site/<site_slug>/settings_override.py
+# files/django_site/<django_site_slug>/settings_override.py
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': '{{ site_db_name }}',
-        'USER': '{{ site_db_user }}',
-        'PASSWORD': '{{ site_db_pass }}',
+        'NAME': '{{ django_site_db_name }}',
+        'USER': '{{ django_site_db_user }}',
+        'PASSWORD': '{{ django_site_db_pass }}',
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -16,7 +16,7 @@ DATABASES = {
 
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
-STATIC_ROOT = '{{ site_user_base|default('/var/www') }}/{{ site_slug }}/static/'
-MEDIA_ROOT = '/var/www/{{ site_slug }}/media/'
+STATIC_ROOT = '{{ django_site_base_dir }}/{{ django_site_slug }}/static/'
+MEDIA_ROOT = '/var/www/{{ django_site_slug }}/media/'
 
 ALLOWED_HOSTS = ['*']
