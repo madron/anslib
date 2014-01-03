@@ -1,0 +1,13 @@
+- name: required packages
+  apt: >
+    name={{ item }}
+    state=present
+  with_items:
+    - python-dev
+    - build-essential
+
+- name: install virtualenv
+  pip: >
+    name=virtualenv
+    state=present
+    version={{ virtualenv_version }}
