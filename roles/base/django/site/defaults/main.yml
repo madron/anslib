@@ -7,3 +7,7 @@ django_site_group: root
 django_site_hg_rev: default
 
 django_site_use_south: no
+
+# Web server
+django_site_server_port: 80
+django_site_server_group: www-data

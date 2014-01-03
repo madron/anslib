@@ -64,6 +64,14 @@
     owner={{ django_site_user }}
     group={{ django_site_group }}
 
+- name: '{{ django_site_slug }} - Application - media directory'
+  file: >
+    path={{ django_site_base_dir }}/{{ django_site_slug }}/media/
+    state=directory
+    mode=2755
+    owner={{ django_site_user }}
+    group={{ django_site_server_group }}
+
 - name: '{{ django_site_slug }} - Application - www-data directories'
   file: >
     path={{ item }}
