@@ -1,7 +1,7 @@
 
 
 # You can override this settings fragment in
-# files/django_site/<django_site_slug>/settings_override.py
+# files/django/{{ django_site_slug }}/settings_override.py
 
 DATABASES = {
     'default': {
@@ -17,6 +17,6 @@ DATABASES = {
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 STATIC_ROOT = '{{ django_site_base_dir }}/{{ django_site_slug }}/static/'
-MEDIA_ROOT = '/var/www/{{ django_site_slug }}/media/'
+MEDIA_ROOT = '{{ django_site_base_dir }}/{{ django_site_slug }}/media/'
 
 ALLOWED_HOSTS = ['*']
