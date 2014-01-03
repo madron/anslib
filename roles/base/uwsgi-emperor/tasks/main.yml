@@ -5,12 +5,11 @@
 # http://www.collabspot.com/2012/08/14/setting-up-nginx-uwsgi-python-ubuntu-12-04/
 
 
-- name: requirements
+- name: required packages
   apt: name={{ item }} state=present
   with_items:
   - build-essential
   - python-dev
-  - python-pip
 
 - name: git-core
   apt: >
@@ -18,30 +17,35 @@
     state=present
   when: ansible_distribution_version < '12.04'
 
-- name: pip
-  pip: >
-    name=pip
-    state=latest
-    use_mirrors=no
-  when: ansible_distribution_version < '12.04'
-
 - name: git
-  apt: name=git state=present
+  apt: >
+    name=git
+    state=present
   when: ansible_distribution_version >= '12.04'
 
 - name: uwsgi package
-  pip: name=uwsgi version=1.9.18.2
+  pip: >
+    name=uwsgi
+    version={{ uwsgi_version }}
 
 - name: uwsgitop package
-  pip: name='git+https://github.com/madron/uwsgitop.git@769e875fafbde6e1c22235ff837a6cea2b6e83be#egg=uwsgitop'
+  pip: >
+    name='git+https://github.com/madron/uwsgitop.git@769e875fafbde6e1c22235ff837a6cea2b6e83be#egg=uwsgitop'
 
 - name: directories
-  file: path={{ item }} state=directory owner=root group=root mode=0755
+  file: >
+    path={{ item }}
+    state=directory
+    mode=0755
+    owner=root
+    group=root
   with_items:
   - /var/log/uwsgi
 
 - name: supervisor configuration
-  template: src=uwsgi-emperor.conf dest=/etc/supervisor/conf.d/uwsgi-emperor.conf
+  template: >
+    src=uwsgi-emperor.conf
+    dest=/etc/supervisor/conf.d/uwsgi-emperor.conf
   register: supervisor_configuration
 
 - name: supervisor reread
@@ -49,8 +53,12 @@
   when: supervisor_configuration.changed
 
 - name: restart uwsgi-emperor
-  supervisorctl: name=uwsgi-emperor state=restarted
+  supervisorctl: >
+    name=uwsgi-emperor
+    state=restarted
   when: supervisor_configuration.changed
 
 - name: start uwsgi-emperor
-  supervisorctl: name=uwsgi-emperor state=started
+  supervisorctl: >
+    name=uwsgi-emperor
+    state=started
