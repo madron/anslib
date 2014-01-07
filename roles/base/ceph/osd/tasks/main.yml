@@ -1,0 +1,35 @@
+# http://ceph.com/docs/master/install/manual-deployment/#long-form
+
+# In a monitor create a new uuid
+# uuidgen
+# and then use the generated uuid to create the new osd
+# ceph osd create <uuid>
+
+- name: ceph.conf
+  template: >
+     src=ceph.conf
+     dest=/etc/ceph/
+     mode=644
+     owner=root
+     group=root
+
+- name: osd directories
+  file: >
+    path=/var/lib/ceph/osd/{{ ceph_cluster_name }}-{{ ceph_osd_number }}
+    state=directory
+    mode=0755
+    owner=root
+    group=root
+
+# Mount the disk in /var/lib/ceph/osd/{{ ceph_cluster_name }}-{{ ceph_osd_number }}
+
+- name: create osd
+  command: >
+    ceph-osd -i {{ ceph_osd_number }} --mkfs --mkkey
+    creates=/var/lib/ceph/osd/{{ ceph_cluster_name }}-{{ ceph_osd_number }}/ceph_fsid
+
+- name: register authentication key
+  command: >
+    ceph auth add osd.{{ ceph_osd_number }} osd 'allow *' mon 'allow rwx' -i /var/lib/ceph/osd/{{ ceph_cluster_name }}-{{ ceph_osd_number }}/keyring
+
+    # creates=/var/lib/ceph/osd/{{ ceph_cluster_name }}-{{ ceph_osd_number }}/ceph_fsid
