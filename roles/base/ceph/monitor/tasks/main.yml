@@ -1,0 +1,71 @@
+# http://ceph.com/docs/master/install/manual-deployment/
+
+# Verify that Ceph created the default pools.
+# ceph osd lspools
+
+# Verify that the monitor is running.
+# ceph -s
+
+- name: ceph.conf
+  template: >
+     src=ceph.conf
+     dest=/etc/ceph/
+     mode=644
+     owner=root
+     group=root
+  notify: restart ceph-mon-all
+
+- name: ceph.mon.keyring
+  command: >
+    ceph-authtool --create-keyring /etc/ceph/ceph.mon.keyring --gen-key -n mon. --cap mon 'allow *'
+    creates=/etc/ceph/ceph.mon.keyring
+  register: ceph_mon_keyring
+
+- name: ceph.client.admin.keyring
+  command: >
+    ceph-authtool --create-keyring /etc/ceph/ceph.client.admin.keyring --gen-key -n client.admin --set-uid=0 --cap mon 'allow *' --cap osd 'allow *' --cap mds 'allow'
+    creates=/etc/ceph/ceph.client.admin.keyring
+  register: ceph_client_admin_keyring
+
+- name: add client.admin key to ceph.mon.keyring
+  command: >
+    ceph-authtool /etc/ceph/ceph.mon.keyring --import-keyring /etc/ceph/ceph.client.admin.keyring
+  when: ceph_mon_keyring.changed or ceph_client_admin_keyring.changed
+
+- name: monitor list
+  template: >
+     src=monitors.txt
+     dest=/etc/ceph/
+  register: monitor_list
+
+- name: monitor map
+  command: >
+    monmaptool  --create {% if ceph_clobber is defined %}--clobber{% endif %} --fsid {{ ceph_fsid }} {% for monitor in ceph_monitors %}--add  {{ monitor.host }} {{ monitor.ip }}:{{ monitor.port }} {% endfor %} /etc/ceph/monmap
+  when: monitor_list.changed
+
+- name: monitor directories
+  file: >
+    path=/var/lib/ceph/mon/{{ ceph_cluster_name }}-{{ item.host }}
+    state=directory
+    mode=0755
+    owner=root
+    group=root
+  with_items: ceph_monitors
+
+- name: filesystem
+  command: >
+    ceph-mon --mkfs -i {{ item.host }} --monmap /etc/ceph/monmap --keyring /etc/ceph/ceph.mon.keyring
+    creates=/var/lib/ceph/mon/{{ ceph_cluster_name }}-{{ item.host }}/keyring
+  with_items: ceph_monitors
+
+- name: sysvinit
+  command: >
+    touch /var/lib/ceph/mon/{{ ceph_cluster_name }}-{{ item.host }}/sysvinit
+    creates=/var/lib/ceph/mon/{{ ceph_cluster_name }}-{{ item.host }}/sysvinit
+  with_items: ceph_monitors
+
+- name: start monitors
+  service: >
+    name=ceph-mon-all
+    state=started
+    enabled=yes

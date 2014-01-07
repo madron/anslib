@@ -1,0 +1,7 @@
+# {{ ansible_managed }}
+
+fsid: {{ ceph_fsid }}
+members:
+{% for monitor in ceph_monitors %}
+{{ monitor }}
+{% endfor %}

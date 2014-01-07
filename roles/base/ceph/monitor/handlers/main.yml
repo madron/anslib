@@ -1,0 +1,5 @@
+- name: restart ceph-mon-all
+  service: >
+    name=ceph-mon-all
+    state=restarted
+    enabled=yes
