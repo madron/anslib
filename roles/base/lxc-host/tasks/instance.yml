@@ -38,6 +38,15 @@
     state=absent
   with_items: lxc_host_instances
 
+- name: apt sources
+  template: >
+    src=sources.list
+    dest=/var/lib/lxc/{{ item.name }}/rootfs/etc/apt/sources.list
+    mode=0644
+    owner=root
+    group=root
+  with_items: lxc_host_instances
+
 - name: stop vm
   command: lxc-shutdown -w -t 15 -n {{ item.0.item.name }}
   with_together:
