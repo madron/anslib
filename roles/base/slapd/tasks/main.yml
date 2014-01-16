@@ -1,0 +1,39 @@
+- name: required packages
+  apt: >
+    pkg={{ item }}
+    state=latest
+    update_cache={{ update_cache|default('no')}}
+  with_items:
+    - slapd
+    - ldap-utils
+
+- name: /etc/default/slapd
+  template: >
+    src=default_slapd
+    dest=/etc/default/slapd
+    mode=0644
+    owner=root
+    group=root
+  notify: restart slapd
+
+- name: slapd.conf
+  template: >
+    src=slapd.conf
+    dest=/etc/ldap/slapd.conf
+    mode=0644
+    owner=root
+    group=root
+  notify: restart slapd
+
+- name: ldap.conf
+  template: >
+    src=ldap.conf
+    dest=/etc/ldap/ldap.conf
+    mode=0644
+    owner=root
+    group=root
+
+- name: start slapd
+  service: >
+    name=slapd
+    state=started

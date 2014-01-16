@@ -1,0 +1,11 @@
+slapd_suffix: 'dc=example,dc=com'
+# The default password is 'pass' to encript a new password use
+# slappasswd -s <password>
+slapd_root_pw: '{SSHA}zqMZjIejkjevxIQKvU1QEqBnPJb5WIHj'
+slapd_root_cn: admin
+slapd_schemas:
+    - core
+    - cosine
+    - nis
+    - inetorgperson
+slapd_backend: mdb
