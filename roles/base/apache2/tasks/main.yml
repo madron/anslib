@@ -1,0 +1,10 @@
+- name: install package
+  apt: >
+    pkg=apache2
+    state=latest
+    update_cache={{ update_cache|default('no')}}
+
+- name: disable default site
+  file: >
+    path=/etc/apache2/sites-enabled/000-default
+    state=absent
