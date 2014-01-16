@@ -14,3 +14,42 @@
     owner=root
     group=root
   notify: restart mysql
+
+
+- name: root password
+  mysql_user: >
+    name=root
+    host=localhost
+    password={{ mysql_root_password }}
+
+- name: .my.cnf file
+  template: >
+    src=client.cnf
+    dest=/root/client.cnf
+    mode=0600
+    owner=root
+    group=root
+
+- name: update root password for all root accounts
+  mysql_user: >
+    name=root
+    host={{ item }}
+    password={{ mysql_root_password }}
+  with_items:
+    - '{{ ansible_hostname }}'
+    - 127.0.0.1
+    - ::1
+
+- name: remove anonymous users
+  mysql_user: >
+    name=''
+    host={{ item }}
+    state=absent
+  with_items:
+    - localhost
+    - '{{ inventory_hostname }}'
+
+- name: remove test database
+  mysql_db: >
+    name=test
+    state=absent
