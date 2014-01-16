@@ -1,0 +1,6 @@
+dependencies:
+  - {
+        role: base/mysql,
+        mysql_bind_address: '{{ openstack_controller_internal_ip }}',
+        mysql_root_password: '{{ openstack_db_pass }}',
+    }

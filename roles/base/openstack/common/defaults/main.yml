@@ -1,0 +1,16 @@
+openstack_rabbit_pass: password         # Password of user guest of RabbitMQ
+openstack_keystone_dbpass: password     # Database password of Identity service
+openstack_admin_pass: password          # Password of user admin
+openstack_glance_dbpass: password       # Database password for Image Service
+openstack_glance_pass: password         # Password of Image Service user glance
+openstack_nova_dbpass: password         # Database password for Compute service
+openstack_nova_pass: password           # Password of Compute service user nova
+openstack_dash_dbpass: password         # Database password for the dashboard
+openstack_cinder_dbpass: password       # Database password for the Block Storage Service
+openstack_cinder_pass: password         # Password of Block Storage Service user cinder
+openstack_neutron_dbpass: password      # Database password for the Networking service
+openstack_neutron_pass: password        # Password of Networking service user neutron
+openstack_heat_dbpass: password         # Database password for the Orchestration service
+openstack_heat_pass: password           # Password of Orchestration service user heat
+openstack_ceilometer_dbpass: password   # Database password for the Telemetry service
+openstack_ceilometer_pass: password     # Password of Telemetry service user ceilometer

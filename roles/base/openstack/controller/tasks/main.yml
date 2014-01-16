@@ -1,0 +1,6 @@
+- name: mysql python
+  apt: >
+    name={{ item }}
+    state=present
+  with_items:
+    - python-mysqldb
