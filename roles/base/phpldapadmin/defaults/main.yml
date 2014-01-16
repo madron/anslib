@@ -1,0 +1,6 @@
+phpldapadmin_server_name: localhost
+phpldapadmin_ldap_host: localhost
+phpldapadmin_ldap_port: 389
+phpldapadmin_ldap_description: LDAP Server
+phpldapadmin_ldap_base: 'dc=example,dc=com'
+phpldapadmin_ldap_bind: 'cn=manager,dc=example,dc=com'

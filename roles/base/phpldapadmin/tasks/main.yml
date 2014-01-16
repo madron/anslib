@@ -1,0 +1,55 @@
+- name: required packages
+  apt: >
+    pkg=phpldapadmin
+    state=latest
+
+
+# - name: download directory
+#   file: >
+#     path=/var/cache/ansible/base/slapd
+#     state=directory
+#     mode=0755
+#     owner=root
+#     group=root
+
+# - name: download source
+#   get_url: >
+#     url={{ phpldapadmin_url }}
+#     sha256sum={{ phpldapadmin_sha256sum }}
+#     dest=/var/cache/ansible/base/slapd/
+#     mode=0644
+#     owner=root
+#     group=root
+
+# - name: unzip source
+#   command: >
+#     tar xfz /var/cache/ansible/base/slapd/phpldapadmin-{{ phpldapadmin_version }}.tgz
+#     chdir=/var/www
+#     creates=/var/www/phpldapadmin-{{ phpldapadmin_version }}
+
+- name: config.php
+  template: >
+    src=config.php
+    dest=/etc/phpldapadmin/config.php
+    mode=0644
+    owner=root
+    group=root
+
+- name: apache.conf
+  template: >
+    src=apache.conf
+    dest=/etc/phpldapadmin/apache.conf
+    mode=0644
+    owner=root
+    group=root
+  notify: restart apache2
+
+- name: apache conf.d
+  file: >
+    src=/etc/phpldapadmin/apache.conf
+    dest=/etc/apache2/conf.d/phpldapadmin
+    state=link
+    mode=0644
+    owner=root
+    group=root
+  notify: restart apache2
