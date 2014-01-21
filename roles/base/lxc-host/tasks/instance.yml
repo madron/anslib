@@ -1,8 +1,6 @@
-# Virtual machine
-
 - name: create vm
   command: >
-    lxc-create -t ubuntu -n {{ item.name }} {% if item.release is defined %}-- --release {{ item.release }}{% endif %}
+    lxc-create -n {{ item.name }} -t {{ item.distribution }} -- --release {{ item.release }}
     creates=/var/lib/lxc/{{ item.name }}
   register: create_vm
   with_items: lxc_host_instances
@@ -19,7 +17,8 @@
 
 - name: automatic start symbolic link
   file: >
-    src=/var/lib/lxc/{{ item.name }}/config path=/etc/lxc/auto/{{ item.name }}
+    src=/var/lib/lxc/{{ item.name }}/config
+    path=/etc/lxc/auto/{{ item.name }}.conf
     state=link
   with_items: lxc_host_instances
 
@@ -36,15 +35,6 @@
   file: >
     path=/var/lib/lxc/{{ item.name }}/rootfs/etc/resolvconf/resolv.conf.d/tail
     state=absent
-  with_items: lxc_host_instances
-
-- name: apt sources
-  template: >
-    src=sources.list
-    dest=/var/lib/lxc/{{ item.name }}/rootfs/etc/apt/sources.list
-    mode=0644
-    owner=root
-    group=root
   with_items: lxc_host_instances
 
 - name: stop vm
