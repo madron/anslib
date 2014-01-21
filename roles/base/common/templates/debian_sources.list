@@ -1,0 +1,5 @@
+# {{ ansible_managed }}
+
+deb http://ftp.{{ common_apt_mirror_code }}.debian.org/debian  {{ ansible_lsb.codename }}          main contrib
+deb http://ftp.debian.org/debian/    {{ ansible_lsb.codename }}-updates  main contrib
+deb http://security.debian.org/      {{ ansible_lsb.codename }}/updates  main contrib

@@ -1,9 +1,8 @@
----
-# This playbook contains common plays that will be run on all nodes.
-
 # https://help.ubuntu.com/community/Locale
 - name: set locale
-  template: src=default_locale dest=/etc/default/locale
+  template: >
+    src=default_locale
+    dest=/etc/default/locale
 
 - name: apt repository proxy
   template: >
@@ -15,28 +14,44 @@
   when: apt_proxy_host is defined
   notify: apt-get update
 
-- name: install python-apt package
-  command: apt-get -y install python-apt  creates=/usr/share/doc/python-apt/README
+- name: apt sources.list
+  template: >
+    src='{{ ansible_distribution|lower() }}_sources.list'
+    dest=/etc/apt/sources.list
+    mode=0644
+    owner=root
+    group=root
+  register: sources_list
 
-- name: install utility packages
-  apt: name={{ item }} update_cache={{ update_cache|default('no')}} state=present
+- name: apt-get update
+  command: >
+    apt-get update
+  when: sources_list.changed
+
+- name: python-apt package
+  command: >
+    apt-get -y install python-apt
+    creates=/usr/share/doc/python-apt/README
+
+- name: utility packages
+  apt: >
+    name={{ item }}
+    update_cache={{ update_cache|default('no')}}
+    state=present
   with_items:
   - python-software-properties
   - aptitude
-  - language-pack-en
   - pwgen
   - sysstat
   - dnsutils
   - iftop
   - htop
   - wget
+  - less
   - vim
   - nano
   - mc
   - debfoster
 
-- name: install new utility packages
-  apt: name={{ item }} update_cache={{ update_cache|default('no')}} state=present
-  with_items:
-  - python-keyczar
-  when: ansible_distribution_version >= '12.04'
+- include: ubuntu.yml
+  when: ansible_distribution == 'Ubuntu'
