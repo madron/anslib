@@ -1,4 +1,4 @@
-- name: Role nginx - ppa repository
+- name: ppa repository
   apt_repository: >
     repo=ppa:ubuntu-lxc/stable
     state=present
