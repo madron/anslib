@@ -31,7 +31,7 @@
   lineinfile: >
     dest=/usr/share/lxc/templates/lxc-debian
     insertafter='^ifupdown,'
-    line='python-apt,\'
+    line='python-apt,lsb-release,\'
     backup=yes
   register: debian_template
   tags:
