@@ -2,20 +2,36 @@
   command: lxc-kill -n  {{ item.name }}
   ignore_errors: yes
   with_items: lxc_host_instances_remove
+  tags:
+    - lxc-host
+    - lxc-host-instance
+    - lxc-host-instance-remove
 
 - name: Remove - destroy
   command: lxc-destroy -n {{ item.name }}
   ignore_errors: yes
   with_items: lxc_host_instances_remove
+  tags:
+    - lxc-host
+    - lxc-host-instance
+    - lxc-host-instance-remove
 
 - name: Remove - vm directory
   file: >
     path=/var/lib/lxc/{{ item.name }}
     state=absent
   with_items: lxc_host_instances_remove
+  tags:
+    - lxc-host
+    - lxc-host-instance
+    - lxc-host-instance-remove
 
 - name: Remove - automatic start symbolic link
   file: >
     path=/etc/lxc/auto/{{ item.name }}.conf
     state=absent
   with_items: lxc_host_instances_remove
+  tags:
+    - lxc-host
+    - lxc-host-instance
+    - lxc-host-instance-remove
