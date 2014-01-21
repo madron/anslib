@@ -27,11 +27,11 @@
   tags:
     - lxc-host
 
-- name: add python-minimal package to debian template
+- name: add python-apt package to debian template
   lineinfile: >
     dest=/usr/share/lxc/templates/lxc-debian
     insertafter='^ifupdown,'
-    line='python-minimal,\'
+    line='python-apt,\'
     backup=yes
   register: debian_template
   tags:
