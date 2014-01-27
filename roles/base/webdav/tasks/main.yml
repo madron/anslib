@@ -19,6 +19,17 @@
   tags:
     - webdav
 
+- name: location directories
+  file: >
+    path={{ webdav_root }}{{ item.path }}
+    state=directory
+    mode=0755
+    owner=www-data
+    group=www-data
+  with_items: webdav_locations
+  tags:
+    - webdav
+
 - include: auth_htpasswd.yml
   when: webdav_auth_type == 'htpasswd'
   tags:

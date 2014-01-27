@@ -1,6 +1,11 @@
 webdav_server_name: localhost
-webdav_root: /var/www/webdav
+webdav_locations:
+    - { path: '/',
+        write_users: [admin],
+        read_users: []
+      }
 webdav_auth_type: htpasswd
+webdav_root: /var/www/webdav
 
 
 # auth htpasswd
