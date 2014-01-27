@@ -7,6 +7,15 @@
     - lxc-host-instance
     - lxc-host-instance-remove
 
+- name: Remove - wait
+  command: lxc-wait -n {{ item.name }} -s 'STOPPED'
+  ignore_errors: yes
+  with_items: lxc_host_instances_remove
+  tags:
+    - lxc-host
+    - lxc-host-instance
+    - lxc-host-instance-remove
+
 - name: Remove - destroy
   command: lxc-destroy -n {{ item.name }}
   ignore_errors: yes
