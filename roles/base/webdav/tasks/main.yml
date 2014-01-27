@@ -1,0 +1,48 @@
+- name: enable apache modules
+  command: >
+    a2enmod {{ item }}
+    creates=/etc/apache2/mods-enabled/{{ item }}.load
+  notify: restart apache2
+  with_items:
+    - dav
+    - dav_fs
+  tags:
+    - webdav
+
+- name: root directory
+  file: >
+    path={{ webdav_root }}
+    state=directory
+    mode=0755
+    owner=www-data
+    group=www-data
+  tags:
+    - webdav
+
+- include: auth_htpasswd.yml
+  when: webdav_auth_type == 'htpasswd'
+  tags:
+    - webdav
+
+- name: site available
+  template: >
+    src=apache.conf
+    dest=/etc/apache2/sites-available/webdav.conf
+    mode=0644
+    owner=root
+    group=root
+  notify: reload apache2
+  tags:
+    - webdav
+
+- name: site enabled
+  file: >
+    src=/etc/apache2/sites-available/webdav.conf
+    dest=/etc/apache2/sites-enabled/webdav.conf
+    state=link
+    mode=0644
+    owner=root
+    group=root
+  notify: reload apache2
+  tags:
+    - webdav

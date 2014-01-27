@@ -1,0 +1,12 @@
+webdav_server_name: localhost
+webdav_root: /var/www/webdav
+webdav_auth_type: htpasswd
+
+
+# auth htpasswd
+webdav_htpasswd_file: /etc/apache2/webdav.password
+# webdav_htpasswd_username: admin
+# webdav_htpasswd_password: admin
+
+
+# auth ldap
