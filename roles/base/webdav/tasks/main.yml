@@ -15,6 +15,7 @@
     creates=/etc/apache2/mods-enabled/{{ item }}.load
   notify: restart apache2
   with_items:
+    - auth_basic
     - dav
     - dav_fs
   tags:
