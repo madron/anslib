@@ -19,5 +19,5 @@ webdav_auth_file_users: []
 # auth ldap
 webdav_auth_ldap_host: localhost
 webdav_auth_ldap_port: 389
-webdav_auth_ldap_base_dn: 'dc=example,dc=com'
-webdav_auth_ldap_filter: '?uid?sub?(objectClass=*)'
+webdav_auth_ldap_base_dn: 'ou=People,dc=example,dc=com'
+webdav_auth_ldap_filter: '?uid?sub?(objectClass=inetOrgPerson)'
