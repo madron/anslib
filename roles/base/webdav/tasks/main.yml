@@ -1,3 +1,11 @@
+- name: cadaver package
+  apt: >
+    pkg=cadaver
+    state=latest
+    update_cache={{ update_cache|default('no')}}
+  tags:
+    - webdav
+
 - name: enable apache modules
   command: >
     a2enmod {{ item }}
