@@ -1,8 +1,11 @@
-- name: cadaver package
+- name: required packages
   apt: >
-    pkg=cadaver
+    pkg={{ item }}
     state=latest
     update_cache={{ update_cache|default('no')}}
+  with_items:
+    - python-passlib
+    - cadaver
   tags:
     - webdav
 
