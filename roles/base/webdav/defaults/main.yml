@@ -10,8 +10,9 @@ webdav_root: /var/www/webdav
 
 # auth htpasswd
 webdav_htpasswd_file: /etc/apache2/webdav.password
-# webdav_htpasswd_username: admin
-# webdav_htpasswd_password: admin
+webdav_htpasswd_users: []
+# webdav_htpasswd_users:
+#     - { username: admin, password: admin }
 
 
 # auth ldap
