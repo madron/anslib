@@ -5,7 +5,6 @@ webdav_locations:
         read_users: []
       }
 
-webdav_auth_type: Basic         # Basic or Digest
 webdav_auth_provider: file      # file or ldap
 webdav_root: /var/www/webdav
 
@@ -18,3 +17,7 @@ webdav_auth_file_users: []
 
 
 # auth ldap
+webdav_auth_ldap_host: localhost
+webdav_auth_ldap_port: 389
+webdav_auth_ldap_base_dn: 'dc=example,dc=com'
+webdav_auth_ldap_filter: '?uid?sub?(objectClass=*)'
