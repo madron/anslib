@@ -4,14 +4,16 @@ webdav_locations:
         write_users: [admin],
         read_users: []
       }
-webdav_auth_type: htpasswd
+
+webdav_auth_type: Basic         # Basic or Digest
+webdav_auth_provider: file      # file or ldap
 webdav_root: /var/www/webdav
 
 
-# auth htpasswd
-webdav_htpasswd_file: /etc/apache2/webdav.password
-webdav_htpasswd_users: []
-# webdav_htpasswd_users:
+# auth file
+webdav_auth_file_path: /etc/apache2/webdav.password
+webdav_auth_file_users: []
+# webdav_auth_file_users:
 #     - { username: admin, password: admin }
 
 

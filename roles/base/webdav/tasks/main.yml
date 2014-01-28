@@ -41,8 +41,8 @@
   tags:
     - webdav
 
-- include: auth_htpasswd.yml
-  when: webdav_auth_type == 'htpasswd'
+- include: auth_file.yml
+  when: webdav_auth_provider == 'file'
   tags:
     - webdav
 

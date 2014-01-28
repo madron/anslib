@@ -1,25 +1,25 @@
-- name: htpasswd users
+- name: auth file users
   htpasswd: >
-    path={{ webdav_htpasswd_file }}
+    path={{ webdav_auth_file_path }}
     name={{ item.username }}
     password={{ item.password }}
     mode=0640
     owner=root
     group=www-data
-  with_items: webdav_htpasswd_users
+  with_items: webdav_auth_file_users
   tags:
     - webdav
 
-- name: htpasswd file
+- name: auth file
   command: >
-    touch {{ webdav_htpasswd_file }}
-    creates={{ webdav_htpasswd_file }}
+    touch {{ webdav_auth_file_path }}
+    creates={{ webdav_auth_file_path }}
   tags:
     - webdav
 
-- name: htpasswd file permission
+- name: auth file permission
   file: >
-    path={{ webdav_htpasswd_file }}
+    path={{ webdav_auth_file_path }}
     state=file
     mode=0640
     owner=root
