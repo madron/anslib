@@ -52,6 +52,7 @@
   - nano
   - mc
   - debfoster
+  when: ansible_lsb.codename not in ('lenny')
 
 - include: ubuntu.yml
   when: ansible_distribution == 'Ubuntu'

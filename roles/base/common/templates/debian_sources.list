@@ -1,5 +1,10 @@
 # {{ ansible_managed }}
 
+{% if ansible_lsb.codename in ('wheezy') %}
 deb http://ftp.{{ common_apt_mirror_code }}.debian.org/debian  {{ ansible_lsb.codename }}          main contrib
 deb http://ftp.debian.org/debian/    {{ ansible_lsb.codename }}-updates  main contrib
 deb http://security.debian.org/      {{ ansible_lsb.codename }}/updates  main contrib
+{% endif %}
+{% if ansible_lsb.codename in ('squeeze', 'lenny') %}
+deb http://archive.debian.org/debian/ {{ ansible_lsb.codename }} main contrib
+{% endif %}
