@@ -1,0 +1,8 @@
+postgresql_acls: []
+# postgresql_acls:
+#     - {type: host, database: all, user: all, address: '192.168.1.0/24', method: md5}
+
+postgresql_cluster_name: main
+postgresql_port: 5432
+
+postgresql_version: 9.1

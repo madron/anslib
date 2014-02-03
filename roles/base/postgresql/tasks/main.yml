@@ -1,0 +1,36 @@
+- name: required packages
+  apt: >
+    name={{ item }}
+    state=latest
+  with_items:
+  - postgresql-{{ postgresql_version }}
+  - python-psycopg2
+  tags:
+    - postgresql
+
+- name: postgresql.conf
+  template: >
+    src=postgresql.conf
+    dest=/etc/postgresql/{{ postgresql_version }}/{{ postgresql_cluster_name }}/
+    mode=0644
+    owner=postgres
+    group=postgres
+  notify: restart postgresql cluster
+  tags:
+    - postgresql
+
+- name: pg_hba.conf
+  template: >
+    src=pg_hba.conf
+    dest=/etc/postgresql/{{ postgresql_version }}/{{ postgresql_cluster_name }}/
+    mode=0640
+    owner=postgres
+    group=postgres
+  notify: restart postgresql cluster
+  tags:
+    - postgresql
+
+- name: ensure service started
+  service: name=postgresql state=started
+  tags:
+    - postgresql
