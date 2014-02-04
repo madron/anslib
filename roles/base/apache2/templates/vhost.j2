@@ -1,0 +1,18 @@
+# {{ ansible_managed }}
+
+<VirtualHost *:{{ apache2_vhost_port }}>
+{% if apache2_vhost_server_name is defined %}
+    ServerName                            {{ apache2_vhost_server_name }}
+{% for alias in apache2_vhost_server_aliases|default([]) %}
+    ServerAlias                           {{ alias }}
+{% endfor %}
+{% endif%}
+{% if apache2_vhost_admin_email is defined %}
+    ServerAdmin                           {{ apache2_vhost_admin_email }}
+{% endif%}
+
+    DocumentRoot  {{ apache2_docbase }}/{{ apache2_vhost_code }}/
+    CustomLog     {{ apache2_log_dir }}/{{ apache2_vhost_code }}_access.log  combined
+    ErrorLog      {{ apache2_log_dir }}/{{ apache2_vhost_code }}_error.log
+
+</VirtualHost>

@@ -1,10 +1,53 @@
-- name: install package
-  apt: >
-    pkg=apache2
-    state=latest
-    update_cache={{ update_cache|default('no')}}
+- name: os specific variables
+  include_vars: "{{ ansible_os_family }}.yml"
 
-- name: disable default site
+
+- include: packages_debian.yml
+  when: ansible_os_family == 'Debian'
+
+
+- name: disable default sites
   file: >
-    path=/etc/apache2/sites-enabled/000-default
+    path=/etc/apache2/sites-enabled/{{ item }}
     state=absent
+  with_items:
+    - 000-default
+    - 000-default-ssl
+  notify: reload apache2
+
+
+- name: ports.conf
+  template: >
+    src=ports.conf.j2
+    dest=/etc/apache2/ports.conf
+    mode=0644
+    owner=root
+    group=root
+  notify: reload apache2
+
+
+- name: vhost config
+  template: >
+    src=vhost.j2
+    dest=/etc/apache2/sites-available/{{ apache2_vhost_code }}
+    mode=0644
+    owner=root
+    group=root
+  notify: reload apache2
+  when: apache2_vhost_code is defined
+
+- name: vhost config symlink
+  file: >
+    src=/etc/apache2/sites-available/{{ apache2_vhost_code }}
+    dest=/etc/apache2/sites-enabled/{{ apache2_vhost_code }}
+    state=link
+    force=yes
+  notify: reload apache2
+  when: apache2_vhost_code is defined
+
+
+- name: start service
+  service: >
+    name=apache2
+    state=started
+    enabled=yes

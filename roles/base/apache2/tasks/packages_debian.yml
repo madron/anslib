@@ -1,0 +1,5 @@
+- name: required packages
+  apt: >
+    pkg={{ item }}
+    state=latest
+  with_items: apache2_packages
