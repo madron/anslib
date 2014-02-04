@@ -1,7 +1,10 @@
 - name: required packages
   apt: >
-    pkg=phpldapadmin
+    pkg={{ item }}
     state=latest
+  with_items:
+    - phpldapadmin
+    - libapache2-mod-php5
 
 
 # - name: download directory
