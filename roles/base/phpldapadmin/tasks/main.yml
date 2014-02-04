@@ -6,30 +6,6 @@
     - phpldapadmin
     - libapache2-mod-php5
 
-
-# - name: download directory
-#   file: >
-#     path=/var/cache/ansible/base/slapd
-#     state=directory
-#     mode=0755
-#     owner=root
-#     group=root
-
-# - name: download source
-#   get_url: >
-#     url={{ phpldapadmin_url }}
-#     sha256sum={{ phpldapadmin_sha256sum }}
-#     dest=/var/cache/ansible/base/slapd/
-#     mode=0644
-#     owner=root
-#     group=root
-
-# - name: unzip source
-#   command: >
-#     tar xfz /var/cache/ansible/base/slapd/phpldapadmin-{{ phpldapadmin_version }}.tgz
-#     chdir=/var/www
-#     creates=/var/www/phpldapadmin-{{ phpldapadmin_version }}
-
 - name: config.php
   template: >
     src=config.php
