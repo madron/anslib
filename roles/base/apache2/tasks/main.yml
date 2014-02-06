@@ -16,6 +16,16 @@
   notify: reload apache2
 
 
+- name: modules
+  file: >
+    src=/etc/apache2/mods-available/{{ item }}.load
+    dest=/etc/apache2/mods-enabled/{{ item }}.load
+    state=link
+    force=yes
+  notify: restart apache2
+  with_items: apache2_modules
+
+
 - name: ports.conf
   template: >
     src=ports.conf.j2

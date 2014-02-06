@@ -4,6 +4,10 @@ apache2_listen_ports:
 #   - 80
 #   - 443
 
+apache2_modules: []
+# apache2_modules:
+#   - rewrite
+
 # apache2_vhost_code: example
 # apache2_vhost_port: 80
 # apache2_vhost_server_name: example.com
