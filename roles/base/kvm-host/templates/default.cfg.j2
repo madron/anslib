@@ -1,0 +1,35 @@
+[DEFAULT]
+# Username of initial user
+user      = {{ kvm_host_username }}
+# Full name of initial user
+name      = {{ kvm_host_user_description }}
+# Password of initial user
+pass      = {{ kvm_host_password }}
+
+{% if kvm_host_network_domain is defined %}domain = {{ kvm_host_network_domain }}{% endif %}
+
+{% if kvm_host_network_gateway is defined %}gw = {{ kvm_host_network_gateway }}{% endif %}
+
+{% if kvm_host_network_dns is defined %}dns = {{ kvm_host_network_dns }}{% endif %}
+
+
+[ubuntu]
+{% if kvm_host_proxy is defined %}proxy = {{ kvm_host_proxy }}{% endif %}
+
+suite           = {{ kvm_host_ubuntu_release }}
+flavour         = {{ kvm_host_ubuntu_flavour }}
+components      = {% for pkg in kvm_host_ubuntu_components %}{{ pkg }}, {% endfor %}
+
+addpkg          = {% for pkg in kvm_host_ubuntu_additional_packages %}{{ pkg }}, {% endfor %}
+
+ssh-key         = {{ kvm_host_ssh_key_file }}
+
+
+[kvm]
+libvirt = qemu:///system
+arch     = {{ kvm_host_architecture }}
+bridge   = {{ kvm_host_bridge }}
+mem      = {{ kvm_host_ram_mb }}
+cpus     = {{ kvm_host_vcpus }}
+rootsize = {{ kvm_host_root_disk_size_mb }}
+swapsize = {{ kvm_host_swap_disk_size_mb }}

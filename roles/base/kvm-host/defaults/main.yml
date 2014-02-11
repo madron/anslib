@@ -1,0 +1,38 @@
+# Usage example:
+# vmbuilder kvm ubuntu -c /etc/vmbuilder/default.cfg --hostname guest0 -d /var/lib/libvirt/images/guest0 --pass changeme --ip 192.168.1.126 --gw 192.168.1.254 --dns 192.168.1.254
+
+# Username of initial user
+kvm_host_username: manage
+# Full name of initial user
+kvm_host_user_description: Manage
+# Password of initial user
+kvm_host_password: manage
+
+kvm_host_ssh_key_file: /root/.ssh/authorized_keys
+
+# kvm_host_proxy: http://proxy.example.com:3128
+
+
+### Networking
+
+# kvm_host_network_domain: example.com
+# kvm_host_network_gateway: 192.168.1.1
+# kvm_host_network_dns: 192.168.1.1
+
+
+### Kvm
+
+kvm_host_architecture: amd64
+kvm_host_bridge: br0
+kvm_host_ram_mb: 512
+kvm_host_vcpus: 1
+kvm_host_root_disk_size_mb: 4096
+kvm_host_swap_disk_size_mb: 0
+
+
+### Ubuntu specific
+
+kvm_host_ubuntu_release: precise
+kvm_host_ubuntu_flavour: virtual
+kvm_host_ubuntu_components: ['main', 'universe']
+kvm_host_ubuntu_additional_packages: ['openssh-server']

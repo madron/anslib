@@ -1,0 +1,32 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - kvm-host
+
+
+- include: packages_debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - kvm-host
+
+
+- name: libvirtxml.tmpl
+  template: >
+    src=libvirtxml.tmpl.j2
+    dest=/etc/vmbuilder/libvirt/libvirtxml.tmpl
+    mode=0644
+    owner=root
+    group=root
+  tags:
+    - kvm-host
+
+
+- name: default.cfg
+  template: >
+    src=default.cfg.j2
+    dest=/etc/vmbuilder/default.cfg
+    mode=0644
+    owner=root
+    group=root
+  tags:
+    - kvm-host

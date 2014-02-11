@@ -1,0 +1,4 @@
+kvm_host_packages:
+  - ubuntu-virt-server
+  - virt-manager
+  - python-vm-builder
