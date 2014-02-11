@@ -18,10 +18,8 @@ pass      = {{ kvm_host_password }}
 
 suite           = {{ kvm_host_ubuntu_release }}
 flavour         = {{ kvm_host_ubuntu_flavour }}
-components      = {% for pkg in kvm_host_ubuntu_components %}{{ pkg }}, {% endfor %}
-
-addpkg          = {% for pkg in kvm_host_ubuntu_additional_packages %}{{ pkg }}, {% endfor %}
-
+components      = {{ kvm_host_ubuntu_components|join(', ') }}
+addpkg          = {{ kvm_host_ubuntu_additional_packages|join(', ') }}
 ssh-key         = {{ kvm_host_ssh_key_file }}
 
 
