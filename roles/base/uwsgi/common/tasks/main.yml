@@ -1,0 +1,45 @@
+# https://uwsgi-docs.readthedocs.org/en/latest/WSGIquickstart.html
+# http://uwsgi-docs.readthedocs.org/en/latest/PHP.html
+# https://www.ruby-forum.com/topic/3719297#1048654
+
+
+- name: release specific variables
+  include_vars: "{{ ansible_lsb.id }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - uwsgi
+    - uwsgi-common
+
+
+- include: apt_repository.yml
+  when: uwsgi_common_apt_repository is defined
+  tags:
+    - uwsgi
+    - uwsgi-common
+
+
+- include: packages_debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - uwsgi
+    - uwsgi-common
+
+
+- name: uwsgi package
+  pip: >
+    name=uwsgi
+    version={{ uwsgi_common_version }}
+  environment:
+    UWSGI_EMBED_PLUGINS: 'php'
+    LDFLAGS: '-Lpath'
+    LD_RUN_PATH: '/usr/lib/php5'
+  tags:
+    - uwsgi
+    - uwsgi-common
+
+
+- name: uwsgitop package
+  pip: >
+    name='git+https://github.com/madron/uwsgitop.git@769e875fafbde6e1c22235ff837a6cea2b6e83be#egg=uwsgitop'
+  tags:
+    - uwsgi
+    - uwsgi-common

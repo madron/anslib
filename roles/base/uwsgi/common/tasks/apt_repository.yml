@@ -1,0 +1,8 @@
+- name: apt repository
+  apt_repository: >
+    repo='{{ uwsgi_common_apt_repository }}'
+    update_cache={{ update_cache|default('no')}}
+    state=present
+  tags:
+    - uwsgi
+    - uwsgi-common

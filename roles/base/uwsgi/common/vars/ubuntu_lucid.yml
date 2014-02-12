@@ -1,0 +1,16 @@
+uwsgi_common_apt_repository: 'ppa:l-mierzwa/lucid-php5'
+
+uwsgi_common_packages:
+  - wget
+  - build-essential
+  - python-dev
+  - php5-dev
+  - libphp5-embed
+  - libonig-dev
+  - libqdbm-dev
+  - libbz2-dev
+  - libxml2-dev
+  - libpcre3-dev
+  - libkrb5-dev
+  - libdb-dev
+  - git-core
