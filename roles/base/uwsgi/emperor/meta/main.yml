@@ -1,0 +1,3 @@
+dependencies:
+  - { role: base/uwsgi/common }
+  - { role: base/supervisor }

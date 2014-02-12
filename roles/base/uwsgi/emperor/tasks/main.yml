@@ -1,0 +1,55 @@
+# https://uwsgi-docs.readthedocs.org/en/latest/Emperor.html
+
+# Setting up Nginx + uWSGI Emperor to host Python applications on Ubuntu 12.04
+# http://www.collabspot.com/2012/08/14/setting-up-nginx-uwsgi-python-ubuntu-12-04/
+
+
+- name: directories
+  file: >
+    path={{ item }}
+    state=directory
+    mode=0755
+    owner=root
+    group=root
+  with_items:
+  - /var/log/uwsgi
+  tags:
+    - uwsgi
+    - uwsgi-emperor
+
+
+- name: supervisor configuration
+  template: >
+    src=uwsgi-emperor.conf
+    dest=/etc/supervisor/conf.d/uwsgi-emperor.conf
+  register: supervisor_configuration
+  tags:
+    - uwsgi
+    - uwsgi-emperor
+
+
+- name: supervisor reread
+  command: supervisorctl reload
+  when: supervisor_configuration.changed
+  tags:
+    - uwsgi
+    - uwsgi-emperor
+
+
+- name: restart uwsgi-emperor
+  supervisorctl: >
+    name=uwsgi-emperor
+    state=restarted
+  when: supervisor_configuration.changed
+  tags:
+    - uwsgi
+    - uwsgi-emperor
+
+
+- name: start uwsgi-emperor
+  supervisorctl: >
+    name=uwsgi-emperor
+    state=started
+  tags:
+    - uwsgi
+    - uwsgi-emperor
