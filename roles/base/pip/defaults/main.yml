@@ -1,4 +1,4 @@
-pip_version: 1.5
+pip_version: 1.5.2
 pip_setuptools_version: 2.0.2
 pip_setuptools_url: https://pypi.python.org/packages/source/s/setuptools/setuptools-2.0.2.tar.gz#md5=101b0829eca064fe47708039d66fc135
 pip_setuptools_sha256sum: b1f6824beeb32ebb47013817467bd21164385e7c84d72a2760cf215f482fdb26
