@@ -5,7 +5,7 @@
   apt_repository: repo='deb http://nginx.org/packages/ubuntu/ precise nginx' state=absent
 
 - name: Role nginx - install package
-  apt: pkg=nginx state=latest
+  apt: pkg=nginx-full state=latest
 
 - name: Role nginx - disable default site
   file: path=/etc/nginx/sites-enabled/default state=absent
