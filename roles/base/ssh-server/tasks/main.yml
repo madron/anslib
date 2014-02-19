@@ -1,5 +1,5 @@
 - name: os specific variables
-  include_vars: "{{ ansible_lsb.id }}_{{ ansible_lsb.codename }}.yml"
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
   tags:
     - ssh-server
 
