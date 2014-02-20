@@ -1,0 +1,2 @@
+known_hosts: []
+known_hosts_file: /root/.ssh/known_hosts
