@@ -1,17 +1,10 @@
-- name: ppa repository
-  apt_repository: >
-    repo=ppa:nginx/stable
-    state=present
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags: nginx
 
-- name: remove old repository
-  apt_repository: >
-    repo='deb http://nginx.org/packages/ubuntu/ precise nginx'
-    state=absent
 
-- name: install package
-  apt: >
-    pkg=nginx-full
-    state=latest
+- include: packages_debian.yml
+  when: ansible_os_family == 'Debian'
   tags: nginx
 
 

@@ -1,0 +1,20 @@
+- name: ppa repository
+  apt_repository: >
+    repo=ppa:nginx/stable
+    state=present
+  tags: nginx
+
+
+- name: remove old repository
+  apt_repository: >
+    repo='deb http://nginx.org/packages/ubuntu/ precise nginx'
+    state=absent
+  tags: nginx
+
+
+- name: required packages
+  apt: >
+    pkg={{ item }}
+    state=latest
+  with_items: nginx_packages
+  tags: nginx
