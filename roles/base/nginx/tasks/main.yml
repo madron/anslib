@@ -1,16 +1,46 @@
-- name: Role nginx - ppa repository
-  apt_repository: repo=ppa:nginx/stable state=present
+- name: ppa repository
+  apt_repository: >
+    repo=ppa:nginx/stable
+    state=present
 
-- name: Role nginx - remove old repository
-  apt_repository: repo='deb http://nginx.org/packages/ubuntu/ precise nginx' state=absent
+- name: remove old repository
+  apt_repository: >
+    repo='deb http://nginx.org/packages/ubuntu/ precise nginx'
+    state=absent
 
-- name: Role nginx - install package
-  apt: pkg=nginx-full state=latest
+- name: install package
+  apt: >
+    pkg=nginx-full
+    state=latest
 
-- name: Role nginx - disable default site
-  file: path=/etc/nginx/sites-enabled/default state=absent
-  notify:
-  - restart nginx
+- name: disable default site config
+  file: >
+    path=/etc/nginx/sites-enabled/default
+    state=absent
+  notify: reload nginx
 
-- name: Role nginx - start server
-  service: name=nginx state=started
+- name: disable fallback site on listed ports
+  template: >
+    src=default_port.conf.j2
+    dest=/etc/nginx/sites-available/default_{{ item }}.conf
+    mode=0644
+    owner=root
+    group=root
+  with_items: nginx_ports
+  notify: reload nginx
+
+- name: disable fallback site on listed ports - symlink
+  file: >
+    src=/etc/nginx/sites-available/default_{{ item }}.conf
+    dest=/etc/nginx/sites-enabled/default_{{ item }}.conf
+    state=link
+    force=yes
+    owner=root
+    group=root
+  with_items: nginx_ports
+  notify: reload nginx
+
+- name: start server
+  service: >
+    name=nginx
+    state=started
