@@ -23,17 +23,6 @@
     - lxc-host-instance
     - lxc-host-instance-create
 
-- name: automatic start symbolic link
-  file: >
-    src=/var/lib/lxc/{{ item.name }}/config
-    path=/etc/lxc/auto/{{ item.name }}.conf
-    state=link
-  with_items: lxc_host_instances
-  tags:
-    - lxc-host
-    - lxc-host-instance
-    - lxc-host-instance-create
-
 - name: authorized keys
   authorized_key: >
     path=/var/lib/lxc/{{ item.0.name }}/rootfs/root/.ssh/authorized_keys
@@ -58,11 +47,12 @@
     - lxc-host-instance-create
 
 - name: stop vm
-  command: lxc-shutdown -w -t 15 -n {{ item.0.item.name }}
+  command: lxc-stop -t 15 -n {{ item.0.item.name }}
   with_together:
     - create_vm.results
     - config.results
   when: item.1.changed and not item.0.changed
+  ignore_errors: yes
   tags:
     - lxc-host
     - lxc-host-instance

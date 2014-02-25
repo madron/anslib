@@ -1,5 +1,5 @@
 - name: Remove - kill
-  command: lxc-kill -n  {{ item.name }}
+  command: lxc-stop -k -n  {{ item.name }}
   ignore_errors: yes
   with_items: lxc_host_instances_remove
   tags:

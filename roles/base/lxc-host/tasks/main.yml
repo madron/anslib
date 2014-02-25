@@ -27,7 +27,7 @@
   tags:
     - lxc-host
 
-- name: add python-apt package to debian template
+- name: add python-apt and lsb-release packages to debian template
   lineinfile: >
     dest=/usr/share/lxc/templates/lxc-debian
     insertafter='^ifupdown,'
@@ -37,7 +37,7 @@
   tags:
     - lxc-host
 
-- name: remove debian cache cirectory
+- name: remove debian cache directory
   file: >
     path=/var/cache/lxc/debian
     state=absent
