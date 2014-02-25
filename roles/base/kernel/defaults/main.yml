@@ -1,0 +1,5 @@
+# See supported versions for every os release in vars directory
+kernel_version: 3.12.13-031213
+
+kernel_cache_dir: /var/cache/ansible/base/kernel
+proxy_env: {}

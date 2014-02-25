@@ -1,0 +1,63 @@
+- name: download directory
+  file: >
+    path={{ kernel_cache_dir }}
+    state=directory
+    mode=0644
+    owner=root
+    group=root
+  tags:
+    - kernel
+
+
+- name: download linux image package
+  get_url: >
+    url='{{ kernel_ubuntu_urls[kernel_version]['image'] }}'
+    dest='{{ kernel_cache_dir }}/linux-image-{{ kernel_version }}-generic_amd64.deb'
+    sha256sum='{{ kernel_ubuntu_urls[kernel_version]['image_sha256sum'] }}'
+  environment: proxy_env
+  tags:
+    - kernel
+
+
+- name: download linux headers all package
+  get_url: >
+    url='{{ kernel_ubuntu_urls[kernel_version]['headers_all'] }}'
+    dest='{{ kernel_cache_dir }}/linux-headers-{{ kernel_version }}_all.deb'
+    sha256sum='{{ kernel_ubuntu_urls[kernel_version]['headers_all_sha256sum'] }}'
+  environment: proxy_env
+  tags:
+    - kernel
+
+
+- name: download linux headers package
+  get_url: >
+    url='{{ kernel_ubuntu_urls[kernel_version]['headers'] }}'
+    dest='{{ kernel_cache_dir }}/linux-headers-{{ kernel_version }}-generic_amd64.deb'
+    sha256sum='{{ kernel_ubuntu_urls[kernel_version]['headers_sha256sum'] }}'
+  environment: proxy_env
+  tags:
+    - kernel
+
+
+- name: install linux image package
+  command: >
+    dpkg -i {{ kernel_cache_dir }}/linux-image-{{ kernel_version }}-generic_amd64.deb
+    creates=/lib/modules/{{ kernel_version }}-generic
+  tags:
+    - kernel
+
+
+- name: install linux headers all package
+  command: >
+    dpkg -i {{ kernel_cache_dir }}/linux-headers-{{ kernel_version }}_all.deb
+    creates=/usr/src/linux-headers-{{ kernel_version }}
+  tags:
+    - kernel
+
+
+- name: install linux headers package
+  command: >
+    dpkg -i {{ kernel_cache_dir }}/linux-headers-{{ kernel_version }}_all.deb
+    creates=/usr/src/linux-headers-{{ kernel_version }}-generic
+  tags:
+    - kernel

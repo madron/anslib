@@ -1,0 +1,24 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - kernel
+
+
+- name: fail if unsupported version
+  fail: msg='Version {{ kernel_version }} is not supported on {{ ansible_lsb.id|lower() }} {{ ansible_lsb.codename }} release'
+  when: kernel_version not in kernel_supported_versions
+  tags:
+    - kernel
+
+
+- name: http_proxy environment
+  include_vars: "proxy_env.yml"
+  when: http_proxy is defined
+  tags:
+    - kernel
+
+
+- include: ubuntu.yml
+  when: ansible_lsb.id == 'Ubuntu'
+  tags:
+    - kernel
