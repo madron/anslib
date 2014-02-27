@@ -1,0 +1,5 @@
+openvswitch_packages:
+  - openvswitch-datapath-dkms
+  - openvswitch-switch
+  - python-openvswitch
+  - openvswitch-test
