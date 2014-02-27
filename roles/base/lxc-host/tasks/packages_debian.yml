@@ -1,0 +1,16 @@
+- name: ppa repository
+  apt_repository: >
+    repo=ppa:ubuntu-lxc/stable
+    state=present
+  when: ansible_lsb.codename == 'precise'
+  tags:
+    - lxc-host
+
+
+- name: required packages
+  apt: >
+    name={{ item }}
+    state=latest
+  with_items: lxc_host_packages
+  tags:
+    - lxc-host

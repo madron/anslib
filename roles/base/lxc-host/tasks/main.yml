@@ -1,31 +1,38 @@
-- name: ppa repository
-  apt_repository: >
-    repo=ppa:ubuntu-lxc/stable
-    state=present
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id }}_{{ ansible_lsb.codename }}.yml"
   tags:
     - lxc-host
 
-- name: required packages
-  apt: >
-    name={{ item }}
-    state=latest
-  with_items:
-    - cgroup-bin
-    - lxc
-    - lxc-templates
-    - python3-lxc
+
+- include: packages_debian.yml
+  when: ansible_os_family == 'Debian'
   tags:
     - lxc-host
 
-- name: lxc.conf
+
+- name: default lxc-net
+  template: >
+    src=default_lxc_net.j2
+    dest=/etc/default/lxc-net
+    mode=0644
+    owner=root
+    group=root
+  notify: restart lxc-net
+  tags:
+    - lxc-host
+
+
+- name: default.conf
   template: >
     src=default.conf
     dest=/etc/lxc/default.conf
     mode=0644
     owner=root
     group=root
+  notify: restart lxc-net
   tags:
     - lxc-host
+
 
 - name: add python-apt and lsb-release packages to debian template
   lineinfile: >
@@ -37,6 +44,7 @@
   tags:
     - lxc-host
 
+
 - name: remove debian cache directory
   file: >
     path=/var/cache/lxc/debian
@@ -44,6 +52,7 @@
   when: debian_template.changed
   tags:
     - lxc-host
+
 
 # Generate a random mac address (ensure that first number is even)
 # openssl rand -hex 6 | sed 's/\(..\)/\1:/g; s/.$//'

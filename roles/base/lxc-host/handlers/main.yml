@@ -1,2 +1,5 @@
 - name: restart lxc
   action: service name=lxc state=restarted
+
+- name: restart lxc-net
+  action: service name=lxc-net state=restarted
