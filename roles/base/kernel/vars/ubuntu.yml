@@ -1,0 +1,10 @@
+kernel_ubuntu_urls: {
+  '3.12.13-031213': {
+    'headers_all': 'http://kernel.ubuntu.com/~kernel-ppa/mainline/v3.12.13-trusty/linux-headers-3.12.13-031213_3.12.13-031213.201402221735_all.deb',
+    'headers_all_sha256sum': 'a8842e1d60a2fc9d6c421d16b596351c3a7299873f23b79ed402708003922c81',
+    'headers': 'http://kernel.ubuntu.com/~kernel-ppa/mainline/v3.12.13-trusty/linux-headers-3.12.13-031213-generic_3.12.13-031213.201402221735_amd64.deb',
+    'headers_sha256sum': 'c4720f9aef6bb1967aa8ba297ea5c4c4b013bb89f4f8a9bbd28103b2802c5d15',
+    'image': 'http://kernel.ubuntu.com/~kernel-ppa/mainline/v3.12.13-trusty/linux-image-3.12.13-031213-generic_3.12.13-031213.201402221735_amd64.deb',
+    'image_sha256sum': 'cec50f9dadc76313d03f8d47f8431cd2f9c6832f406b235d2cc7fa3f69625d6c',
+  }
+}

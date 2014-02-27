@@ -1,4 +1,10 @@
 - name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}.yml"
+  tags:
+    - kernel
+
+
+- name: os release specific variables
   include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
   tags:
     - kernel
