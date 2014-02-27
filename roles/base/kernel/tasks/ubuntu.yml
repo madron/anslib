@@ -57,7 +57,7 @@
 
 - name: install linux headers package
   command: >
-    dpkg -i {{ kernel_cache_dir }}/linux-headers-{{ kernel_version }}_all.deb
+    dpkg -i {{ kernel_cache_dir }}/linux-headers-{{ kernel_version }}-generic_amd64.deb.deb
     creates=/usr/src/linux-headers-{{ kernel_version }}-generic
   tags:
     - kernel
