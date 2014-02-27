@@ -1,0 +1,22 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - ntpdate
+
+
+- include: packages_debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - ntpdate
+
+
+- name: /etc/cron.daily/ntpdate
+  template: >
+    src=ntpdate.j2
+    dest=/etc/cron.daily/ntpdate
+    mode=0755
+    owner=root
+    group=root
+  notify: run ntpdate
+  tags:
+    - ntpdate
