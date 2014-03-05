@@ -1,0 +1,14 @@
+- name: apt-repository
+  apt_repository: >
+    repo='{{ sublime_text_2_apt_repository }}'
+    state=present
+  tags:
+    - sublime-text-2
+
+- name: required packages
+  apt: >
+    pkg={{ item }}
+    state=latest
+  with_items: sublime_text_2_packages
+  tags:
+    - sublime-text-2
