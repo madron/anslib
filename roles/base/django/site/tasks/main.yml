@@ -92,19 +92,22 @@
     purge=no
   register: hg_repository
   when: django_site_hg_repo is defined
+  notify: 'reload uwsgi {{ django_site_slug }}'
 
 - name: '{{ django_site_slug }} - Application - install psycopg2'
   pip: >
     name=psycopg2
-    version=2.5.1
+    version=2.5.2
     use_mirrors=no
     virtualenv={{ django_site_base_dir }}/{{ django_site_slug }}/env
+  notify: 'reload uwsgi {{ django_site_slug }}'
 
 - name: '{{ django_site_slug }} - Application - requirements file'
   pip: >
     requirements={{ django_site_base_dir }}/{{ django_site_slug }}/src/{{ django_site_requirements_file }}
     virtualenv={{ django_site_base_dir }}/{{ django_site_slug }}/env
   when: django_site_requirements_file is defined and hg_repository.changed
+  notify: 'reload uwsgi {{ django_site_slug }}'
 
 
 #
@@ -161,7 +164,8 @@
     mode=644
     owner=root
     group=root
-  register: settings
+  notify: 'reload uwsgi {{ django_site_slug }}'
+
 
 - name: '{{ django_site_slug }} - Site - syncdb'
   django_manage: >
@@ -225,12 +229,7 @@
     mode=0644
     owner=root
     group=root
-  register: uwsgi_config
-
-- name: '{{ django_site_slug }} - uwsgi - reload uwsgi'
-  command: touch /var/www/{{ django_site_slug }}/conf/touch-to-reload
-  when: hg_repository is defined and hg_repository.changed
-  when: uwsgi_config.changed or settings.changed
+  notify: 'reload uwsgi {{ django_site_slug }}'
 
 
 #

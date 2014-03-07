@@ -1,0 +1,2 @@
+- name: 'reload uwsgi {{ django_site_slug }}'
+  command: touch /var/www/{{ django_site_slug }}/conf/touch-to-reload
