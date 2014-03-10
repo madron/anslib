@@ -2,7 +2,7 @@
   command: >
     lxc-create -n {{ item.name }} -t {{ item.distribution }} -- --release {{ item.release }}
     creates=/var/lib/lxc/{{ item.name }}
-  register: create_vm
+  notify: 'start lxc guest {{ {{ item.name }}}}'
   with_items: lxc_host_instances
   tags:
     - lxc-host
@@ -16,7 +16,9 @@
     mode=0644
     owner=root
     group=root
-  register: config
+  notify: 
+    - 'stop lxc guest {{ {{ item.name }}}}'
+    - 'start lxc guest {{ {{ item.name }}}}'
   with_items: lxc_host_instances
   tags:
     - lxc-host
@@ -41,29 +43,6 @@
     path=/var/lib/lxc/{{ item.name }}/rootfs/etc/resolvconf/resolv.conf.d/tail
     state=absent
   with_items: lxc_host_instances
-  tags:
-    - lxc-host
-    - lxc-host-instance
-    - lxc-host-instance-create
-
-- name: stop vm
-  command: lxc-stop -t 15 -n {{ item.0.item.name }}
-  with_together:
-    - create_vm.results
-    - config.results
-  when: item.1.changed and not item.0.changed
-  ignore_errors: yes
-  tags:
-    - lxc-host
-    - lxc-host-instance
-    - lxc-host-instance-create
-
-- name: start vm
-  command: lxc-start -d -n {{ item.0.item.name }}
-  with_together:
-    - create_vm.results
-    - config.results
-  when: item.0.changed or item.1.changed
   tags:
     - lxc-host
     - lxc-host-instance

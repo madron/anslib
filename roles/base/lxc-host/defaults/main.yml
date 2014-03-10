@@ -8,3 +8,8 @@ lxc_host_netmask: '255.255.255.0'
 lxc_host_network: '10.0.3.0/24'
 lxc_host_dhcp_range: '10.0.3.2,10.0.3.254'
 lxc_host_dhcp_max: '253'
+
+
+lxc_host_authorized_keys: []
+lxc_host_instances_remove: []
+lxc_host_instances: []
