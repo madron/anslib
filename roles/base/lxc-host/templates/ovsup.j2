@@ -1,0 +1,4 @@
+#!/bin/bash
+
+INTERFACE=$5
+ovs-vsctl --may-exist add-port {{ lxc_host_ovs_bridge }} $INTERFACE

@@ -34,6 +34,17 @@
     - lxc-host
 
 
+- name: ovsup script
+  template: >
+    src=ovsup.j2
+    dest=/etc/lxc/ovsup
+    mode=0755
+    owner=root
+    group=root
+  tags:
+    - lxc-host
+
+
 - name: add python-apt and lsb-release packages to debian template
   lineinfile: >
     dest=/usr/share/lxc/templates/lxc-debian

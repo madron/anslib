@@ -1,3 +1,5 @@
+lxc_host_ovs_bridge: br0
+
 lxc_host_network_type: veth
 lxc_host_network_link: lxcbr0
 lxc_host_network_hwaddr: 00:16:3e:xx:xx:xx
