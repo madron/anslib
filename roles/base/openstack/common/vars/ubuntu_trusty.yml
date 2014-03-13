@@ -1,0 +1,2 @@
+openstack_common_packages:
+  - ntp

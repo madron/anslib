@@ -1,0 +1,17 @@
+- name: apt repository
+  apt_repository: >
+    repo={{ openstack_common_repository }}
+    state=present
+  tags:
+    - opestack
+    - opestack-common
+
+
+- name: required packages
+  apt: >
+    pkg={{ item }}
+    state=latest
+  with_items: openstack_common_packages
+  tags:
+    - opestack
+    - opestack-common

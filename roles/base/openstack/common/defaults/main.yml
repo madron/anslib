@@ -1,3 +1,5 @@
+openstack_common_repository: 'cloud-archive:havana'
+
 openstack_rabbit_pass: password         # Password of user guest of RabbitMQ
 openstack_keystone_dbpass: password     # Database password of Identity service
 openstack_admin_pass: password          # Password of user admin
