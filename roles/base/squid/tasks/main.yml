@@ -1,11 +1,16 @@
-- name: Role squid - requirements
-  apt: >
-    name={{ item }}
-    state=latest
-  with_items:
-  - squid
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - squid
 
-- name: Role squid - configuration
+
+- include: packages_debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - squid
+
+
+- name: configuration
   template: >
     src=squid.conf
     dest=/etc/squid3/
@@ -13,6 +18,13 @@
     owner=root
     group=root
   notify: restart squid3
+  tags:
+    - squid
+
 
 - name: Role squid - ensure service started
-  service: name=squid3 state=started
+  service: >
+    name=squid3
+    state=started
+  tags:
+    - squid
