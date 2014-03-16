@@ -10,6 +10,17 @@
     - squid
 
 
+- name: cache dir
+  file: >
+    path={{ squid_cache_dir }}
+    state=directory
+    mode=0755
+    owner=proxy
+    group=proxy
+  tags:
+    - squid
+
+
 - name: configuration
   template: >
     src=squid.conf
