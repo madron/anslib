@@ -1,0 +1,4 @@
+time_machine_packages:
+  - netatalk
+  - avahi-daemon
+  - libnss-mdns

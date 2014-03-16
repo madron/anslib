@@ -1,0 +1,7 @@
+- name: required packages
+  apt: >
+    pkg={{ item }}
+    state=latest
+  with_items: time_machine_packages
+  tags:
+    - time-machine

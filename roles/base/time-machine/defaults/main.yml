@@ -1,0 +1,8 @@
+time_machine_dir: '/var/backups/timemachine'
+time_machine_group: 'timemachine'
+time_machine_user: 'timemachine'
+
+# python -c 'import crypt; print crypt.crypt("password", "$1$SomeSalt$")'
+time_machine_password: '$1$SomeSalt$/jbIwfYCu0MxPBND2EtRH.'
+
+time_machine_size_in_gb: 100

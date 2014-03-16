@@ -1,0 +1,10 @@
+- name: restart netatalk
+  service: >
+    name=netatalk
+    state=restarted
+
+
+- name: restart avahi-daemon
+  service: >
+    name=avahi-daemon
+    state=restarted

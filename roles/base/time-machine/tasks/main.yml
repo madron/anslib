@@ -1,0 +1,90 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - time-machine
+
+
+- include: packages_debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - time-machine
+
+
+- name: create time machine group
+  group: >
+    name={{ time_machine_group }}
+    state=present
+  tags:
+    - time-machine
+
+
+- name: create time machine user
+  user: >
+    name={{ time_machine_user }}
+    group={{ time_machine_group }}
+    password={{ time_machine_password }}
+    system=yes
+    state=present
+  tags:
+    - time-machine
+
+
+- name: create time machine directory
+  file: >
+    path={{ time_machine_dir }}
+    state=directory
+    mode=0755
+    owner={{ time_machine_user }}
+    group={{ time_machine_group }}
+  tags:
+    - time-machine
+
+
+- name: nsswitch.conf
+  template: >
+    src=nsswitch.conf.j2
+    dest=/etc/nsswitch.conf
+    mode=0644
+    owner=root
+    group=root
+  notify:
+    - restart avahi-daemon
+    - restart netatalk
+  tags:
+    - time-machine
+
+
+- name: afpd.service
+  template: >
+    src=afpd.service.j2
+    dest=/etc/avahi/services/afpd.service
+    mode=0644
+    owner=root
+    group=root
+  notify: restart avahi-daemon
+  tags:
+    - time-machine
+
+
+- name: apple volumes
+  template: >
+    src=apple_volumes.default.j2
+    dest=/etc/netatalk/AppleVolumes.default
+    mode=0644
+    owner=root
+    group=root
+  notify: restart netatalk
+  tags:
+    - time-machine
+
+
+- name: default netatalk
+  template: >
+    src=default_netatalk.j2
+    dest=/etc/default/netatalk
+    mode=0644
+    owner=root
+    group=root
+  notify: restart netatalk
+  tags:
+    - time-machine
