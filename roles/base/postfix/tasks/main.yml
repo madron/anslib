@@ -1,38 +1,57 @@
-- name: Role postfix - required packages
-  apt: name={{ item }} state=present
-  with_items:
-  - postfix
-  - mailutils
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - postfix
 
-- name: Role postfix - /etc/mailname
+
+- include: packages_debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - postfix
+
+
+- name: /etc/mailname
   template: >
     src=etc_mailname
     dest=/etc/mailname
   notify: reload postfix
+  tags:
+    - postfix
 
-#
-# Postfix
-#
-- name: Role postfix - main.cf
+
+- name: main.cf
   template: >
     src=postfix-main.cf
     dest=/etc/postfix/main.cf
   notify: reload postfix
-  tags: mail-user
+  tags:
+    - postfix
+    - postfix-users
 
-- name: Role postfix - virtual-mailbox-maps
+
+- name: virtual-mailbox-maps
   template: >
     src=postfix-virtual-mailbox-maps
     dest=/etc/postfix/virtual-mailbox-maps
   notify: reload postfix
-  tags: mail-user
+  tags:
+    - postfix
+    - postfix-users
 
-- name: Role postfix - virtual-alias-maps
+
+- name: virtual-alias-maps
   template: >
     src=postfix-virtual-alias-maps
     dest=/etc/postfix/virtual-alias-maps
   notify: reload postfix
-  tags: mail-user
+  tags:
+    - postfix
+    - postfix-users
 
-- name: Role postfix - start service
-  service: name=postfix state=started
+
+- name: start service
+  service: >
+    name=postfix
+    state=started
+  tags:
+    - postfix

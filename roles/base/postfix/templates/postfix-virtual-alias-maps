@@ -1,5 +1,5 @@
 # {{ ansible_managed }}
-{% for domain in mail_server_domains %}
+{% for domain in postfix_domains %}
 {% for alias in domain.aliases %}
 {{ alias.name }}@{{ domain.name }} {{ alias.to }}
 {% endfor %}

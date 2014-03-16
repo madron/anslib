@@ -1,2 +1,0 @@
-dependencies:
-  - { role: base/os-ubuntu-12-04 }

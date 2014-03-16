@@ -1,1 +1,1 @@
-{{ mailname }}
+{{ postfix_mailname }}

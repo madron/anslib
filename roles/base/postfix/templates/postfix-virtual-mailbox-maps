@@ -1,5 +1,5 @@
 # {{ ansible_managed }}
-{% for domain in mail_server_domains %}
+{% for domain in postfix_domains %}
 {% for user in domain.users %}
 {{ user.name }}@{{ domain.name }}
 {% endfor %}

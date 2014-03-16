@@ -1,20 +1,20 @@
-- name: kernel 3.8
-  apt: >
-    pkg={{ item }}
-    state=present
-  with_items:
-    - linux-image-generic-lts-raring
-    - linux-headers-generic-lts-raring
-  tags:
-    - docker
+# - name: kernel 3.8
+#   apt: >
+#     pkg={{ item }}
+#     state=present
+#   with_items:
+#     - linux-image-generic-lts-raring
+#     - linux-headers-generic-lts-raring
+#   tags:
+#     - docker
 
 
-- name: repository key
-  apt_key: >
-    url=http://keyserver.ubuntu.com/pks/lookup?op=get&fingerprint=on&search=0x36A1D7869245C8950F966E92D8576A8BA88D21E9
-    state=present
-  tags:
-    - docker
+# - name: repository key
+#   apt_key: >
+#     url=http://keyserver.ubuntu.com/pks/lookup?op=get&fingerprint=on&search=0x36A1D7869245C8950F966E92D8576A8BA88D21E9
+#     state=present
+#   tags:
+#     - docker
 
 
 - name: repository

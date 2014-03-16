@@ -35,14 +35,14 @@ alias_database = hash:/etc/aliases
 myorigin = /etc/mailname
 mydestination = {{ postfix_myhostname }}, localhost
 relayhost =
-# mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
 mynetworks = {{ postfix_mynetworks }}
 mailbox_size_limit = 0
 recipient_delimiter = +
 inet_interfaces = all
 
 
-virtual_mailbox_domains = {% for domain in mail_server_domains %}{{ domain.name }}, {% endfor %}
+virtual_mailbox_domains = {% for domain in postfix_domains %}{{ domain.name }}, {% endfor %}
+
 virtual_mailbox_maps = texthash:/etc/postfix/virtual-mailbox-maps
 virtual_alias_maps = texthash:/etc/postfix/virtual-alias-maps
-virtual_transport = lmtp:{{ postfix_lmtp_host|default('127.0.0.1') }}:{{ postfix_lmtp_port|default('24') }}
+virtual_transport = lmtp:{{ postfix_lmtp_host }}:{{ postfix_lmtp_port }}
