@@ -1,9 +1,10 @@
-squid_http_port: 3128
+squid_http_port: '3128'
 
 # Disk
-squid_cache_dir_size_mb: 100
-squid_maximum_object_size_mb: 4
+squid_cache_dir: '/var/spool/squid3'
+squid_cache_dir_size_mb: '100'
+squid_maximum_object_size: '4 MB'
 
 # Memory
-squid_cache_mem: 256 MB
-squid_maximum_object_size_in_memory: 512 KB
+squid_cache_mem: '256 MB'
+squid_maximum_object_size_in_memory: '512 KB'
