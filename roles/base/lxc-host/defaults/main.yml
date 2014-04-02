@@ -7,6 +7,7 @@ lxc_host_network_hwaddr: 00:16:3e:xx:xx:xx
 lxc_host_use_lxc_bridge: 'true'
 lxc_host_addr: '10.0.3.1'
 lxc_host_netmask: '255.255.255.0'
+lxc_host_netmask_bits: '24'
 lxc_host_network: '10.0.3.0/24'
 lxc_host_dhcp_range: '10.0.3.2,10.0.3.254'
 lxc_host_dhcp_max: '253'

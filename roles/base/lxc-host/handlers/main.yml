@@ -1,14 +1,11 @@
 - name: restart lxc
   action: service name=lxc state=restarted
 
-- name: restart lxc-net
-  action: service name=lxc-net state=restarted
-
-- name: 'stop lxc guest {{ {{ item.name }}}}'
+- name: 'stop lxc guest {{ {{ item.name }} }}'
   command: lxc-stop -t 15 -n {{ item.name }}
   with_items: lxc_host_instances
   ignore_errors: yes
 
-- name: 'start lxc guest {{ {{ item.name }}}}'
+- name: 'start lxc guest {{ {{ item.name }} }}'
   command: lxc-start -d -n {{ item.name }}
   with_items: lxc_host_instances
