@@ -8,6 +8,11 @@
   tags:
     - postgresql
 
+- name: create cluster
+  command: >
+    pg_createcluster --start -p {{ postgresql_port }} {{ postgresql_version }} {{ postgresql_cluster_name }}
+    creates=/etc/postgresql/{{ postgresql_version }}/{{ postgresql_cluster_name }}
+
 - name: postgresql.conf
   template: >
     src=postgresql.conf
