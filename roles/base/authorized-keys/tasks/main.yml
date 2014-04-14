@@ -5,3 +5,5 @@
     mode=0600
     owner=root
     group=root
+  tags:
+    - authorized-keys
