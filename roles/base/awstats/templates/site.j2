@@ -1,0 +1,35 @@
+server { 
+    listen {{ awstats_port }}; 
+    server_name {{ awstats_server_name }}; 
+    root    /usr/lib/cgi-bin; 
+
+    # allowed subnets
+    {% for subnet in awstats_allowed_subnets %}allow  {{ subnet }};
+    {% endfor %}
+
+    # drop rest of the world
+    deny    all;
+
+    location ^~ /awstats-icon { 
+            alias /usr/share/awstats/icon/; 
+            access_log off; 
+    } 
+
+    location ^~ /awstatscss { 
+            alias /usr/share/doc/awstats/examples/css/; 
+            access_log off; 
+    } 
+
+    location ^~ /awstatsclasses { 
+            alias /usr/share/doc/awstats/examples/classes/; 
+            access_log off; 
+    } 
+
+    location ~ \.pl$ { 
+          gzip off; 
+          include /etc/nginx/fastcgi_params; 
+          fastcgi_pass unix:/var/run/fcgiwrap.socket; 
+          fastcgi_index awstats.pl; 
+          fastcgi_param SCRIPT_FILENAME /usr/lib/cgi-bin$fastcgi_script_name; 
+      } 
+} 

@@ -1,0 +1,55 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - awstats
+
+
+- include: packages_debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - awstats
+
+
+- name: awstats data dir
+  file: >
+    path=/var/lib/awstats/{{ awstats_code }}
+    state=directory
+    mode=0750
+    owner=www-data
+    group=www-data
+  tags:
+    - awstats
+
+
+- name: awstats.conf
+  template: >
+    src=awstats.conf.j2
+    dest=/etc/awstats/awstats.{{ awstats_code }}.conf
+    mode=0755
+    owner=root
+    group=root
+  tags:
+    - awstats
+
+
+- name: crontab
+  template: >
+    src=cron_daily.j2
+    dest=/etc/cron.daily/awstats
+    mode=0755
+    owner=root
+    group=root
+  tags:
+    - awstats
+
+
+- name: nginx config
+  template: >
+    src=site.j2
+    dest=/etc/nginx/sites-enabled/awstats.conf
+    mode=0664
+    owner=root
+    group=root
+  notify: reload nginx
+  tags:
+    - awstats
