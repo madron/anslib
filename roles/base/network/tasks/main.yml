@@ -1,0 +1,23 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - network
+
+
+- include: packages_debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - network
+
+
+- name: /etc/network/interfaces
+  template: >
+    src=network-interfaces.j2
+    dest=/etc/network/interfaces
+    backup=yes
+    mode=0644
+    owner=root
+    group=root
+  notify: restart networking
+  tags:
+    - network

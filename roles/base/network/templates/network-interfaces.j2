@@ -1,0 +1,40 @@
+# {{ ansible_managed }}
+
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+{% for interface in network_interfaces %}
+{% if interface.auto|default('yes') == 'yes' %}auto {{ interface.name }}
+{% endif %}
+iface {{ interface.name }} inet {{ interface.method|default('dhcp') }}
+{% if interface.address is defined %}    address {{ interface.address }}
+{% endif %}
+{% if interface.network is defined %}    network {{ interface.network }}
+{% endif %}
+{% if interface.netmask is defined %}    netmask {{ interface.netmask }}
+{% endif %}
+{% if interface.broadcast is defined %}    broadcast {{ interface.broadcast }}
+{% endif %}
+{% if interface.bridge_ports is defined %}    bridge_ports {{ interface.bridge_ports }}
+{% endif %}
+{% if interface.bridge_stp is defined %}    bridge_stp {% if interface.bridge_stp %}{{ interface.bridge_stp }}{% else %}off{% endif %}
+
+{% endif %}
+{% if interface.bridge_fd is defined %}    bridge_fd {{ interface.bridge_fd }}
+{% endif %}
+{% if interface.bridge_maxwait is defined %}    bridge_maxwait {{ interface.bridge_maxwait }}
+{% endif %}
+{% if interface.post_up is defined %}    post-up {{ interface.post_up }}
+{% endif %}
+{% if interface.gateway is defined %}    gateway {{ interface.gateway }}
+{% endif %}
+{% if interface.dns_nameservers is defined %}    dns-nameservers {{ interface.dns_nameservers|join(' ') }}
+{% endif %}
+{% if interface.dns_search is defined %}    dns-search {{ interface.dns_search }}
+{% endif %}
+
+{% endfor %}

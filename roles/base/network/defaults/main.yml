@@ -1,0 +1,4 @@
+network_restart: no
+
+network_interfaces:
+  - { name: eth0 }
