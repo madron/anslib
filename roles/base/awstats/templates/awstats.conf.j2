@@ -165,7 +165,8 @@ SiteDomain="{{ awstats_server_name }}"
 # Note: You can also use @/mypath/myfile if list of aliases are in a file.
 # Example: "www.myserver.com localhost 127.0.0.1 REGEX[mydomain\.(net|org)$]"
 #
-# HostAliases="stage1.master localhost 127.0.0.1"
+# HostAliases="localhost 127.0.0.1"
+HostAliases="{{ awstats_server_name }}"
 
 
 # If you want to have hosts reported by name instead of ip address, AWStats
@@ -236,7 +237,12 @@ DirIcons="/awstats-icon"
 # Possible values: 0 or 1
 # Default: 0
 #
-AllowToUpdateStatsFromBrowser=0
+# AllowToUpdateStatsFromBrowser=0
+ {% if awstats_update == 'yes' %}
+ AllowToUpdateStatsFromBrowser=1
+ {% else %}
+ AllowToUpdateStatsFromBrowser=0
+ {% endif %}
 
 
 # AWStats saves and sorts its database on a month basis (except if using
@@ -1546,5 +1552,5 @@ ExtraTrackedRowsLimit=500
 # parameters that are lists of values.
 #
 
-Include "/etc/awstats/awstats.conf.local"
+# Include "/etc/awstats/awstats.conf.local"
 

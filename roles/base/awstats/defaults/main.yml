@@ -1,10 +1,9 @@
-# Requires nginx role. Remember to add awstats_port to nginx_ports variable
-
 awstats_port: 80
 awstats_server_name: localhost
 awstats_allowed_subnets: []
 # awstats_code: mysite
 awstats_web_server_log: /var/log/nginx/access.log
+# awstats_web_server_log: 'gzip -d </var/log/nginx/access.log.2.gz |'
 
 
 # Possible values: 1,2,3,4 or "your_own_personalized_log_format"
@@ -14,3 +13,5 @@ awstats_web_server_log: /var/log/nginx/access.log
 # 4 - Apache or Squid native common log format (NCSA common/CLF log format)
 #     With LogFormat=4, some features (browsers, os, keywords...) can't work.
 awstats_log_format: 1
+
+awstats_update: 'no' 

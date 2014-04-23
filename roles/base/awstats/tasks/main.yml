@@ -10,6 +10,17 @@
     - awstats
 
 
+- name: create /etc/logrotate.d/httpd-prerotate directory
+  file: >
+    path=/etc/logrotate.d/httpd-prerotate
+    state=directory
+    mode=0755
+    owner=root
+    group=root
+  tags:
+    - awstats
+
+
 - name: awstats data dir
   file: >
     path=/var/lib/awstats/{{ awstats_code }}
@@ -32,11 +43,23 @@
     - awstats
 
 
-- name: crontab
+- name: cron daily
   template: >
     src=cron_daily.j2
-    dest=/etc/cron.daily/awstats
+    dest=/etc/cron.daily/awstats_{{ awstats_code }}
     mode=0755
+    owner=root
+    group=root
+  tags:
+    - awstats
+
+
+- name: httpd-prerotate script
+  file: >
+    src=/etc/cron.daily/awstats_{{ awstats_code }}
+    dest=/etc/logrotate.d/httpd-prerotate/awstats_{{ awstats_code }}
+    state=link
+    force=yes
     owner=root
     group=root
   tags:
@@ -46,8 +69,21 @@
 - name: nginx config
   template: >
     src=site.j2
-    dest=/etc/nginx/sites-enabled/awstats.conf
+    dest=/etc/nginx/sites-available/awstats.conf
     mode=0664
+    owner=root
+    group=root
+  notify: reload nginx
+  tags:
+    - awstats
+
+
+- name: nginx config symlink
+  file: >
+    src=/etc/nginx/sites-available/awstats.conf
+    dest=/etc/nginx/sites-enabled/awstats.conf
+    state=link
+    force=yes
     owner=root
     group=root
   notify: reload nginx
