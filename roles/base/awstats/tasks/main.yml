@@ -32,7 +32,15 @@
     - awstats
 
 
-- name: awstats.conf
+- name: remove awstats default config
+  file: >
+    path=/etc/awstats/awstats.conf
+    state=absent
+  tags:
+    - awstats
+
+
+- name: awstats instance conf
   template: >
     src=awstats.conf.j2
     dest=/etc/awstats/awstats.{{ awstats_code }}.conf
