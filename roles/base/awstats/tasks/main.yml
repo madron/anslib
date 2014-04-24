@@ -10,7 +10,7 @@
     - awstats
 
 
-- name: create /etc/logrotate.d/httpd-prerotate directory
+- name: httpd-prerotate dir - /etc/logrotate.d/httpd-prerotate
   file: >
     path=/etc/logrotate.d/httpd-prerotate
     state=directory
@@ -21,7 +21,7 @@
     - awstats
 
 
-- name: awstats data dir
+- name: data dir - /var/lib/awstats/{{ awstats_code }}
   file: >
     path=/var/lib/awstats/{{ awstats_code }}
     state=directory
@@ -40,7 +40,7 @@
     - awstats
 
 
-- name: awstats instance conf
+- name: awstats conf - /etc/awstats/awstats.{{ awstats_code }}.conf
   template: >
     src=awstats.conf.j2
     dest=/etc/awstats/awstats.{{ awstats_code }}.conf
@@ -51,7 +51,7 @@
     - awstats
 
 
-- name: cron daily
+- name: cron daily - /etc/cron.daily/awstats_{{ awstats_code }}
   template: >
     src=cron_daily.j2
     dest=/etc/cron.daily/awstats_{{ awstats_code }}
@@ -62,7 +62,7 @@
     - awstats
 
 
-- name: httpd-prerotate script
+- name: httpd-prerotate script - /etc/logrotate.d/httpd-prerotate/awstats_{{ awstats_code }}
   file: >
     src=/etc/cron.daily/awstats_{{ awstats_code }}
     dest=/etc/logrotate.d/httpd-prerotate/awstats_{{ awstats_code }}
@@ -74,7 +74,7 @@
     - awstats
 
 
-- name: nginx config
+- name: nginx config - /etc/nginx/sites-available/awstats.conf
   template: >
     src=site.j2
     dest=/etc/nginx/sites-available/awstats.conf
@@ -86,7 +86,7 @@
     - awstats
 
 
-- name: nginx config symlink
+- name: nginx config symlink - /etc/nginx/sites-enabled/awstats.conf
   file: >
     src=/etc/nginx/sites-available/awstats.conf
     dest=/etc/nginx/sites-enabled/awstats.conf
