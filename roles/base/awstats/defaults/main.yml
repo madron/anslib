@@ -1,4 +1,5 @@
 awstats_port: 80
+awstats_nginx_ports: ['{{ awstats_port }}']
 awstats_server_name: localhost
 awstats_allowed_subnets: []
 # awstats_code: mysite

@@ -1,2 +1,2 @@
 dependencies:
-    - { role: base/nginx, nginx_ports: ['{{ awstats_port }}'] }
+    - { role: base/nginx, nginx_ports: '{{ awstats_nginx_ports }}' }
