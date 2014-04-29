@@ -1,0 +1,7 @@
+# hostname: hostname
+hostname_domain: ''
+hostname_additional_hosts: []
+
+# hostname_additional_hosts:
+#   - 192.168.1.1   www.local
+#   - 192.168.1.2   ftp.example.com
