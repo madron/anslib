@@ -1,34 +1,10 @@
-- name: repository key
-  apt_key: >
-    url=http://keyserver.ubuntu.com/pks/lookup?op=get&fingerprint=on&search=0x36A1D7869245C8950F966E92D8576A8BA88D21E9
-    state=present
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
   tags:
     - docker
 
 
-- name: repository
-  apt_repository: >
-    repo='deb http://get.docker.io/ubuntu docker main'
-    state=present
-  tags:
-    - docker
-
-
-- name: lxc-docker
-  apt: >
-    pkg=lxc-docker
-    state=latest
-  tags:
-    - docker
-
-
-- name: default docker
-  template: >
-    src=default_docker.j2
-    dest=/etc/default/docker
-    mode=0644
-    owner=root
-    group=root
-  notify: reload docker
+- include: packages_debian.yml
+  when: ansible_os_family == 'Debian'
   tags:
     - docker
