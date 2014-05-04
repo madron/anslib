@@ -8,3 +8,12 @@
   when: ansible_os_family == 'Debian'
   tags:
     - docker
+
+
+- name: docker-py
+  pip: >
+    name=docker-py
+    version=0.3.1
+    state=present
+  tags:
+    - docker
