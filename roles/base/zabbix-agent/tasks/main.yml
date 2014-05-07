@@ -1,0 +1,22 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - zabbix-agent
+
+
+- include: packages_debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - zabbix-agent
+
+
+- name: /etc/zabbix/zabbix_agentd.conf
+  template:
+    src: zabbix_agentd.conf.j2
+    dest: /etc/zabbix/zabbix_agentd.conf
+    mode: 0644
+    owner: root
+    group: root
+  notify: restart zabbix-agent
+  tags:
+    - zabbix-agent
