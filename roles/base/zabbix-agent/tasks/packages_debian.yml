@@ -1,8 +1,17 @@
+- name: repository key
+  apt_key:
+    url: 'http://repo.zabbix.com/zabbix-official-repo.key'
+    state: present
+  tags:
+    - zabbix-agent
+
+
 - name: repository
   apt_repository: >
-    repo=ppa:nginx/stable
+    repo='deb http://repo.zabbix.com/zabbix/{{ zabbix_agent_version }}/{{ ansible_lsb.id|lower() }} {{ ansible_lsb.codename }} main'
     state=present
-  tags: nginx
+  tags:
+    - zabbix-agent
 
 
 - name: required packages
