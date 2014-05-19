@@ -1,7 +1,34 @@
 - name: required packages
-  apt: >
-    pkg={{ item }}
-    state=latest
+  apt: 
+    pkg: '{{ item }}'
+    state: latest
   with_items: kvm_host_packages
+  tags:
+    - kvm-host
+
+
+- name: download directory
+  file: 
+    path: /var/lib/ansible/kvm-host
+    state: directory
+  when: kvm_host_vm_builder_url is defined
+  tags:
+    - kvm-host
+
+
+- name: download python-vm-builder package
+  get_url: 
+    url: '{{ kvm_host_vm_builder_url }}'
+    dest: '/var/lib/ansible/kvm-host/python-vm-builder.deb'
+  when: kvm_host_vm_builder_url is defined
+  tags:
+    - kvm-host
+
+
+- name: install python-vm-builder package
+  command: >
+    dpkg -i /var/lib/ansible/kvm-host/python-vm-builder.deb
+    creates=/usr/share/pyshared/VMBuilder/plugins/ubuntu/precise.py
+  when: kvm_host_vm_builder_url is defined
   tags:
     - kvm-host
