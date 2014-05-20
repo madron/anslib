@@ -1,0 +1,5 @@
+samba_shares: []
+
+# samba_shares:
+#   - { name: public, path: /mnt/public, guest_ok: yes }
+#   - { name: wpub, path: /mnt/public, users: [joe, bob] }

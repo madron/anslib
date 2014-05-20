@@ -1,0 +1,30 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - samba
+
+
+- include: packages_debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - samba
+
+
+- name: /etc/samba/smb.conf
+  template:
+    src: smb.conf.j2
+    dest: /etc/samba/smb.conf
+    mode: 0644
+    owner: root
+    group: root
+  notify: restart smbd
+  tags:
+    - samba
+
+
+- name: start samba
+  service:
+    name: smbd
+    state: started
+  tags:
+    - samba
