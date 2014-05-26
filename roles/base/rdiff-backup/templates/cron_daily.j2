@@ -1,0 +1,30 @@
+#!/bin/bash
+
+{% for backup in rdiff_backup %}
+if [[ ! -d {{ rdiff_backup_dest }} ]]; then
+mkdir {{ rdiff_backup_dest }}
+fi
+ssh -o ConnectTimeout=2 -o BatchMode=yes -o StrictHostKeyChecking=no root@{{ backup.host }}.master true 2>> /root/{{ backup.host }}error.txt
+status=$?
+if [ $status -eq 0 ]; then
+
+if [[ ! -d {{ rdiff_backup_dest }}/{{ backup.host }} ]]; then
+mkdir {{ rdiff_backup_dest }}/{{ backup.host }}
+fi
+
+rdiff-backup --print-statistics {% for selection in backup.incl_excl %} {% for exclude in selection.exclude|default([]) %} --exclude /{{ selection.include }}/{{ exclude }} {% endfor %} --include /{{ selection.include }} {% endfor %} --exclude / {{ backup.host }}::/ {{ rdiff_backup_dest }}/{{ backup.host }}/ >> {{ rdiff_backup_dest }}/{{ backup.host }}.txt 2>> {{ rdiff_backup_dest }}/{{ backup.host }}error.txt
+{% for directory in backup.incl_excl %}
+if [[ ! -d {{ rdiff_backup_dest }}/{{ backup.host }}/{{ directory.include }} ]]; then
+echo "backup directory on {{ backup.host }} not exists" >> {{ rdiff_backup_dest }}/{{ backup.host }}error.txt;
+fi
+{% endfor %}
+
+rdiff-backup --remove-older-than {{ backup.retain_days }}D {{ rdiff_backup_dest }}/{{ backup.host }}/
+fi
+{% endfor %}
+
+
+
+
+
+
