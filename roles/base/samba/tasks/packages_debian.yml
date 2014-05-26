@@ -1,0 +1,7 @@
+- name: required packages
+  apt: >
+    name={{ item }}
+    state=latest
+  with_items: samba_packages
+  tags:
+    - samba

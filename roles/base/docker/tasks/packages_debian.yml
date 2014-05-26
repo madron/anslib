@@ -1,0 +1,35 @@
+- name: repository key
+  apt_key: >
+    url=http://keyserver.ubuntu.com/pks/lookup?op=get&fingerprint=on&search=0x36A1D7869245C8950F966E92D8576A8BA88D21E9
+    state=present
+  tags:
+    - docker
+
+
+- name: repository
+  apt_repository: >
+    repo='deb http://get.docker.io/ubuntu docker main'
+    state=present
+  tags:
+    - docker
+
+
+- name: required packages
+  apt: >
+    name={{ item }}
+    state=latest
+  with_items: docker_packages
+  tags:
+    - docker
+
+
+- name: default docker
+  template: >
+    src=default_docker.j2
+    dest=/etc/default/docker
+    mode=0644
+    owner=root
+    group=root
+  notify: reload docker
+  tags:
+    - docker

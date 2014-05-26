@@ -1,0 +1,24 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - hostname
+
+
+- name: hostname
+  hostname: >
+    name={{ hostname }}
+  when: hostname is defined
+  tags:
+    - hostname
+
+
+- name: /etc/hosts
+  template: >
+    src=hosts.j2
+    dest=/etc/hosts
+    mode=0644
+    owner=root
+    group=root
+  when: hostname is defined
+  tags:
+    - hostname
