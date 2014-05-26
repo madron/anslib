@@ -1,6 +1,6 @@
 #!/bin/bash
 
-{% for backup in rdiff_backup %}
+{% for backup in rdiff_backup_list %}
 if [[ ! -d {{ rdiff_backup_dest }} ]]; then
 mkdir {{ rdiff_backup_dest }}
 fi
