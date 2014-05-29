@@ -43,15 +43,15 @@ fi
 
 # Transfer disk image
 if [[ "${DIR}" == "${IMAGE_DIR}" ]]; then
-    /usr/bin/rsync -v -e ssh --progress --ignore-existing ${DISK_IMAGE} root@${DESTINATION_HOST}:/root/
+    /usr/bin/rsync -v -e ssh --progress --ignore-existing ${DISK_IMAGE} root@${DESTINATION_HOST}:${IMAGE_DIR}/
 else
-    /usr/bin/rsync -v -a -e ssh --progress --ignore-existing ${DIR} root@${DESTINATION_HOST}:/root/
+    /usr/bin/rsync -v -a -e ssh --progress --ignore-existing ${DIR} root@${DESTINATION_HOST}:${IMAGE_DIR}/
 fi
 
 
 # Dump configuration
 virsh dumpxml ${VM} > ${TEMP_XML}
-/usr/bin/rsync -v -e ssh --progress --ignore-existing ${TEMP_XML} root@${DESTINATION_HOST}:${LIBVIRT_CONF_DIR}/
+/usr/bin/rsync -v -e ssh --progress --ignore-existing ${TEMP_XML} root@${DESTINATION_HOST}:${LIBVIRT_CONF_DIR}/${VM}.xml
 
 
 echo "Done"
