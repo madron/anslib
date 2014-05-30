@@ -241,7 +241,12 @@ unix extensions = no
    guest ok = {{ share.guest_ok|default('no') }}
    browseable = {{ share.browseable|default('yes') }}
    read only = {{ share.read_only|default('yes') }}
-{% if share.users is defined %}   valid users = {{ share.users|join(' ') }}
+{% if share.hide_files is defined %}   hide files = /{{ share.hide_files|join('/') }}/
+{% endif %}
+   hide dot files = yes
+{% if share.users is defined %}   valid users = {{ share.users|join(',') }}
+{% endif %}
+{% if share.write_list is defined %}   write list = {{ share.write_list|join(',') }}
 {% endif %}
    create mask = {{ share.create_mask|default('0775') }}
    directory mask = {{ share.directory_mask|default('0775') }}
