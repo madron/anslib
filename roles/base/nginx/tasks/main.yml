@@ -8,66 +8,77 @@
   tags: nginx
 
 
+- name: nginx.conf
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    mode: 0644
+    owner: root
+    group: root
+  notify: reload nginx
+  tags: nginx
+
+
 - name: disable default site config
-  file: >
-    path=/etc/nginx/sites-enabled/default
-    state=absent
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
   notify: reload nginx
   tags: nginx
 
 
 - name: disable fallback site on listed ports
-  template: >
-    src=default_port.conf.j2
-    dest=/etc/nginx/sites-available/default_{{ item }}.conf
-    mode=0644
-    owner=root
-    group=root
+  template:
+    src: default_port.conf.j2
+    dest: /etc/nginx/sites-available/default_{{ item }}.conf
+    mode: 0644
+    owner: root
+    group: root
   with_items: nginx_ports
   notify: reload nginx
   tags: nginx
 
 
 - name: disable fallback site on listed ports - symlink
-  file: >
-    src=/etc/nginx/sites-available/default_{{ item }}.conf
-    dest=/etc/nginx/sites-enabled/default_{{ item }}.conf
-    state=link
-    force=yes
-    owner=root
-    group=root
+  file:
+    src: /etc/nginx/sites-available/default_{{ item }}.conf
+    dest: /etc/nginx/sites-enabled/default_{{ item }}.conf
+    state: link
+    force: yes
+    owner: root
+    group: root
   with_items: nginx_ports
   notify: reload nginx
   tags: nginx
 
 
 - name: proxy pass - sites-available
-  template: >
-    src=proxy_pass.conf.j2
-    dest=/etc/nginx/sites-available/{{ item.server_name }}.conf
-    mode=0644
-    owner=root
-    group=root
+  template:
+    src: proxy_pass.conf.j2
+    dest: /etc/nginx/sites-available/{{ item.server_name }}.conf
+    mode: 0644
+    owner: root
+    group: root
   with_items: nginx_proxy_pass
   notify: reload nginx
   tags: nginx
 
 
 - name: proxy pass - sites-enabled
-  file: >
-    src=/etc/nginx/sites-available/{{ item.server_name }}.conf
-    dest=/etc/nginx/sites-enabled/{{ item.server_name }}.conf
-    state=link
-    force=yes
-    owner=root
-    group=root
+  file:
+    src: /etc/nginx/sites-available/{{ item.server_name }}.conf
+    dest: /etc/nginx/sites-enabled/{{ item.server_name }}.conf
+    state: link
+    force: yes
+    owner: root
+    group: root
   with_items: nginx_proxy_pass
   notify: reload nginx
   tags: nginx
 
 
 - name: start server
-  service: >
-    name=nginx
-    state=started
+  service:
+    name: nginx
+    state: started
   tags: nginx
