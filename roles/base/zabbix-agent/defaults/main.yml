@@ -1,4 +1,2 @@
 # Hostname or ip of zabbix server or proxy
 zabbix_agent_server: localhost
-
-zabbix_agent_version: '2.0'
