@@ -2,7 +2,7 @@
   apt: >
     name={{ item }}
     state=latest
-  with_items: rdiff_backup_packages
+  with_items: rdiff_backup_server_packages
   tags:
-    - rdiff-backup
+    - rdiff-backup-server
 

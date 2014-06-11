@@ -2,12 +2,12 @@
 - name: os specific variables
   include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
   tags:
-    - awstats
+    - rdiff-backup-server
 
 - include: packages_debian.yml
   when: ansible_os_family == 'Debian'
   tags:
-    - rdiff-backup
+    - rdiff-backup-server
 
 - name: cron daily
   template: >
@@ -17,6 +17,6 @@
     owner=root
     group=root
   tags:
-    - rdiff-backup
+    - rdiff-backup-server
 
 
