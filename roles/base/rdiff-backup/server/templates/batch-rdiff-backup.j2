@@ -1,0 +1,36 @@
+#!/bin/env python
+
+# {{ ansible_managed }}
+
+import os
+import sys
+import paramiko
+from StringIO import StringIO
+
+BACKUP_DIR = '/var/backups'
+
+
+def get_ssh_client(host, username='root'):
+    known_hosts_file = os.path.join(os.path.expanduser('~'), '.ssh', 'known_hosts')
+    client = paramiko.SSHClient()
+    client.load_host_keys(known_hosts_file)
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.connect(host, username=username)
+    return client
+
+
+def remote_command(ssh_client, command):
+    stdin, stdout, stderr = ssh_client.exec_command(command)
+    rc = stdout.channel.recv_exit_status()
+    return rc, stdout.read(), stderr.read()
+
+
+def run(host, pre_execute_commands=[]):
+    try:
+        ssh_client = get_ssh_client(host)
+        for command in pre_execute_commands:
+            rc, out, err = remote_command(ssh_client, command)
+        ssh_client.close()
+    except Exception, e:
+        print e
+        raise
