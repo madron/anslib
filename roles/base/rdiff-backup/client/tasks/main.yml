@@ -2,7 +2,7 @@
 - name: os specific variables
   include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
   tags:
-    - awstats
+    - rdiff-backup-client
 
 - include: packages_debian.yml
   when: ansible_os_family == 'Debian'
