@@ -13,7 +13,7 @@ if [ $status -eq 0 ]; then
 
 rdiff-backup --create-full-path --print-statistics {% for path in backup.excludes|default([]) %} --exclude {{ path }}{% endfor %} {% for path in backup.includes %} --include {{ path }}{% endfor %} --exclude / {{ backup.host }}::/ {{ rdiff_backup_server_dest }}/{{ backup.host }}/ >> {{ rdiff_backup_server_dest }}/stats_{{ backup.host }}.txt 2>> {{ rdiff_backup_server_dest }}/error_{{ backup.host }}.txt
 {% for path in backup.includes %}
-if [[ ! -d {{ rdiff_backup_server_dest }}/{{ backup.host }}/{{ path }} ]]; then
+if [[ ! -d {{ rdiff_backup_server_dest }}/{{ backup.host }}{{ path }} ]]; then
 echo "backup '{{ path }}' directory on {{ backup.host }} doesn't exist" >> {{ rdiff_backup_server_dest }}/error_{{ backup.host }}.txt;
 fi
 {% endfor %}
