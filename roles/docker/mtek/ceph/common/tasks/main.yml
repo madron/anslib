@@ -1,0 +1,17 @@
+- name: dockerfile
+  copy:
+    src: docker
+    dest: /var/lib/ansible/mtek-ceph-common
+  register: dockerfile
+  tags:
+    - mtek-ambassador
+
+
+- name: docker image
+  docker_image:
+    path=/var/lib/ansible/mtek-ceph-common/docker
+    name=mtek/ceph-common
+    state=present
+  when: dockerfile.changed
+  tags:
+    - mtek-ceph-common
