@@ -18,7 +18,7 @@ echo "backup '{{ path }}' directory on {{ backup.host }} doesn't exist" >> {{ rd
 fi
 {% endfor %}
 
-rdiff-backup --remove-older-than {{ backup.retain_days }}D {{ rdiff_backup_server_dest }}/{{ backup.host }}/ >> {{ rdiff_backup_server_dest }}/warn_{{ backup.host }}.txt;
+rdiff-backup --remove-older-than {{ backup.retain_days|default(rdiff_backup_server_default_retain_days) }}D {{ rdiff_backup_server_dest }}/{{ backup.host }}/ >> {{ rdiff_backup_server_dest }}/warn_{{ backup.host }}.txt;
 fi
 
 {% endfor %}

@@ -1,4 +1,5 @@
 rdiff_backup_server_dest: /var/backups
+rdiff_backup_server_default_retain_days: 20
 rdiff_backup_server_list: []
 
 # rdiff_backup_server_list:
