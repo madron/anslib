@@ -1,0 +1,3 @@
+rsync_backup_server_dest: /var/backups
+rsync_backup_server_list:
+  - { host: mvr-test1, includes: ['/etc', '/root'], excludes: ['/etc/X11'] }

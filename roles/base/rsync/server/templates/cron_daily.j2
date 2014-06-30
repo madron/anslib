@@ -1,0 +1,5 @@
+#!/bin/bash
+
+{% for backup in rsync_backup_server_list %}
+rsync --stats -e "ssh -o StrictHostKeyChecking=no" {% for path in backup.excludes|default([]) %} --exclude {{ path }}{% endfor %} -a root@{{ backup.host }}{% for path in backup.includes %}:{{ path }} {% endfor %} {{ rsync_backup_server_dest }}/{{ backup.host }}/ >> {{ rsync_backup_server_dest }}/stats_{{ backup.host }}.txt 2> {{ rsync_backup_server_dest }}/error_{{ backup.host }}.txt
+{% endfor %} 
