@@ -4,7 +4,11 @@
 
 import os
 import sys
+import argparse
+import commands
 import paramiko
+import subprocess
+import rdiff_backup.Main
 from StringIO import StringIO
 
 BACKUP_DIR = '/var/backups'
@@ -25,12 +29,81 @@ def remote_command(ssh_client, command):
     return rc, stdout.read(), stderr.read()
 
 
-def run(host, pre_execute_commands=[]):
+def run(**kwargs):
+    host = kwargs['host']
+    destination = kwargs['destination']
+    pre_execute_commands = kwargs['pre_execute_commands']
     try:
+        output = StringIO()
+        error = StringIO()
+        sys.stdout = output
+        sys.stderr = error
         ssh_client = get_ssh_client(host)
         for command in pre_execute_commands:
             rc, out, err = remote_command(ssh_client, command)
         ssh_client.close()
+        backup(**kwargs)
+        includes = kwargs['includes']
+        for paths in includes:
+            if not os.path.exists(os.path.join(destination, host, paths)):
+                sys.stdout = error
+                print "the directory %s%s%s does not exists" % (destination, host, paths)
+        clean_backup(**kwargs)
     except Exception, e:
         print e
         raise
+
+
+def backup(**args):
+    host = kwargs['host']
+    includes = kwargs['includes']
+    excludes = kwargs['excludes']
+    destination = kwargs['destination']
+    args = [
+        '--create-full-path', 
+        '--print-statistics', 
+    ]
+    for path in excludes:
+        args.append('--exclude')
+        args.append(path)
+    for path in includes:
+        args.append('--include')
+        args.append(path)
+    args.extend(['--exclude', '/']) 
+    args.append('root@%s::/' % host)
+    args.append(os.path.join(destination, host))
+    rdiff_backup.Main.error_check_Main(args)
+    return
+
+
+def clean_backup(**kwargs):
+    host = kwargs['host']
+    day = kwargs['remove_older_than']
+    destination = kwargs['destination']
+    args = []
+    args.append('--remove-older-than')
+    args.append(day)
+    args.append(os.path.join(destination, host))
+    rdiff_backup.Main.error_check_Main(args)
+    return
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='rdiff-backup.')
+    parser.add_argument('host', metavar='H', type=str,
+                       help='Host to backup')
+    parser.add_argument('destination', type=str,
+                       help='Base destination directory')
+    parser.add_argument('--includes', type=str, nargs='+',
+                       help='Paths to backup')
+    parser.add_argument('--excludes', type=str, nargs='*',
+                       help='Paths to exclude from backup')
+    parser.add_argument('--pre_execute_commands', type=str, nargs='*',
+                       help='Commands to execute on remote host')
+    parser.add_argument('--remove_older_than', type=str, nargs='?',
+                       help='Backup date remove')
+
+    kwargs = vars(parser.parse_args())
+    kwargs['excludes'] = kwargs['excludes'] or []
+    kwargs['pre_execute_commands'] = kwargs['pre_execute_commands'] or []
+    run(**kwargs)
