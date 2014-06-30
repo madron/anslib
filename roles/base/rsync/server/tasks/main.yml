@@ -1,0 +1,19 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - rsync
+
+- include: packages_debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - rsync
+
+- name: cron daily
+  template: >
+    src=cron_daily.j2
+    dest=/etc/cron.daily/rsync
+    mode=0755
+    owner=root
+    group=root
+  tags:
+    - rsync
