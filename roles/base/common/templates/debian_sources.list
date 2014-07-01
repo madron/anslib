@@ -5,6 +5,6 @@ deb http://ftp.{{ common_apt_mirror_code }}.debian.org/debian  {{ ansible_lsb.co
 deb http://ftp.debian.org/debian/    {{ ansible_lsb.codename }}-updates  main contrib
 deb http://security.debian.org/      {{ ansible_lsb.codename }}/updates  main contrib
 {% endif %}
-{% if ansible_lsb.codename in ('squeeze', 'lenny') %}
+{% if ansible_lsb.codename in ('squeeze', 'lenny', 'etch') %}
 deb http://archive.debian.org/debian/ {{ ansible_lsb.codename }} main contrib
 {% endif %}
