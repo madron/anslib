@@ -1,3 +1,4 @@
+samba_log_level: 1
 samba_shares: []
 
 # samba_shares:
