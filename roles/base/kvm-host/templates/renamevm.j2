@@ -1,0 +1,86 @@
+#!/bin/bash
+
+export IMAGE_DIR="/var/lib/libvirt/images"
+export LIBVIRT_CONF_DIR="/etc/libvirt/qemu"
+export TEMP_XML="/tmp/renamevm.xml"
+
+if [ -z "$1" ]; then
+    echo "migratevm <source vm> <source disk image file> <destination vm> <destination disk image file>"
+    virsh list --all
+    exit 1
+fi
+export SOURCE_VM="$1"
+
+if [ -z "$2" ]; then
+    echo "disk image file needed"
+    virsh dumpxml $SOURCE_VM | grep "source file"
+    exit 1
+fi
+export SOURCE_DISK_IMAGE="$2"
+
+
+if [ -z "$3" ]; then
+    echo "Missing destination vm"
+    exit 1
+fi
+export DESTINATION_VM="$3"
+
+
+if [ -z "$4" ]; then
+    echo "Missing destination disk image"
+    exit 1
+fi
+export DESTINATION_DISK_IMAGE="$4"
+
+
+echo "Renaming ${SOURCE_VM} (${SOURCE_DISK_IMAGE}) to ${DESTINATION_VM} (${DESTINATION_DISK_IMAGE})"
+
+
+if [[ $(/usr/bin/virsh list | /bin/grep ${SOURCE_VM} ) != "" ]]; then
+    echo "${SOURCE_VM} is running: shutdown it before retrying !"
+    exit 1
+fi
+
+# Dump configuration
+virsh dumpxml ${SOURCE_VM} > ${TEMP_XML}
+
+# Replace domain name
+SED_COMMAND="sed -i.bak 's|${SOURCE_VM}|${DESTINATION_VM}|g' ${TEMP_XML}"
+eval $SED_COMMAND
+
+# Replace disk image name
+export SRC_PATH_1=/vserver/HardDisks/${SOURCE_DISK_IMAGE}
+export SRC_PATH_2=/var/lib/libvirt/images/${SOURCE_DISK_IMAGE}
+export DST_PATH=/var/lib/libvirt/images/${DESTINATION_DISK_IMAGE}
+SED_COMMAND="sed -i.bak 's|${SRC_PATH_1}|${DST_PATH}|g' ${TEMP_XML}"
+eval $SED_COMMAND
+SED_COMMAND="sed -i.bak 's|${SRC_PATH_2}|${DST_PATH}|g' ${TEMP_XML}"
+eval $SED_COMMAND
+cp -i ${TEMP_XML} ${LIBVIRT_CONF_DIR}/${DESTINATION_VM}.xml
+
+# Move disk image file
+if [ -f $SRC_PATH_1 ]
+then
+    mv -i ${SRC_PATH_1} ${DST_PATH}
+else
+    if [ -f $SRC_PATH_2 ]
+    then
+        mv -i ${SRC_PATH_2} ${DST_PATH}
+    else
+        echo "Source disk image file '${SOURCE_DISK_IMAGE}' does not exist."
+        exit 1
+    fi
+fi
+
+# Undefine old vm
+echo virsh undefine  ${SOURCE_VM}
+virsh undefine  ${SOURCE_VM}
+
+# Define new vm
+echo virsh define  ${LIBVIRT_CONF_DIR}/${DESTINATION_VM}.xml
+virsh define  ${LIBVIRT_CONF_DIR}/${DESTINATION_VM}.xml
+
+echo "Done"
+echo "Start vm if needed: virsh start ${DESTINATION_VM}"
+
+exit 0

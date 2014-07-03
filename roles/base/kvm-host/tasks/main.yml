@@ -52,3 +52,14 @@
     group: root
   tags:
     - kvm-host
+
+
+- name: /usr/local/bin/renamevm
+  template:
+    src: renamevm.j2
+    dest: /usr/local/bin/renamevm
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - kvm-host
