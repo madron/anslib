@@ -1,0 +1,17 @@
+- name: dockerfile
+  copy:
+    src: docker
+    dest: /var/lib/ansible/madron-coreos-ipxe-server
+  register: dockerfile
+  tags:
+    - madron-coreos-ipxe-server
+
+
+- name: docker image
+  docker_image:
+    path=/var/lib/ansible/madron-coreos-ipxe-server/docker
+    name=madron/coreos-ipxe-server
+    state=present
+  when: dockerfile.changed
+  tags:
+    - madron-coreos-ipxe-server
