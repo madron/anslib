@@ -10,7 +10,7 @@
     - kvm-host
 
 
-- name: libvirtxml.tmpl
+- name: /etc/vmbuilder/libvirt/libvirtxml.tmpl
   template:
     src: libvirtxml.tmpl.j2
     dest: /etc/vmbuilder/libvirt/libvirtxml.tmpl
@@ -21,7 +21,7 @@
     - kvm-host
 
 
-- name: default.cfg
+- name: /etc/vmbuilder/default.cfg
   template:
     src: default.cfg.j2
     dest: /etc/vmbuilder/default.cfg
