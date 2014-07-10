@@ -32,17 +32,6 @@
     - kvm-host
 
 
-- name: default.cfg
-  template:
-    src: default.cfg.j2
-    dest: /etc/vmbuilder/default.cfg
-    mode: 0644
-    owner: root
-    group: root
-  tags:
-    - kvm-host
-
-
 - name: /usr/local/bin/migratevm
   template:
     src: migratevm.j2
