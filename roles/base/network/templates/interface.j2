@@ -1,18 +1,5 @@
 # {{ ansible_managed }}
 
-# This file describes the network interfaces available on your system
-# and how to activate them. For more information, see interfaces(5).
-
-# The loopback network interface
-auto lo
-iface lo inet loopback
-
-{% if network_interfaces_directory %}
-source /etc/network/interfaces.d/*.conf
-{% else %}
-{% for item in network_interfaces %}
-{% if item.auto|default('yes') == 'yes' %}auto {{ item.name }}
-{% endif %}
 {% if item.auto|default('yes') == 'yes' %}auto {{ item.name }}
 {% endif %}
 iface {{ item.name }} inet {{ item.method|default('dhcp') }}
@@ -41,7 +28,4 @@ iface {{ item.name }} inet {{ item.method|default('dhcp') }}
     dns-nameservers {{ item.dns_nameservers|join(' ') }}
 {% endif %}
 {% if item.dns_search is defined %}    dns-search {{ item.dns_search }}
-{% endif %}
-
-{% endfor %}
 {% endif %}

@@ -11,13 +11,40 @@
 
 
 - name: /etc/network/interfaces
-  template: >
-    src=network-interfaces.j2
-    dest=/etc/network/interfaces
-    backup=yes
-    mode=0644
-    owner=root
-    group=root
+  template:
+    src: network-interfaces.j2
+    dest: /etc/network/interfaces
+    backup: yes
+    mode: 0644
+    owner: root
+    group: root
+  notify: restart networking
+  tags:
+    - network
+
+
+- name: create /etc/network/interfaces.d directory
+  file:
+    path: /etc/network/interfaces.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  when: network_interfaces_directory
+  tags:
+    - network
+
+
+- name: /etc/network/interfaces.d
+  template:
+    src: interface.j2
+    dest: '/etc/network/interfaces.d/{{ item.name }}.conf'
+    backup: yes
+    mode: 0644
+    owner: root
+    group: root
+  with_items: network_interfaces
+  when: network_interfaces_directory
   notify: restart networking
   tags:
     - network
