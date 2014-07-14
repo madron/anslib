@@ -35,4 +35,4 @@ kvm_host_swap_disk_size_mb: 0
 kvm_host_ubuntu_release: precise
 kvm_host_ubuntu_flavour: virtual
 kvm_host_ubuntu_components: ['main', 'universe']
-kvm_host_ubuntu_additional_packages: ['linux-image-generic', 'openssh-server']
+kvm_host_ubuntu_additional_packages: ['linux-image-generic', 'acpid', 'openssh-server']
