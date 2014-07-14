@@ -42,6 +42,9 @@
   - python-software-properties
   - python-pycurl
   - aptitude
+  - acpid
+  - sg3-utils
+  - sdparm
   - pwgen
   - sysstat
   - dnsutils
