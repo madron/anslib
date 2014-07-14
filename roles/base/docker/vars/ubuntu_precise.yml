@@ -1,5 +1,5 @@
 docker_packages:
-  - lxc-docker
+  - 'lxc-docker-{{ docker_version }}'
   - python-pip
   - linux-image-generic-lts-raring
   - linux-headers-generic-lts-raring

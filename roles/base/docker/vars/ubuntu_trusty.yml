@@ -1,3 +1,3 @@
 docker_packages:
-  - lxc-docker
+  - 'lxc-docker-{{ docker_version }}'
   - python-pip
