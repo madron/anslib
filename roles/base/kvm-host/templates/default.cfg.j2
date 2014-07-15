@@ -26,7 +26,9 @@ ssh-key         = {{ kvm_host_ssh_key_file }}
 [kvm]
 libvirt = qemu:///system
 arch     = {{ kvm_host_architecture }}
+{% if not kvm_host_openvswitch %}
 bridge   = {{ kvm_host_bridge }}
+{% endif %}
 mem      = {{ kvm_host_ram_mb }}
 cpus     = {{ kvm_host_vcpus }}
 rootsize = {{ kvm_host_root_disk_size_mb }}

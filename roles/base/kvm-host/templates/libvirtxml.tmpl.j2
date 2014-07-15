@@ -15,6 +15,25 @@
   <on_crash>destroy</on_crash>
   <devices>
     <emulator>/usr/bin/kvm</emulator>
+{% if kvm_host_openvswitch %}
+{# Openvswitch networking #}
+    <interface type='bridge'>
+      <virtualport type='openvswitch'/>
+      <source bridge='{{ kvm_host_bridge }}'/>
+#if $bridge
+      <vlan>
+        <tag id='$bridge'/>
+      </vlan>
+#end if
+#if $mac
+      <mac address='$mac'/>
+#end if
+#if $virtio_net
+      <model type='virtio'/>
+#end if
+    </interface>
+{% else %}
+{# Normal networking #}
 #if $bridge
     <interface type='bridge'>
       <source bridge='$bridge'/>
@@ -31,6 +50,7 @@
       <model type='virtio'/>
 #end if
     </interface>
+{% endif %}
     <input type='mouse' bus='ps2'/>
     <graphics type='vnc' port='-1' listen='127.0.0.1'/>
 #for $disk in $disks

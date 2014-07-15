@@ -36,3 +36,8 @@ kvm_host_ubuntu_release: precise
 kvm_host_ubuntu_flavour: virtual
 kvm_host_ubuntu_components: ['main', 'universe']
 kvm_host_ubuntu_additional_packages: ['linux-image-generic', 'acpid', 'openssh-server']
+
+
+### Openvswitch
+
+kvm_host_openvswitch: no
