@@ -2,16 +2,42 @@
 
 # {{ ansible_managed }}
 
-import os
-import sys
 import argparse
 import commands
-import paramiko
+import logging
+import os
+import sys
 import subprocess
+import paramiko
 import rdiff_backup.Main
 from StringIO import StringIO
 
 BACKUP_DIR = '/var/backups'
+
+
+def get_logger(sysout, log_dir, host):
+    logger = logging.getLogger('rdiff-backup')
+    logger.setLevel(logging.DEBUG)
+    formatter_string = '%(asctime)s ' + host + ' %(levelname)-5s %(message)s'
+    if sysout:
+        formatter = logging.Formatter(formatter_string, '%H:%M:%S')
+        handler = logging.StreamHandler()
+        handler.setLevel(logging.DEBUG)
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+    else:
+        formatter = logging.Formatter(formatter_string, '%Y-%m-%d %H:%M:%S')
+        info_file = os.path.join(log_dir, 'info.log')
+        info_handler = logging.FileHandler(info_file)
+        info_handler.setLevel(logging.INFO)
+        info_handler.setFormatter(formatter)
+        logger.addHandler(info_handler)
+        error_file = os.path.join(log_dir, 'error.log')
+        error_handler = logging.FileHandler(error_file)
+        error_handler.setLevel(logging.ERROR)
+        error_handler.setFormatter(formatter)
+        logger.addHandler(error_handler)
+    return logger
 
 
 def get_ssh_client(host, username='root'):
@@ -24,37 +50,71 @@ def get_ssh_client(host, username='root'):
 
 
 def remote_command(ssh_client, command):
+    logger.info("Executing remote command: '%s'" % command)
     stdin, stdout, stderr = ssh_client.exec_command(command)
     rc = stdout.channel.recv_exit_status()
+    stdout_lines = [l.rstrip() for l in stdout.readlines()]
+    stderr_lines = [l.rstrip() for l in stderr.readlines()]
+    for line in stdout_lines:
+        logger.info(line)
+    for line in stderr_lines:
+        logger.error(line)
     return rc, stdout.read(), stderr.read()
+
+
+def rdiff_backup_command(logger, args):
+    logger.debug('rdiff_backup_command arguments: %s' % args)
+    original_stdout = sys.stdout
+    original_stderr = sys.stderr
+    stdout = StringIO()
+    stderr = StringIO()
+    sys.stdout = stdout
+    sys.stderr = stderr
+    try:
+        rdiff_backup.Main.error_check_Main(args)
+    except:
+        pass
+    finally:
+        sys.stdout = original_stdout
+        sys.stderr = original_stderr
+        stdout.seek(0)
+        stderr.seek(0)
+        stdout_lines = [l.rstrip() for l in stdout.readlines()]
+        stderr_lines = [l.rstrip() for l in stderr.readlines()]
+    for line in stdout_lines:
+        logger.info(line)
+    for line in stderr_lines:
+        logger.error(line)
+    rc = 1 if stderr_lines else 0
+    return rc
 
 
 def run(**kwargs):
     host = kwargs['host']
     destination = kwargs['destination']
     pre_execute_commands = kwargs['pre_execute_commands']
+    if host == 'localhost' and pre_execute_commands:
+        logger.error('pre_execute_commands not supported on localhost')
+        return
     try:
-        output = StringIO()
-        error = StringIO()
-        sys.stdout = output
-        sys.stderr = error
-        ssh_client = get_ssh_client(host)
-        for command in pre_execute_commands:
-            rc, out, err = remote_command(ssh_client, command)
-        ssh_client.close()
+        # Connection check and pre-exececute-commands
+        if not host == 'localhost':
+            ssh_client = get_ssh_client(host)
+            for command in pre_execute_commands:
+                rc, out, err = remote_command(ssh_client, command)
+            ssh_client.close()
+        # Backup
         backup(**kwargs)
-        includes = kwargs['includes']
-        for paths in includes:
-            if not os.path.exists(os.path.join(destination, host, paths)):
-                sys.stdout = error
-                print "the directory %s%s%s does not exists" % (destination, host, paths)
+        # Check
+        check_backup(**kwargs)
+        # Clean
         clean_backup(**kwargs)
-    except Exception, e:
-        print e
-        raise
+    except:
+        logger.exception('Unexpected error')
 
 
-def backup(**args):
+def backup(**kwargs):
+    logger = kwargs['logger']
     host = kwargs['host']
     includes = kwargs['includes']
     excludes = kwargs['excludes']
@@ -70,22 +130,43 @@ def backup(**args):
         args.append('--include')
         args.append(path)
     args.extend(['--exclude', '/'])
-    args.append('root@%s::/' % host)
+    if host == 'localhost':
+        args.append('/')
+    else:
+        args.append('root@%s::/' % host)
     args.append(os.path.join(destination, host))
-    rdiff_backup.Main.error_check_Main(args)
-    return
+    return rdiff_backup_command(logger, args)
+
+
+def check_backup(**kwargs):
+    logger = kwargs['logger']
+    host = kwargs['host']
+    includes = kwargs['includes']
+    destination = kwargs['destination']
+    rc = 0
+    for remote_path in includes:
+        path = os.path.join(destination, host, remote_path.lstrip('/'))
+        logger.info("Checking path: '%s'" % path)
+        if not os.path.exists(path):
+            rc = 1
+            logger.error("Path '%s' does not exist on remote host" % remote_path)
+    return rc
 
 
 def clean_backup(**kwargs):
+    logger = kwargs['logger']
     host = kwargs['host']
-    day = kwargs['remove_older_than']
     destination = kwargs['destination']
+    days = kwargs['retain_days']
+    if not days:
+        logger.info('retain-days parameter not supplied: not removing old backups.')
+        return
+    logger.info('Removing backups older than %d days.' % days)
     args = []
     args.append('--remove-older-than')
-    args.append(day)
+    args.append('%dD' % days)
     args.append(os.path.join(destination, host))
-    rdiff_backup.Main.error_check_Main(args)
-    return
+    return rdiff_backup_command(logger, args)
 
 
 if __name__ == '__main__':
@@ -103,6 +184,14 @@ if __name__ == '__main__':
                        help='Commands to execute on remote host')
     parser.add_argument('--retain-days', metavar='DAYS', type=int,
                        help='Remove backups older than specified days')
+    parser.add_argument('--sysout', action='store_true', default=False,
+                       help='Log to sysout')
 
     kwargs = vars(parser.parse_args())
+    logger = get_logger(kwargs['sysout'], kwargs['destination'], kwargs['host'])
+    logger.info('=' * 50)
+    logger.info('Backup started.')
+    logger.debug(kwargs)
+    kwargs['logger'] = logger
     run(**kwargs)
+    logger.info('Backup finished.')
