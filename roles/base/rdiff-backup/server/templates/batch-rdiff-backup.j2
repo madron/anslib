@@ -163,6 +163,7 @@ def clean_backup(**kwargs):
         return
     logger.info('Removing backups older than %d days.' % days)
     args = []
+    args.append('--force')
     args.append('--remove-older-than')
     args.append('%dD' % days)
     args.append(os.path.join(destination, host))
