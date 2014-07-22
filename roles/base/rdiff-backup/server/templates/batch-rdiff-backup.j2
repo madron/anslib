@@ -60,8 +60,8 @@ def backup(**args):
     excludes = kwargs['excludes']
     destination = kwargs['destination']
     args = [
-        '--create-full-path', 
-        '--print-statistics', 
+        '--create-full-path',
+        '--print-statistics',
     ]
     for path in excludes:
         args.append('--exclude')
@@ -69,7 +69,7 @@ def backup(**args):
     for path in includes:
         args.append('--include')
         args.append(path)
-    args.extend(['--exclude', '/']) 
+    args.extend(['--exclude', '/'])
     args.append('root@%s::/' % host)
     args.append(os.path.join(destination, host))
     rdiff_backup.Main.error_check_Main(args)
@@ -90,20 +90,19 @@ def clean_backup(**kwargs):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='rdiff-backup.')
-    parser.add_argument('host', metavar='H', type=str,
+    parser.add_argument('--host', metavar='HOSTNAME', type=str, required=True,
                        help='Host to backup')
-    parser.add_argument('destination', type=str,
-                       help='Base destination directory')
-    parser.add_argument('--includes', type=str, nargs='+',
-                       help='Paths to backup')
-    parser.add_argument('--excludes', type=str, nargs='*',
-                       help='Paths to exclude from backup')
-    parser.add_argument('--pre_execute_commands', type=str, nargs='*',
+    parser.add_argument('--includes', metavar='PATH', type=str, nargs='+',
+                       required=True, help='Paths to backup')
+    parser.add_argument('--excludes', metavar='PATH', type=str, nargs='+',
+                       default=[], help='Paths to exclude from backup')
+    parser.add_argument('--destination', metavar='DEST', type=str,
+                       default=BACKUP_DIR, help='Base destination directory')
+    parser.add_argument('--pre-execute-commands', metavar='COMMAND',
+                       type=str, nargs='+', default=[],
                        help='Commands to execute on remote host')
-    parser.add_argument('--remove_older_than', type=str, nargs='?',
-                       help='Backup date remove')
+    parser.add_argument('--retain-days', metavar='DAYS', type=int,
+                       help='Remove backups older than specified days')
 
     kwargs = vars(parser.parse_args())
-    kwargs['excludes'] = kwargs['excludes'] or []
-    kwargs['pre_execute_commands'] = kwargs['pre_execute_commands'] or []
     run(**kwargs)
