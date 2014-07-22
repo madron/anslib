@@ -4,19 +4,30 @@
   tags:
     - rdiff-backup-server
 
+
 - include: packages_debian.yml
   when: ansible_os_family == 'Debian'
   tags:
     - rdiff-backup-server
 
-- name: cron daily
-  template: >
-    src=cron_daily.j2
-    dest=/etc/cron.daily/rdiff_backup
-    mode=0755
-    owner=root
-    group=root
+
+- name: /usr/local/sbin/batch-rdiff-backup
+  template:
+    src: batch-rdiff-backup.j2
+    dest: /usr/local/sbin/batch-rdiff-backup
+    mode: 0755
+    owner: root
+    group: root
   tags:
     - rdiff-backup-server
 
 
+- name: /etc/cron.daily/rdiff_backup
+  template:
+    src: cron_daily.j2
+    dest: /etc/cron.daily/rdiff_backup
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - rdiff-backup-server
