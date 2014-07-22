@@ -1,2 +1,3 @@
 rdiff_backup_server_packages:
   - rdiff-backup
+  - python-paramiko
