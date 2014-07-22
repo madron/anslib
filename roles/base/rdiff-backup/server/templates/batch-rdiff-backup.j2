@@ -13,9 +13,10 @@ import rdiff_backup.Main
 from StringIO import StringIO
 
 BACKUP_DIR = '/var/backups'
+LOG_DIR = '/var/log'
 
 
-def get_logger(sysout, log_dir, host):
+def get_logger(sysout, host):
     logger = logging.getLogger('rdiff-backup')
     logger.setLevel(logging.DEBUG)
     formatter_string = '%(asctime)s ' + host + ' %(levelname)-5s %(message)s'
@@ -27,12 +28,12 @@ def get_logger(sysout, log_dir, host):
         logger.addHandler(handler)
     else:
         formatter = logging.Formatter(formatter_string, '%Y-%m-%d %H:%M:%S')
-        info_file = os.path.join(log_dir, 'info.log')
+        info_file = os.path.join(LOG_DIR, 'rdiff-backup-info.log')
         info_handler = logging.FileHandler(info_file)
         info_handler.setLevel(logging.INFO)
         info_handler.setFormatter(formatter)
         logger.addHandler(info_handler)
-        error_file = os.path.join(log_dir, 'error.log')
+        error_file = os.path.join(LOG_DIR, 'rdiff-backup-error.log')
         error_handler = logging.FileHandler(error_file)
         error_handler.setLevel(logging.ERROR)
         error_handler.setFormatter(formatter)
@@ -189,7 +190,7 @@ if __name__ == '__main__':
                        help='Log to sysout')
 
     kwargs = vars(parser.parse_args())
-    logger = get_logger(kwargs['sysout'], kwargs['destination'], kwargs['host'])
+    logger = get_logger(kwargs['sysout'], kwargs['host'])
     logger.info('=' * 50)
     logger.info('Backup started.')
     logger.debug(kwargs)
