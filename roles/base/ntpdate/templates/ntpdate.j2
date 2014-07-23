@@ -2,4 +2,4 @@
 
 # {{ ansible_managed }}
 
-ntpdate {{ ntpdate_server }}
+ntpdate {{ ntpdate_server }} 2>&1 | /usr/bin/logger -t ntpdate
