@@ -10,4 +10,4 @@ declare -a TASKS=(
 {% endfor %}
 )
 
-parallel --jobs {{ rdiff_backup_server_concurrent_jobs }} ::: "${TASKS[@]}"
+parallel --gnu --jobs {{ rdiff_backup_server_concurrent_jobs }} ::: "${TASKS[@]}"
