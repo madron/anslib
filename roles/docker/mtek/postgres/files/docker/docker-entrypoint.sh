@@ -6,10 +6,8 @@ export PGDATA=/var/lib/postgresql/$VERSION
 export POSTGRES=/usr/lib/postgresql/$VERSION/bin/postgres
 export CONFIG_FILE=/etc/postgresql/$VERSION/main/postgresql.conf
 
-echo ===$1===
 
 if [[ "$1" = "postgres" ]]; then
-    echo 'pppp'
     chown -R postgres "$PGDATA"
 
     if [ -z "$(ls -A "$PGDATA")" ]; then
