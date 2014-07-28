@@ -1,0 +1,17 @@
+- name: dockerfile
+  copy:
+    src: docker
+    dest: /var/lib/ansible/mtek-postgres-test
+  register: dockerfile
+  tags:
+    - mtek-postgres-test
+
+
+- name: docker image
+  docker_image:
+    path=/var/lib/ansible/mtek-postgres-test/docker
+    name=mtek/postgres-test
+    state=present
+  when: dockerfile.changed
+  tags:
+    - mtek-postgres-test
