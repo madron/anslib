@@ -19,12 +19,8 @@ RUN rm -rf /etc/postgresql/9.1/main
 RUN rm -rf /var/lib/postgresql/9.1/main
 
 # Config
-RUN mkdir /docker
-ADD entrypoint.sh /docker/entrypoint.sh
+ADD docker /docker/
 RUN chmod 755 /docker/entrypoint.sh
-ADD pg_hba.conf /docker/
-ADD pg_ident.conf /docker/
-ADD postgresql.conf /docker/
 
 
 EXPOSE 5432 5433
