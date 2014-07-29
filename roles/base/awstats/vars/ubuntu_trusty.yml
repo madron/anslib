@@ -1,0 +1,3 @@
+awstats_packages:
+  - awstats
+  - fcgiwrap
