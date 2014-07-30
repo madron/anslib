@@ -12,12 +12,16 @@ RUN useradd -d /var/lib/postgresql/9.1 -u 999 -g 999 postgres
 # Required packages
 RUN DEBIAN_FRONTEND=noninteractive apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y postgresql-9.1
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y postgresql-client
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y sudo
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y python-jinja2
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y nano less
 
 RUN rm -rf /etc/postgresql/9.1/main
 RUN rm -rf /var/lib/postgresql/9.1/main
+
+# Symlink
+RUN ln -s /usr/lib/postgresql/9.1/bin/* /usr/local/bin
 
 # Config
 ADD docker /docker/
@@ -26,7 +30,7 @@ RUN chmod 755 /docker/render.py
 
 
 EXPOSE 5432
-VOLUME ["/data", "/log"]
+VOLUME ["/data"]
 
 
 ENTRYPOINT ["/docker/entrypoint.sh"]
