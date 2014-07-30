@@ -19,6 +19,9 @@ docker run -i -t --rm --hostname db_master_util  --volumes-from db_master --link
 
 psql -h postgres -U postgres
 
+pg_controldata /data | grep checkpoint ; ls -l /data/pg_xlog/
+
+
 # Start backup command
 psql -h postgres -U postgres -c "SELECT pg_start_backup('label');"
 
