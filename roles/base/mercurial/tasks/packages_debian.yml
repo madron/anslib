@@ -1,0 +1,7 @@
+- name: required package
+  apt:
+    name: '{{ item }}'
+    state: latest
+  with_items: mercurial_packages
+  tags:
+    - mercurial

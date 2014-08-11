@@ -1,0 +1,15 @@
+mercurial_admins: []
+mercurial_users: []
+
+# mercurial_admins: [joe]
+# mercurial_users: [sam]
+
+# ssh_public_keys: {
+#     joe: [
+#         'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA0gp+MOFulQW6Rm6LCZxxKXBCQZFXv3BRztnsKBrou0nKTxzCn3Gqyg9tpTXUlw9DNsC8WwqV0oDupuli/bKEiZWWOgzDv5tYs9R4uucuba6jKpKPPkWritAAdZmfrCk2wSxQKyztDw5TEqtEHl5DlRRJ+1q90lFWnr03a9OwWVnvPwjdzLhSrjIk1fQZT4nstpO8Q1w5rvEovCMB1AK9Fs2eBB0qfpC20+kB+1FRfsIldJ87q8LA54IfTz8RnH3AzVn90S3WV22AFOwrJF1hlOy0nCABRdJaiHB8uqZMHVDZcdO0kFMr4QMk8wsHEABzM4Di7K4bm3xqv43GbDb3fQ== joe@desktop',
+#         'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA2wn1Gs3/Vd5xOQjmubbgvgpfbsTmKytX39kdndjKfKulBbBQjNKWSVyIFZfNtlVT/O87dGoRcaiHLfQ3emZGGhBf3yOhngwpSL/517m0zLS0pBLLJ8YqaLghea3Z/okXXkk/aAYK/DAMXl3BunWOQZEMIkx9cQQvE1g6V6+5MZhIccUs8Xyb2JA+yR3ahZ/ywwxq0VOdadcLxTdeugFduHt6dcc+qVwKhPHXxU4fUFTY5IxDRTpe4l2BgX8cr1Dpvt0WUVpPY5OD3vTNTEtVsJh8Q3VHe7Sk6+4TVoDTw9ts2ZMbWu4cJcR4EzHyLjzdcd5CQ5d5P/uZUsVdL4Ttiw== joe@laptop',
+#     ],
+#     sam: [
+#         'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA0gp+MOFulQW6Rm6LCZxxKXBCQZFXv3BRztnsKBrou0nKTxzCn3Gqyg9tpTXUlw9DNsC8WwqV0oDupuli/bKEiZWWOgzDv5tYs9R4uucuba6jKpKPPkWritAAdZmfrCk2wSxQKyztDw5TEqtEHl5DlRRJ+1q90lFWnr03a9OwWVnvPwjdzLhSrjIk1fQZT4nstpO8Q1w5rvEovCMB1AK9Fs2eBB0qfpC20+kB+1FRfsIldJ87q8LA54IfTz8RnH3AzVn90S3WV22AFOwrJF1hlOy0nCABRdJaiHB8uqZMHVDZcdO0kFMr4QMk8wsHEABzM4Di7K4bm3xqv43GbDb3fQ== sam@desktop',
+#     ],
+# }

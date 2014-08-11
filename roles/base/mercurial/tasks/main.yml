@@ -1,0 +1,60 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - mercurial
+
+
+- include: packages_debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - mercurial
+
+
+- name: admin directories
+  file:
+    path: '/etc/mercurial-server/keys/root/{{ item }}'
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  with_items: mercurial_admins
+  tags:
+    - mercurial
+
+
+- name: user directories
+  file:
+    path: '/etc/mercurial-server/keys/users/{{ item }}'
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  with_items: mercurial_users
+  tags:
+    - mercurial
+
+
+- name: admin keys
+  template:
+    src: authorized-keys.j2
+    dest: '/etc/mercurial-server/keys/root/{{ item }}/authorized_keys'
+    mode: 0644
+    owner: root
+    group: root
+  with_items: mercurial_admins
+  notify: refresh_mercurial_auth
+  tags:
+    - mercurial
+
+
+- name: user keys
+  template:
+    src: authorized-keys.j2
+    dest: '/etc/mercurial-server/keys/users/{{ item }}/authorized_keys'
+    mode: 0644
+    owner: root
+    group: root
+  with_items: mercurial_users
+  notify: refresh_mercurial_auth
+  tags:
+    - mercurial
