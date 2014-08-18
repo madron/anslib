@@ -48,3 +48,25 @@
   notify: restart networking
   tags:
     - network
+
+
+- name: /var/lib/ansible/network directory
+  file:
+    path: /var/lib/ansible/network
+    state: directory
+  tags:
+    - network
+
+
+- name: resolvconf update file
+  template:
+    src: resolvconf.j2
+    dest: '/var/lib/ansible/network/update_resolvconf.{{ item.name }}.sh'
+    backup: no
+    mode: 0755
+    owner: root
+    group: root
+  with_items: network_interfaces
+  notify: update resolvconf
+  tags:
+    - network

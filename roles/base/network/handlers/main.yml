@@ -3,3 +3,8 @@
     name=networking
     state=restarted
   when: network_restart == 'yes'
+
+
+- name: update resolvconf
+  command: /var/lib/ansible/network/update_resolvconf.{{ item.name }}.sh
+  with_items: network_interfaces

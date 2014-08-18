@@ -1,0 +1,8 @@
+#!/bin/bash
+{% if item.dns_nameservers is defined %}
+echo "{% for nameserver in item.dns_nameservers %}
+nameserver {{ nameserver }}
+{% endfor %}
+{% if item.dns_search is defined %}search {{ item.dns_search }}
+{% endif %}" | sudo resolvconf -a {{ item.name }}.inet
+{% endif %}
