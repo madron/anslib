@@ -46,11 +46,11 @@
 
 
 - name: add python-apt and lsb-release packages to debian template
-  lineinfile: >
-    dest=/usr/share/lxc/templates/lxc-debian
-    insertafter='^ifupdown,'
-    line='python-apt,lsb-release,\'
-    backup=yes
+  lineinfile:
+    dest: /usr/share/lxc/templates/lxc-debian
+    insertafter: '^ifupdown,'
+    line: 'python-apt,lsb-release,\'
+    backup: yes
   register: debian_template
   tags:
     - lxc-host
