@@ -1,0 +1,13 @@
+#!/bin/bash
+# network_resolvconf_support: {{ network_resolvconf_support }}
+
+{% if item.dns_nameservers is defined %}
+
+{% if network_resolvconf_support %}
+cat /var/lib/ansible/network/resolv.conf.{{ item.name }} | sudo resolvconf -a {{ item.name }}.inet
+resolvconf -u
+{% else %}
+cp /var/lib/ansible/network/resolv.conf.{{ item.name }} /etc/resolv.conf
+{% endif %}
+
+{% endif %}
