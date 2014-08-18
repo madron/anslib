@@ -4,7 +4,13 @@ set -e
 export VERSION=9.1
 export PGBIN=/usr/lib/postgresql/${VERSION}/bin
 export PGDATA=/data
+export DATA_FILE=/docker/data.py
+export DATA_DEFAULT=/docker/default_data.py
 
+
+echo "data=dict()" >  $DATA_FILE
+echo "data['WAL_KEEP_SEGMENTS']='$WAL_KEEP_SEGMENTS'" >>  $DATA_FILE
+cat $DATA_DEFAULT >> $DATA_FILE
 
 if [[ "$1" = "postgres" ]]; then
     chown -R postgres "${PGDATA}"
