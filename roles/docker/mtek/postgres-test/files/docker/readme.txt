@@ -1,5 +1,24 @@
+# db data
+docker run --name db_master_data -v /data busybox
+docker run --name db_slave_data -v /data busybox
+
+# remove db data
+docker rm db_master_data
+docker rm db_slave_data
+
 # Run db_master server
-docker run -i -t --rm --name db_master mtek/postgres:precise
+docker run -i -t --rm --name db_master --volumes-from db_master_data mtek/postgres:precise
+
+# Backup db to current directory
+docker run -i -t --rm --volumes-from db_master_data -v $(pwd):/backup busybox tar cvf /backup/db_data.tar /data
+
+# restore to db_slave_data
+docker run -i -t --rm --volumes-from db_slave_data -v $(pwd):/backup busybox tar xvf /backup/db_data.tar
+
+
+
+# Run db_master server
+docker run -i -t --rm --name db_slave --link db_master:master -e MASTER_SERVER=master mtek/postgres:precise
 
 # Create test database and log table
 docker run -i -t --rm --link db_master:postgres mtek/postgres-test:precise /create-table.sh

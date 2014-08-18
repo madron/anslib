@@ -28,8 +28,22 @@ if [[ "$1" = "postgres" ]]; then
     fi
     # postgresql.conf is always overwritten
     /docker/render.py --template /docker/postgresql.conf --outfile ${PGDATA}/etc/postgresql.conf
+    # recovery.conf is always overwritten
+    rm -f ${PGDATA}/recovery.conf
+    if [ ! "${MASTER_SERVER}" == "" ]; then
+        /docker/render.py --template /docker/recovery.conf --outfile ${PGDATA}/recovery.conf
+    fi
 
     sudo -i -u postgres ${PGBIN}/postgres -D ${PGDATA} -c config_file=${PGDATA}/etc/postgresql.conf
+
+elif [[ "$1" = "backup" ]]; then
+    # sudo -i -u postgres ${PGBIN}/postgres -D ${PGDATA} -c config_file=${PGDATA}/etc/postgresql.conf
+    tar cvfz /backup/db_data.tgz /data
+
+elif [[ "$1" = "restore" ]]; then
+    # sudo -i -u postgres ${PGBIN}/postgres -D ${PGDATA} -c config_file=${PGDATA}/etc/postgresql.conf
+    cd /
+    tar xvfz /backup/db_data.tgz
 
 else
     exec "$@"
