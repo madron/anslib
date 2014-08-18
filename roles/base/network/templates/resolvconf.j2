@@ -5,4 +5,5 @@ nameserver {{ nameserver }}
 {% endfor %}
 {% if item.dns_search is defined %}search {{ item.dns_search }}
 {% endif %}" | sudo resolvconf -a {{ item.name }}.inet
+resolvconf -u
 {% endif %}

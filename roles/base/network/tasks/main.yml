@@ -70,3 +70,12 @@
   notify: update resolvconf
   tags:
     - network
+
+
+- name: remove /etc/resolvconf/resolv.conf.d/tail
+  file:
+    path: /etc/resolvconf/resolv.conf.d/tail
+    state: absent
+  notify: update resolvconf
+  tags:
+    - network
