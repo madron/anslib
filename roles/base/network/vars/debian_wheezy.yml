@@ -1,4 +1,4 @@
 network_interfaces_directory: no
-network_resolvconf_support: yes
+network_resolvconf_support: no
 network_packages:
     - bridge-utils
