@@ -8,5 +8,6 @@ MAINTAINER Massimiliano Ravelli, m.ravelli@mastervoice.it
 ADD create-table.sh /
 ADD insert.sh /
 ADD select.sh /
+ADD delete.sh /
 
 RUN chmod 755 /*.sh
