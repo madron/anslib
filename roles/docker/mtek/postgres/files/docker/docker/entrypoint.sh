@@ -38,7 +38,9 @@ if [[ "$1" = "postgres" ]]; then
 
 elif [[ "$1" = "backup" ]]; then
     # sudo -i -u postgres ${PGBIN}/postgres -D ${PGDATA} -c config_file=${PGDATA}/etc/postgresql.conf
-    tar cvfz /backup/db_data.tgz /data
+    psql -h postgres -U postgres -c "SELECT pg_start_backup('backup_label');"
+    cp -a /data /backup
+    psql -h postgres -U postgres -c "SELECT pg_stop_backup();"
 
 elif [[ "$1" = "restore" ]]; then
     # sudo -i -u postgres ${PGBIN}/postgres -D ${PGDATA} -c config_file=${PGDATA}/etc/postgresql.conf
