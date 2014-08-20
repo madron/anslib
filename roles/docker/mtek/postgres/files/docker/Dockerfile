@@ -1,7 +1,7 @@
 FROM ubuntu:precise
 MAINTAINER Massimiliano Ravelli, m.ravelli@mastervoice.it
 
-# docker build -t mtek/postgres:precise .
+# docker build -t mtek/postgres:precise roles/docker/mtek/postgres/files/docker/
 
 
 # Postgres user and group
