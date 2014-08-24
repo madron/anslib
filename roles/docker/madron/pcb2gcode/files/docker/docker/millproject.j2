@@ -1,0 +1,57 @@
+metric = 1
+
+# Engrave the front side according to the given file (typically used in two-sided boards).
+front = {{ base_name }}.PosiTop
+
+# Engrave the back side according to the given file.
+back = {{ base_name }}.PosiBot
+
+# Cut  out  the  board  to the shape exposed in the given file. Typically, there is only a polygon in this gerber file. Alternatively,
+# this file can contain a closed line chain (see --fill-outline).
+outline = {{ base_name }}.Outline
+
+# Convert the given file (containing drill sizes and positions) to G-code.
+drill = {{ base_name }}.Drill
+
+
+### The parameters that define outline cutting are:
+
+# amount by half of which the tool path is outset from the shape in the outline file
+cutter-diameter = 3
+
+# Z-coordinate indicating where the outline cutting ends
+zcut = 0.01
+
+# feed rate at which outline cutting takes place (horizontal speed)
+cut-feed = 300
+
+# spindle speed during outline cutting (rounds per minute)
+cut-speed = 18000
+
+# maximum Z distance that is cut away in a single pass (positive value; if less then zcut's value, there will be more than one pass)
+cut-infeed = 3
+
+# If  --fill-outline  is given, it is assumed that the outline file contains not a polygon but a closed chain of lines. The board will
+# be cut along the centres of these lines.
+# fill-outline = 1
+
+# thickness of the lines that form the outline (if --fill-outline is given)
+# outline-width=
+
+
+# parameters for isolation routing / engraving / etching
+zwork = -0.04
+zsafe = 0.3
+zchange = 15
+mill-feed = 200
+mill-speed = 30000
+drill-front = 1
+
+# drilling parameters
+zdrill = -2
+drill-feed = 300
+drill-speed = 20000
+
+# generate voronoi regions
+offset=100
+dpi=1000
