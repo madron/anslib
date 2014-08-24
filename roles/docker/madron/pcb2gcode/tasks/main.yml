@@ -1,0 +1,17 @@
+- name: dockerfile
+  copy:
+    src: docker
+    dest: /var/lib/ansible/madron-pcb2gcode
+  register: dockerfile
+  tags:
+    - madron-pcb2gcode
+
+
+- name: docker image
+  docker_image:
+    path=/var/lib/ansible/madron-pcb2gcode/docker
+    name=madron/pcb2gcode
+    state=present
+  when: dockerfile.changed
+  tags:
+    - madron-pcb2gcode
