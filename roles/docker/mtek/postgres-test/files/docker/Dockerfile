@@ -1,8 +1,7 @@
 FROM mtek/postgres:precise
 MAINTAINER Massimiliano Ravelli, m.ravelli@mastervoice.it
 
-# docker build -t mtek/postgres-test:precise .
-
+# docker build -t mtek/postgres-test:precise roles/docker/mtek/postgres-test/files/docker/
 
 # Scripts
 ADD create-table.sh /
