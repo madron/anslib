@@ -46,9 +46,13 @@ elif [[ "$1" = "backup" ]]; then
         echo "Directory /backup/data already exists"
         exit 1
     fi
-    psql -h postgres -U postgres -c "SELECT pg_start_backup('backup_label');"
-    cp -a /data /backup
-    psql -h postgres -U postgres -c "SELECT pg_stop_backup();"
+    export FORMAT=plain
+    export GZIP_OPTION=""
+    if [[ "$2" = "tar" ]]; then
+        export FORMAT=tar
+        export GZIP_OPTION="--gzip"
+    fi
+    ${PGBIN}/pg_basebackup --pgdata=/backup/data --xlog --format=${FORMAT} ${GZIP_OPTION} --progress --verbose --host=postgres --username=syncuser
 
 elif [[ "$1" = "restore" ]]; then
     # sudo -i -u postgres ${PGBIN}/postgres -D ${PGDATA} -c config_file=${PGDATA}/etc/postgresql.conf

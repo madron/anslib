@@ -13,8 +13,8 @@ docker run -i -t --rm --name db_master --volumes-from db_master_data -e WAL_KEEP
 docker run -d --name db_master --volumes-from db_master_data -e WAL_KEEP_SEGMENTS=20 mtek/postgres:precise
 
 # Backup to /tmp
-docker run -i -t --rm --link db_master:postgres --volumes-from db_master  -v /tmp:/backup mtek/postgres:precise backup
-docker run -i -t --rm --link db_slave:postgres  --volumes-from db_slave   -v /tmp:/backup mtek/postgres:precise backup
+docker run -i -t --rm --link db_master:postgres -v /tmp:/backup mtek/postgres:precise backup
+docker run -i -t --rm --link db_slave:postgres  -v /tmp:/backup mtek/postgres:precise backup
 
 # restore backup from /tmp
 docker run -i -t --rm --volumes-from db_master_data -v /tmp:/backup busybox cp -a /backup/data /
