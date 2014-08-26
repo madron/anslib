@@ -12,10 +12,12 @@ docker run --name db_slave_data  -v /data busybox
 docker run -i -t --rm --name db_master --volumes-from db_master_data -e WAL_KEEP_SEGMENTS=20 mtek/postgres:precise
 docker run -d --name db_master --volumes-from db_master_data -e WAL_KEEP_SEGMENTS=20 mtek/postgres:precise
 
-# Backup master_db to /tmp
+# Backup to /tmp
 docker run -i -t --rm --link db_master:postgres --volumes-from db_master  -v /tmp:/backup mtek/postgres:precise backup
+docker run -i -t --rm --link db_slave:postgres  --volumes-from db_slave   -v /tmp:/backup mtek/postgres:precise backup
 
 # restore backup from /tmp
+docker run -i -t --rm --volumes-from db_master_data -v /tmp:/backup busybox cp -a /backup/data /
 docker run -i -t --rm --volumes-from db_backup_data -v /tmp:/backup busybox cp -a /backup/data /
 docker run -i -t --rm --volumes-from db_slave_data  -v /tmp:/backup busybox cp -a /backup/data /
 
@@ -23,8 +25,11 @@ docker run -i -t --rm --volumes-from db_slave_data  -v /tmp:/backup busybox cp -
 # Run server
 docker run -i -t --rm --name db_master --volumes-from db_master_data -e WAL_KEEP_SEGMENTS=20 mtek/postgres:precise
 docker run -i -t --rm --name db_backup --volumes-from db_backup_data -e WAL_KEEP_SEGMENTS=20 mtek/postgres:precise
-docker run -i -t --rm --name db_slave  --volumes-from db_slave_data  --link db_master:master -e WAL_KEEP_SEGMENTS=20 mtek/postgres:precise
 docker run -i -t --rm --name db_slave  --volumes-from db_slave_data  --link db_master:master -e WAL_KEEP_SEGMENTS=20 -e MASTER_SERVER=master mtek/postgres:precise
+docker run -i -t --rm --name db_master  --volumes-from db_master_data  --link db_slave:master -e WAL_KEEP_SEGMENTS=20 -e MASTER_SERVER=master mtek/postgres:precise
+
+# Create syncuser
+docker run -i -t --rm --link db_master:postgres mtek/postgres-test:precise syncuser syncuser
 
 # Create test database and log table
 docker run -i -t --rm --link db_master:postgres mtek/postgres-test:precise /create-table.sh
@@ -39,6 +44,7 @@ docker run -i -t --rm --name db_master_delete --link db_master:postgres mtek/pos
 
 # Check last row every second
 docker run -i -t --rm --name db_master_select --link db_master:postgres mtek/postgres-test:precise /select.sh
+docker run -i -t --rm --name db_slave_select --link db_slave:postgres mtek/postgres-test:precise /select.sh
 
 
 # utility container
