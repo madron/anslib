@@ -37,6 +37,9 @@ if [[ "$1" = "postgres" ]]; then
 
     sudo -i -u postgres ${PGBIN}/postgres -D ${PGDATA} -c config_file=${PGDATA}/etc/postgresql.conf
 
+elif [[ "$1" = "syncuser" ]]; then
+    psql -h postgres -U postgres -c "CREATE USER syncuser REPLICATION LOGIN CONNECTION LIMIT 1 ENCRYPTED PASSWORD '$2';"
+
 elif [[ "$1" = "backup" ]]; then
     if [ -d "/backup/data" ]; then
         # Abort if directory exists
