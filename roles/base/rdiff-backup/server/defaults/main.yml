@@ -1,8 +1,11 @@
 rdiff_backup_server_dest: /var/backups
 rdiff_backup_server_default_retain_days: 20
+rdiff_backup_server_user: root
+rdiff_backup_server_port: 22
 # percentage over available cores (100% -> 1 job per core)
 rdiff_backup_server_concurrent_jobs: 400%
 rdiff_backup_server_list: []
 
 # rdiff_backup_server_list:
 #   - { host: localhost, includes: ['/etc', '/root'], excludes: ['/etc/X11'], retain_days: 20 }
+#   - { host: localhost, includes: ['/etc'], user: manage, port: 30022 }

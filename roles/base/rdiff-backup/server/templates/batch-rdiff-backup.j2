@@ -14,6 +14,8 @@ from StringIO import StringIO
 
 BACKUP_DIR = '/var/backups'
 LOG_DIR = '/var/log'
+DEFAULT_USER = 'root'
+DEFAULT_PORT = 22
 
 
 def get_logger(sysout, host):
@@ -41,12 +43,12 @@ def get_logger(sysout, host):
     return logger
 
 
-def get_ssh_client(host, username='root'):
+def get_ssh_client(host, port, user):
     known_hosts_file = os.path.join(os.path.expanduser('~'), '.ssh', 'known_hosts')
     client = paramiko.SSHClient()
     client.load_host_keys(known_hosts_file)
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    client.connect(host, username=username)
+    client.connect(host, port=port, username=user)
     return client
 
 
@@ -91,7 +93,14 @@ def rdiff_backup_command(logger, args):
 
 
 def run(**kwargs):
+    logger = get_logger(kwargs['sysout'], kwargs['host'])
+    logger.info('=' * 50)
+    logger.info('Backup started.')
+    logger.debug(kwargs)
+    kwargs['logger'] = logger
     host = kwargs['host']
+    port = kwargs['port']
+    user = kwargs['user']
     destination = kwargs['destination']
     pre_execute_commands = kwargs['pre_execute_commands']
     if host == 'localhost' and pre_execute_commands:
@@ -100,7 +109,7 @@ def run(**kwargs):
     try:
         # Connection check and pre-exececute-commands
         if not host == 'localhost':
-            ssh_client = get_ssh_client(host)
+            ssh_client = get_ssh_client(host, port, user)
             for command in pre_execute_commands:
                 rc, out, err = remote_command(ssh_client, command)
             ssh_client.close()
@@ -112,11 +121,14 @@ def run(**kwargs):
         clean_backup(**kwargs)
     except:
         logger.exception('Unexpected error')
+    logger.info('Backup finished.')
 
 
 def backup(**kwargs):
     logger = kwargs['logger']
     host = kwargs['host']
+    port = kwargs['port']
+    user = kwargs['user']
     includes = kwargs['includes']
     excludes = kwargs['excludes']
     destination = kwargs['destination']
@@ -134,7 +146,9 @@ def backup(**kwargs):
     if host == 'localhost':
         args.append('/')
     else:
-        args.append('root@%s::/' % host)
+        args.append('--remote-schema')
+        args.append('ssh -C -p %d ' % port + '%s rdiff-backup --server')
+        args.append('%s@%s::/' % (user, host))
     args.append(os.path.join(destination, host))
     return rdiff_backup_command(logger, args)
 
@@ -175,6 +189,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='rdiff-backup.')
     parser.add_argument('--host', metavar='HOSTNAME', type=str, required=True,
                        help='Host to backup')
+    parser.add_argument('--port', metavar='PORT', type=int, default=DEFAULT_PORT,
+                       help='Ssh port')
+    parser.add_argument('--user', metavar='USER', type=str, default=DEFAULT_USER,
+                       help='Ssh user')
     parser.add_argument('--includes', metavar='PATH', type=str, nargs='+',
                        required=True, help='Paths to backup')
     parser.add_argument('--excludes', metavar='PATH', type=str, nargs='+',
@@ -190,10 +208,4 @@ if __name__ == '__main__':
                        help='Log to sysout')
 
     kwargs = vars(parser.parse_args())
-    logger = get_logger(kwargs['sysout'], kwargs['host'])
-    logger.info('=' * 50)
-    logger.info('Backup started.')
-    logger.debug(kwargs)
-    kwargs['logger'] = logger
     run(**kwargs)
-    logger.info('Backup finished.')

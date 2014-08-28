@@ -6,7 +6,7 @@ export SHELL=/bin/sh
 
 declare -a TASKS=(
 {% for backup in rdiff_backup_server_list %}
-"/usr/local/sbin/batch-rdiff-backup --host {{ backup.host }} --includes {% for path in backup.includes %}{{ path }} {% endfor %}{% if backup.excludes is defined %}--excludes {% for path in backup.excludes %} {{ path }}{% endfor %}{% endif %} {% if backup.pre_execute_commands is defined %}--pre-execute-commands {% for command in backup.pre_execute_commands %} '{{ command }}'{% endfor %}{% endif %} --retain-days {{ backup.retain_days|default(rdiff_backup_server_default_retain_days) }} --destination {{ rdiff_backup_server_dest }}"
+"/usr/local/sbin/batch-rdiff-backup --host {{ backup.host }} --port {{ backup.port|default(rdiff_backup_server_port) }} --user {{ backup.user|default(rdiff_backup_server_user) }} --includes {% for path in backup.includes %}{{ path }} {% endfor %}{% if backup.excludes is defined %}--excludes {% for path in backup.excludes %} {{ path }}{% endfor %}{% endif %} {% if backup.pre_execute_commands is defined %}--pre-execute-commands {% for command in backup.pre_execute_commands %} '{{ command }}'{% endfor %}{% endif %} --retain-days {{ backup.retain_days|default(rdiff_backup_server_default_retain_days) }} --destination {{ rdiff_backup_server_dest }}"
 {% endfor %}
 )
 
