@@ -12,13 +12,14 @@ import paramiko
 import rdiff_backup.Main
 from StringIO import StringIO
 
-BACKUP_DIR = '/var/backups'
+BACKUP_BASE = '/var/backups'
 LOG_DIR = '/var/log'
+LOG_PREFIX = 'rdiff-backup'
 DEFAULT_USER = 'root'
 DEFAULT_PORT = 22
 
 
-def get_logger(sysout, host):
+def get_logger(sysout, host, log_prefix):
     logger = logging.getLogger('rdiff-backup')
     logger.setLevel(logging.DEBUG)
     formatter_string = '%(asctime)s ' + host + ' %(levelname)-5s %(message)s'
@@ -30,12 +31,12 @@ def get_logger(sysout, host):
         logger.addHandler(handler)
     else:
         formatter = logging.Formatter(formatter_string, '%Y-%m-%d %H:%M:%S')
-        info_file = os.path.join(LOG_DIR, 'rdiff-backup-info.log')
+        info_file = os.path.join(LOG_DIR, '%s-info.log' % log_prefix)
         info_handler = logging.FileHandler(info_file)
         info_handler.setLevel(logging.INFO)
         info_handler.setFormatter(formatter)
         logger.addHandler(info_handler)
-        error_file = os.path.join(LOG_DIR, 'rdiff-backup-error.log')
+        error_file = os.path.join(LOG_DIR, '%s-error.log' % log_prefix)
         error_handler = logging.FileHandler(error_file)
         error_handler.setLevel(logging.ERROR)
         error_handler.setFormatter(formatter)
@@ -52,12 +53,21 @@ def get_ssh_client(host, port, user):
     return client
 
 
-def remote_command(ssh_client, command):
+def remote_command(logger, ssh_client, command, no_errors=[]):
     logger.info("Executing remote command: '%s'" % command)
     stdin, stdout, stderr = ssh_client.exec_command(command)
     rc = stdout.channel.recv_exit_status()
     stdout_lines = [l.rstrip() for l in stdout.readlines()]
-    stderr_lines = [l.rstrip() for l in stderr.readlines()]
+    stderr_lines = []
+    for line in [l.rstrip() for l in stderr.readlines()]:
+        is_error = True
+        for text in no_errors:
+            if line.startswith(text):
+                is_error = False
+        if is_error:
+            stderr_lines.append(line)
+        else:
+            stdout_lines.append(line)
     for line in stdout_lines:
         logger.info(line)
     for line in stderr_lines:
@@ -93,7 +103,9 @@ def rdiff_backup_command(logger, args):
 
 
 def run(**kwargs):
-    logger = get_logger(kwargs['sysout'], kwargs['host'])
+    kwargs['name'] = kwargs['name'] or kwargs['host']
+    kwargs['backup_dir'] = kwargs['backup_dir'] or os.path.join(kwargs['backup_base'], kwargs['name'])
+    logger = get_logger(kwargs['sysout'], kwargs['name'], kwargs['log_prefix'])
     logger.info('=' * 50)
     logger.info('Backup started.')
     logger.debug(kwargs)
@@ -101,17 +113,17 @@ def run(**kwargs):
     host = kwargs['host']
     port = kwargs['port']
     user = kwargs['user']
-    destination = kwargs['destination']
     pre_execute_commands = kwargs['pre_execute_commands']
+    no_errors = kwargs['no_errors']
     if host == 'localhost' and pre_execute_commands:
         logger.error('pre_execute_commands not supported on localhost')
         return
     try:
-        # Connection check and pre-exececute-commands
+        #Connection check and pre-exececute-commands
         if not host == 'localhost':
             ssh_client = get_ssh_client(host, port, user)
             for command in pre_execute_commands:
-                rc, out, err = remote_command(ssh_client, command)
+                rc, out, err = remote_command(logger, ssh_client, command, no_errors=no_errors)
             ssh_client.close()
         # Backup
         backup(**kwargs)
@@ -131,7 +143,7 @@ def backup(**kwargs):
     user = kwargs['user']
     includes = kwargs['includes']
     excludes = kwargs['excludes']
-    destination = kwargs['destination']
+    backup_dir = kwargs['backup_dir']
     args = [
         '--create-full-path',
         '--print-statistics',
@@ -147,9 +159,9 @@ def backup(**kwargs):
         args.append('/')
     else:
         args.append('--remote-schema')
-        args.append('ssh -C -p %d ' % port + '%s rdiff-backup --server')
+        args.append('ssh -C -p %d ' % port + ' %s rdiff-backup --server')
         args.append('%s@%s::/' % (user, host))
-    args.append(os.path.join(destination, host))
+    args.append(backup_dir)
     return rdiff_backup_command(logger, args)
 
 
@@ -157,10 +169,10 @@ def check_backup(**kwargs):
     logger = kwargs['logger']
     host = kwargs['host']
     includes = kwargs['includes']
-    destination = kwargs['destination']
+    backup_dir = kwargs['backup_dir']
     rc = 0
     for remote_path in includes:
-        path = os.path.join(destination, host, remote_path.lstrip('/'))
+        path = os.path.join(backup_dir, remote_path.lstrip('/'))
         logger.info("Checking path: '%s'" % path)
         if not os.path.exists(path):
             rc = 1
@@ -171,7 +183,7 @@ def check_backup(**kwargs):
 def clean_backup(**kwargs):
     logger = kwargs['logger']
     host = kwargs['host']
-    destination = kwargs['destination']
+    backup_dir = kwargs['backup_dir']
     days = kwargs['retain_days']
     if not days:
         logger.info('retain-days parameter not supplied: not removing old backups.')
@@ -181,12 +193,16 @@ def clean_backup(**kwargs):
     args.append('--force')
     args.append('--remove-older-than')
     args.append('%dD' % days)
-    args.append(os.path.join(destination, host))
+    args.append('--remote-schema')
+    args.append('')
+    args.append(backup_dir)
     return rdiff_backup_command(logger, args)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='rdiff-backup.')
+    parser.add_argument('--name', metavar='NAME', type=str, default='',
+                       help='Name of host to backup')
     parser.add_argument('--host', metavar='HOSTNAME', type=str, required=True,
                        help='Host to backup')
     parser.add_argument('--port', metavar='PORT', type=int, default=DEFAULT_PORT,
@@ -197,9 +213,16 @@ if __name__ == '__main__':
                        required=True, help='Paths to backup')
     parser.add_argument('--excludes', metavar='PATH', type=str, nargs='+',
                        default=[], help='Paths to exclude from backup')
-    parser.add_argument('--destination', metavar='DEST', type=str,
-                       default=BACKUP_DIR, help='Base destination directory')
+    parser.add_argument('--backup-base', metavar='DIR', type=str,
+                       default=BACKUP_BASE, help='Backup base directory')
+    parser.add_argument('--backup-dir', metavar='DIR', type=str, default='',
+                        help='Backup directory (If not provided will be calculated with backup-base and name or host')
+    parser.add_argument('--log-prefix', metavar='PREFIX', type=str,
+                       default=LOG_PREFIX, help='Log file name prefix')
     parser.add_argument('--pre-execute-commands', metavar='COMMAND',
+                       type=str, nargs='+', default=[],
+                       help='Commands to execute on remote host')
+    parser.add_argument('--no-errors', metavar='TEXT',
                        type=str, nargs='+', default=[],
                        help='Commands to execute on remote host')
     parser.add_argument('--retain-days', metavar='DAYS', type=int,
