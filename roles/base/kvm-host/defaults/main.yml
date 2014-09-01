@@ -1,5 +1,21 @@
-# Usage example:
+# Partition resize example:
+# cd /var/lib/libvirt/images
+
+# Create empty destination image:
+# qemu-img create -f qcow2 new.qcow2 10G
+# qemu-img create -f qcow2 -o preallocation=metadata new.qcow2 10G
+
+# Expand partition:
+# virt-resize --expand /dev/sda1 old.qcow2 new.qcow2
+
+
+# Clone vm
+# virt-clone -o old -n new -f /var/lib/libvirt/images/new.qcow2
+
+
+# Create new ubuntu vm:
 # vmbuilder kvm ubuntu -c /etc/vmbuilder/default.cfg --hostname guest0 -d /var/lib/libvirt/images/guest0 --pass changeme --ip 192.168.1.126 --gw 192.168.1.254 --dns 192.168.1.254
+
 
 # Username of initial user
 kvm_host_username: manage
