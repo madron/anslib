@@ -1,3 +1,4 @@
 # {{ ansible_managed }}
 LANG={{ common_default_locale }}.UTF-8
+LC_ALL={{ common_default_locale }}.UTF-8
 LC_MESSAGES=POSIX
