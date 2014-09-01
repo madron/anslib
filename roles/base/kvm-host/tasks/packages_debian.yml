@@ -1,5 +1,13 @@
+- name: debconf libguestfs/update-appliance
+  debconf:
+    name: libguestfs
+    question: 'libguestfs/update-appliance'
+    value: true
+    vtype: 'boolean'
+
+
 - name: required packages
-  apt: 
+  apt:
     pkg: '{{ item }}'
     state: latest
   with_items: kvm_host_packages
@@ -8,7 +16,7 @@
 
 
 - name: download directory
-  file: 
+  file:
     path: /var/lib/ansible/kvm-host
     state: directory
   when: kvm_host_vm_builder_url is defined
@@ -17,7 +25,7 @@
 
 
 - name: download python-vm-builder package
-  get_url: 
+  get_url:
     url: '{{ kvm_host_vm_builder_url }}'
     dest: '/var/lib/ansible/kvm-host/python-vm-builder.deb'
   when: kvm_host_vm_builder_url is defined
