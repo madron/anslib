@@ -1,4 +1,5 @@
 kvm_host_packages:
   - ubuntu-virt
+  - libguestfs-tools
 
 kvm_host_vm_builder_url: 'http://security.ubuntu.com/ubuntu/pool/universe/v/vm-builder/python-vm-builder_0.12.4+bzr477-0ubuntu5_all.deb'
