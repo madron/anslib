@@ -15,6 +15,8 @@
 
 # Create new ubuntu vm:
 # vmbuilder kvm ubuntu -c /etc/vmbuilder/default.cfg --hostname guest0 -d /var/lib/libvirt/images/guest0 --pass changeme --ip 192.168.1.126 --gw 192.168.1.254 --dns 192.168.1.254
+# vmbuilder kvm ubuntu --suite trusty -c /etc/vmbuilder/default.cfg --hostname guest0 -d /var/lib/libvirt/images/guest --rootsize 5120 --swapsize 1024  --cpus 1 --mem 512 --user manage --pass manage  --bridge 2268 --ip 172.22.68.22 --gw 172.22.68.1 --mask 255.255.255.0 --dns 172.22.66.5
+# vmbuilder kvm ubuntu --suite trusty -c /etc/vmbuilder/default.cfg --hostname guest -d /var/lib/libvirt/images/guest --rootsize 5120 --swapsize 1024  --cpus 1 --mem 512 --user manage --pass manage  --bridge 1 --ip 192.168.30.xx --gw 192.168.30.254 --mask 255.255.255.0 --dns 192.168.30.254
 
 
 # Username of initial user
