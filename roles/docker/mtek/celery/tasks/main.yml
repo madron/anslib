@@ -1,0 +1,17 @@
+- name: dockerfile
+  copy:
+    src: docker
+    dest: /var/lib/ansible/mtek-celery
+  register: dockerfile
+  tags:
+    - mtek-celery
+
+
+- name: docker image
+  docker_image:
+    path=/var/lib/ansible/mtek-celery/docker
+    name=mtek/celery
+    state=present
+  when: dockerfile.changed
+  tags:
+    - mtek-celery

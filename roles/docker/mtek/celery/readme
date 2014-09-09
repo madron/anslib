@@ -1,0 +1,26 @@
+# Redis server
+docker run -d --name redis-celery redis
+
+
+# Remove celery data
+docker rm -v celery_data
+
+# Celery data
+docker run --name celery_data -v /data busybox
+
+
+# Util
+docker run -i -t --rm --link redis-celery:redis --volumes-from celery_data mtek/celery bash
+
+# Celery worker
+docker run -i -t --rm --hostname celery-worker-1 --name celery-worker-1 --volumes-from celery_data --link redis-celery:redis mtek/celery bash
+
+export C_FORCE_ROOT="true"; celery worker --autoreload --loglevel=info --broker redis://redis/0 --app tasks
+
+
+# Flower
+docker run -d --name celery-flower --link redis-celery:redis --volumes-from celery_data -p 80:80 mtek/celery celery flower --broker redis://redis/0 --port=80
+
+
+# Shell
+docker run -i -t --rm --link redis-celery:redis --volumes-from celery_data mtek/celery celery  shell --broker redis://redis/0 --app tasks
