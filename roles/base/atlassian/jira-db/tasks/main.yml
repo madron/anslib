@@ -1,0 +1,20 @@
+- name: jira user
+  postgresql_user:
+    user: '{{ atlassian_jira_db_username }}'
+    password: '{{ atlassian_jira_db_password }}'
+  sudo: True
+  sudo_user: postgres
+  tags:
+    - atlassian-jira-db
+
+
+- name: jira database
+  postgresql_db:
+    name: '{{ atlassian_jira_db_name }}'
+    owner: '{{ atlassian_jira_db_username }}'
+    encoding: 'UTF-8'
+    template: 'template0'
+  sudo: True
+  sudo_user: postgres
+  tags:
+    - atlassian-jira-db

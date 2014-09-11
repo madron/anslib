@@ -1,0 +1,26 @@
+- name: download installer
+  get_url:
+    url: 'http://www.atlassian.com/software/jira/downloads/binary/{{ atlassian_jira_installer }}'
+    dest: '/var/lib/ansible/atlassian/jira/{{ atlassian_jira_installer }}'
+    mode: 0755
+  tags:
+    - base-atlassian-jira
+
+
+- name: response.varfile
+  template:
+    src: response.varfile
+    dest: /var/lib/ansible/atlassian/jira/response.varfile
+    mode: 0644
+    owner: root
+    group: root
+  tags:
+    - base-atlassian-jira
+
+
+- name: installation
+  command: >
+    /var/lib/ansible/atlassian/jira/{{ atlassian_jira_installer }} -q -varfile /var/lib/ansible/atlassian/jira/response.varfile
+    creates=/var/atlassian/application-data/jira
+  tags:
+    - base-atlassian-jira
