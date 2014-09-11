@@ -5,20 +5,18 @@ MAINTAINER Massimiliano Ravelli, m.ravelli@mastervoice.it
 
 
 # Required packages
-RUN DEBIAN_FRONTEND=noninteractive apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y python-pip
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y python-dev
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y nano
-RUN pip install celery[librabbitmq,redis]
-RUN pip install flower
+RUN DEBIAN_FRONTEND=noninteractive \
+       apt-get update \
+    && apt-get install -y python-pip \
+    && apt-get install -y python-dev \
+    && pip install celery[librabbitmq,redis] \
+    && pip install flower \
+    && apt-get --purge remove -y python-dev \
+    && apt-get --purge autoremove -y
 
 # Celery user and group
-RUN groupadd -g 999 celery
-RUN useradd -d /data -u 999 -g 999 celery
+RUN groupadd --gid 999 celery
+RUN useradd --home-dir /celery --create-home --uid 999 --gid 999 celery
 
 
-
-VOLUME ["/data"]
-
-
-WORKDIR /data
+WORKDIR /celery
