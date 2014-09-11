@@ -1,1 +1,3 @@
 atlassian_jira_db_name: jira
+atlassian_jira_db_username: jira
+atlassian_jira_db_password: jira
