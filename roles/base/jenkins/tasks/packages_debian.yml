@@ -1,0 +1,31 @@
+- name: java repository
+  apt_repository:
+    repo: 'ppa:nginx/stable'
+    state: present
+  tags:
+    - jenkins
+
+
+- name: jenkins repository key
+  apt_key:
+    url: 'https://jenkins-ci.org/debian/jenkins-ci.org.key'
+    state: present
+  tags:
+    - jenkins
+
+
+- name: jenkins repository
+  apt_repository: >
+    repo='deb http://pkg.jenkins-ci.org/debian binary/'
+    state=present
+  tags:
+    - jenkins
+
+
+- name: required packages
+  apt:
+    name: '{{ item }}'
+    state: latest
+  with_items: jenkins_packages
+  tags:
+    - jenkins
