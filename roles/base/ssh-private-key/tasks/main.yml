@@ -1,10 +1,27 @@
-- name: '{{ ssh_private_key_name }}'
-  copy: >
-    src={{ item }}
-    dest=/root/.ssh
-    mode=0600
-    owner=root
-    group=root
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - ssh-private-key
+
+
+- name: ssh directory
+  file:
+    path: '{{ ssh_private_key_dir }}'
+    state: directory
+    mode: 0700
+    owner: '{{ ssh_private_key_owner }}'
+    group: '{{ ssh_private_key_group }}'
+  tags:
+    - ssh-private-key
+
+
+- name: ssh keys
+  copy:
+    src: '{{ item }}'
+    dest: '{{ ssh_private_key_dir }}'
+    mode: 0600
+    owner: '{{ ssh_private_key_owner }}'
+    group: '{{ ssh_private_key_group }}'
   with_items:
     - '{{ inventory_dir }}/files/ssh_private_key/{{ ssh_private_key_name }}/id_rsa'
     - '{{ inventory_dir }}/files/ssh_private_key/{{ ssh_private_key_name }}/id_rsa.pub'
