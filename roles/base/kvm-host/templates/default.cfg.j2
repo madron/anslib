@@ -20,14 +20,18 @@ suite           = {{ kvm_host_ubuntu_release }}
 flavour         = {{ kvm_host_ubuntu_flavour }}
 components      = {{ kvm_host_ubuntu_components|join(', ') }}
 addpkg          = {{ kvm_host_ubuntu_additional_packages|join(', ') }}
+{% if kvm_host_ssh_key_file %}
 ssh-key         = {{ kvm_host_ssh_key_file }}
+{% endif %}
 
 
 [kvm]
 libvirt = qemu:///system
 arch     = {{ kvm_host_architecture }}
 {% if not kvm_host_openvswitch %}
+{% if kvm_host_bridge %}
 bridge   = {{ kvm_host_bridge }}
+{% endif %}
 {% endif %}
 mem      = {{ kvm_host_ram_mb }}
 cpus     = {{ kvm_host_vcpus }}
