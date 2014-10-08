@@ -9,9 +9,10 @@
 
 - name: docker image
   docker_image:
-    path=/var/lib/ansible/mtek-zabbix-server/docker
-    name=mtek/zabbix_server
-    state=present
+    path: /var/lib/ansible/mtek-zabbix-server/docker
+    name: mtek/zabbix_server
+    tag: '2.4'
+    state: present
   when: dockerfile.changed
   tags:
     - mtek-zabbix-server
