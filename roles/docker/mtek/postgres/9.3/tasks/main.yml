@@ -1,0 +1,20 @@
+- name: dockerfile
+  copy:
+    src: docker
+    dest: /var/lib/ansible/mtek-postgres-9.3
+  register: dockerfile
+  tags:
+    - mtek-postgres
+    - mtek-postgres-9.3
+
+
+- name: docker image
+  docker_image:
+    path: /var/lib/ansible/mtek-postgres-9.3
+    name: mtek/postgres
+    tag: '9.3'
+    state: present
+  when: dockerfile.changed
+  tags:
+    - mtek-postgres
+    - mtek-postgres-9.3
