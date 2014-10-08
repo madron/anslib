@@ -1,0 +1,18 @@
+- name: dockerfile
+  copy:
+    src: docker
+    dest: /var/lib/ansible/mtek-zabbix-base
+  register: dockerfile
+  tags:
+    - mtek-zabbix-base
+
+
+- name: docker image
+  docker_image:
+    path: /var/lib/ansible/mtek-zabbix-base/docker
+    name: mtek/zabbix_base
+    tag: '2.4'
+    state: present
+  when: dockerfile.changed
+  tags:
+    - mtek-zabbix-server

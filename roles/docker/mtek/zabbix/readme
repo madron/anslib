@@ -1,3 +1,5 @@
+docker build -t mtek/zabbix_base:2.4 roles/docker/mtek/zabbix/base/files/docker/
+
 docker build -t mtek/zabbix_server:2.4 roles/docker/mtek/zabbix/server/files/docker/
 
 clear; docker build -t mtek/zabbix_server:2.4 roles/docker/mtek/zabbix/server/files/docker/ && docker run -i -t --rm mtek/zabbix_server:2.4
