@@ -37,6 +37,9 @@ if [[ "$1" = "postgres" ]]; then
     echo "Starting postgres"
     sudo -i -u postgres ${PGBIN}/postgres -D /data -c config_file=/data/postgresql.conf
 
+elif [[ "$1" = "psql" ]]; then
+    sudo -i -u postgres $@
+
 elif [[ "$1" = "syncuser" ]]; then
     psql -h postgres -U postgres -c "CREATE USER syncuser REPLICATION LOGIN CONNECTION LIMIT 1 ENCRYPTED PASSWORD '$2';"
 
