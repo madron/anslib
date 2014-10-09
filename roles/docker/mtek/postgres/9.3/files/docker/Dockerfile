@@ -21,9 +21,8 @@ RUN chmod 755 /docker/entrypoint.sh
 RUN chmod 755 /docker/render.py
 
 
+VOLUME ["/data", "/var/run/postgresql"]
 EXPOSE 5432
-VOLUME ["/data"]
-VOLUME ["/var/run/postgresql"]
 
 
 ENTRYPOINT ["/docker/entrypoint.sh"]
