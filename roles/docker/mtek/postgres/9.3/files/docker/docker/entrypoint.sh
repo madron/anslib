@@ -3,36 +3,39 @@ set -e
 
 export VERSION=9.3
 export PGBIN=/usr/lib/postgresql/${VERSION}/bin
-export PGDATA=/data
 
 
 chown -R postgres.postgres /var/run/postgresql
 chmod 775 /var/run/postgresql
 
 if [[ "$1" = "postgres" ]]; then
-    chown -R postgres "${PGDATA}"
+    chown -R postgres "/data"
 
     # Create cluster if it doesn't exist
-    if [ -z "$(ls -A "${PGDATA}")" ]; then
-        sudo -i -u postgres ${PGBIN}/initdb --pgdata=${PGDATA} --encoding=UTF8
-        rm ${PGDATA}/postgresql.conf
-        rm ${PGDATA}/pg_hba.conf
-        rm ${PGDATA}/pg_ident.conf
-    fi
-    # Config files
-    # pg_hba.conf will be created only if it doesn't exist
-    if [ ! -f "${PGDATA}/pg_hba.conf" ]; then
-        /docker/render.py --template /docker/pg_hba.conf --outfile ${PGDATA}/pg_hba.conf
-    fi
-    # postgresql.conf is always overwritten
-    /docker/render.py --template /docker/postgresql.conf --outfile ${PGDATA}/postgresql.conf
-    # recovery.conf is always overwritten
-    rm -f ${PGDATA}/recovery.conf
-    if [ ! "${MASTER_SERVER}" == "" ]; then
-        /docker/render.py --template /docker/recovery.conf --outfile ${PGDATA}/recovery.conf
+    if [ -z "$(ls -A "/data")" ]; then
+        sudo -i -u postgres ${PGBIN}/initdb --pgdata=/data --encoding=UTF8
+        # Config files
+        rm /data/pg_ident.conf
+        /docker/render.py --template /docker/postgresql.conf --outfile /data/postgresql.conf
+        /docker/render.py --template /docker/pg_hba.conf --outfile /data/pg_hba.conf
+        # Init sql
+        if [ -f "/docker/init.sql" ]; then
+            echo "Loading init.sql"
+            sudo -i -u postgres pg_ctl start -w -D /data --silent -o "-c listen_addresses=''"
+            sudo -i -u postgres psql -f /docker/init.sql
+            sudo -i -u postgres pg_ctl stop -w -D /data --silent
+        fi
     fi
 
-    sudo -i -u postgres ${PGBIN}/postgres -D ${PGDATA} -c config_file=${PGDATA}/postgresql.conf
+    # recovery.conf is always overwritten
+    rm -f /data/recovery.conf
+    if [ ! "${MASTER_SERVER}" == "" ]; then
+        /docker/render.py --template /docker/recovery.conf --outfile /data/recovery.conf
+    fi
+
+    # Start postgres
+    echo "Starting postgres"
+    sudo -i -u postgres ${PGBIN}/postgres -D /data -c config_file=/data/postgresql.conf
 
 elif [[ "$1" = "syncuser" ]]; then
     psql -h postgres -U postgres -c "CREATE USER syncuser REPLICATION LOGIN CONNECTION LIMIT 1 ENCRYPTED PASSWORD '$2';"
