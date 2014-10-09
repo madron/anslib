@@ -9,3 +9,7 @@ docker run -d --name mtr_zabbix_db --volumes-from mtr_zabbix_db_volume -e WAL_KE
 
 # Zabbix
 docker run -d --name mtr_zabbix_db --link mtr_zabbix_db:zabbix_server_db -p 10051:10051 mtek/zabbix_server:2.4
+
+
+# Db psql
+docker run -it --rm --volumes-from mtr_zabbix_db mtek/zabbix_db:2.4 psql zabbix

@@ -3,7 +3,7 @@ MAINTAINER Massimiliano Ravelli, m.ravelli@mastervoice.it
 
 
 # init.sql
-ADD create_db.sql /docker/init.sql
+ADD create_db.sql /docker/sql/init.sql
 RUN DEBIAN_FRONTEND=noninteractive \
        apt-get update \
     && apt-get install -y curl \
@@ -11,10 +11,10 @@ RUN DEBIAN_FRONTEND=noninteractive \
     && cd /build \
     && curl -L http://sourceforge.net/projects/zabbix/files/ZABBIX%20Latest%20Stable/2.4.0/zabbix-2.4.0.tar.gz/download | tar xz \
     && cd /build/zabbix-2.4.0/database/postgresql \
-    && cp schema.sql /docker/ \
-    && cp images.sql /docker/ \
-    && cp data.sql   /docker/ \
-    && cd /docker \
+    && cp schema.sql /docker/sql/ \
+    && cp images.sql /docker/sql/ \
+    && cp data.sql   /docker/sql/ \
+    && cd /docker/sql/ \
     && cat schema.sql >> init.sql \
     && cat images.sql >> init.sql \
     && cat data.sql   >> init.sql \
