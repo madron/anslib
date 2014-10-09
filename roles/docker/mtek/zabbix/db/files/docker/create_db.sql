@@ -1,0 +1,6 @@
+CREATE DATABASE zabbix;
+CREATE USER zabbix WITH ENCRYPTED PASSWORD 'zabbix';
+GRANT ALL PRIVILEGES ON DATABASE zabbix to zabbix;
+
+\c zabbix;
+

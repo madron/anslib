@@ -1,5 +1,12 @@
+docker build -t mtek/zabbix_db:2.4 roles/docker/mtek/zabbix/db/files/docker/
 docker build -t mtek/zabbix_base:2.4 roles/docker/mtek/zabbix/base/files/docker/
 docker build -t mtek/zabbix_server:2.4 roles/docker/mtek/zabbix/server/files/docker/
+
+
+# Database
+docker run --name zabbix_db_volume -v /data busybox
+docker run -d --name zabbix_db --volumes-from zabbix_db_volume -e WAL_KEEP_SEGMENTS=20 mtek/zabbix_db:2.4
+
 
 clear; docker build -t mtek/zabbix_server:2.4 roles/docker/mtek/zabbix/server/files/docker/ && docker run -i -t --rm mtek/zabbix_server:2.4
 
