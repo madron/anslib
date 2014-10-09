@@ -19,4 +19,5 @@ RUN DEBIAN_FRONTEND=noninteractive \
     && cat images.sql >> init.sql \
     && cat data.sql   >> init.sql \
     && rm -rf /build \
-    && apt-get install -y --purge remove curl
+    && apt-get -y --purge remove curl \
+    && apt-get -y --purge autoremove
