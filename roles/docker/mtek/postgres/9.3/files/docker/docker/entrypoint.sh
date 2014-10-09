@@ -16,13 +16,13 @@ if [[ "$1" = "postgres" ]]; then
         sudo -i -u postgres ${PGBIN}/initdb --pgdata=/data --encoding=UTF8
         # Config files
         rm /data/pg_ident.conf
-        /docker/render.py --template /docker/postgresql.conf --outfile /data/postgresql.conf
-        /docker/render.py --template /docker/pg_hba.conf --outfile /data/pg_hba.conf
+        /docker/render.py --template /docker/conf/postgresql.conf --outfile /data/postgresql.conf
+        /docker/render.py --template /docker/conf/pg_hba.conf --outfile /data/pg_hba.conf
         # Init sql
-        if [ -f "/docker/init.sql" ]; then
+        if [ -f "/docker/sql/init.sql" ]; then
             echo "Loading init.sql"
             sudo -i -u postgres pg_ctl start -w -D /data --silent -o "-c listen_addresses=''"
-            sudo -i -u postgres psql -f /docker/init.sql
+            sudo -i -u postgres psql -f /docker/sql/init.sql
             sudo -i -u postgres pg_ctl stop -w -D /data --silent
         fi
     fi
@@ -30,7 +30,7 @@ if [[ "$1" = "postgres" ]]; then
     # recovery.conf is always overwritten
     rm -f /data/recovery.conf
     if [ ! "${MASTER_SERVER}" == "" ]; then
-        /docker/render.py --template /docker/recovery.conf --outfile /data/recovery.conf
+        /docker/render.py --template /docker/conf/recovery.conf --outfile /data/recovery.conf
     fi
 
     # Start postgres
