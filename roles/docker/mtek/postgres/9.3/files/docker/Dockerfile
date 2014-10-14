@@ -9,7 +9,7 @@ RUN groupadd -g 999 postgres && useradd -d /var/lib/postgresql/9.3 -u 999 -g 999
 # Required packages
 RUN DEBIAN_FRONTEND=noninteractive \
        apt-get update \
-    && apt-get install -y postgresql-9.3 postgresql-client sudo python-jinja2 \
+    && apt-get install -y postgresql-9.3 postgresql-client sudo python-jinja2 python-netaddr \
     && rm -rf /etc/postgresql/9.3/main \
     && rm -rf /var/lib/postgresql/9.3/main \
     && ln -s /usr/lib/postgresql/9.3/bin/* /usr/local/bin

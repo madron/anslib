@@ -27,6 +27,9 @@ if [[ "$1" = "postgres" ]]; then
         fi
     fi
 
+    # pg_hba.conf  is always overwritten
+    /docker/render.py --template /docker/conf/pg_hba.conf --outfile /data/pg_hba.conf
+
     # recovery.conf is always overwritten
     rm -f /data/recovery.conf
     if [ ! "${master_server}" == "" ]; then
@@ -37,8 +40,12 @@ if [[ "$1" = "postgres" ]]; then
     echo "Starting postgres"
     sudo -i -u postgres ${PGBIN}/postgres -D /data -c config_file=/data/postgresql.conf
 
+elif [[ "$1" = "pg_hba" ]]; then
+    /docker/render.py --template /docker/conf/pg_hba.conf --outfile /data/pg_hba.conf
+    sudo -i -u postgres psql -c "SELECT pg_reload_conf();" > /dev/null
+
 elif [[ "$1" = "psql" ]]; then
-    sudo -i -u postgres $@
+    exec sudo -i -u postgres "$@"
 
 elif [[ "$1" = "syncuser" ]]; then
     sudo -i -u postgres psql -c "CREATE USER syncuser REPLICATION LOGIN CONNECTION LIMIT 1 ENCRYPTED PASSWORD '$2';"

@@ -9,20 +9,24 @@ docker run --name db_master_volume -v /data busybox
 docker run --name db_slave_volume  -v /data busybox
 
 # Run server
-docker run -i -t --rm --name db_master --volumes-from db_master_volume -e wal_keep_segments=20 mtek/postgres:9.3
-docker run -i -t --rm --name db_slave  --volumes-from db_slave_volume  --link db_master:master -e wal_keep_segments=20 -e master_server=master mtek/postgres:9.3
-docker run -i -t --rm --name db_master  --volumes-from db_master_volume  --link db_slave:master -e wal_keep_segments=20 -e master_server=master mtek/postgres:9.3
+docker run -it --rm --name db_master --volumes-from db_master_volume -e wal_keep_segments=20 -e allowed_networks=172.17.0.0/16,192.168.1.0/24 -e allowed_replication_networks=172.17.0.0/16 mtek/postgres:9.3
+docker run -it --rm --name db_slave  --volumes-from db_slave_volume  --link db_master:master -e wal_keep_segments=20 -e master_server=master mtek/postgres:9.3
+docker run -it --rm --name db_master  --volumes-from db_master_volume  --link db_slave:master -e wal_keep_segments=20 -e master_server=master mtek/postgres:9.3
+
+# Update pg_hba.conf (postgres will be reloaded)
+docker run -it --rm --volumes-from db_master -e allowed_networks=172.17.0.0/16 mtek/postgres:9.3 pg_hba
+docker run -it --rm --volumes-from db_slave  -e allowed_networks=172.17.0.0/16 mtek/postgres:9.3 pg_hba
 
 # Backup to /tmp
-docker run -i -t --rm --volumes-from db_master -v /tmp:/backup mtek/postgres:9.3 backup --overwrite
-docker run -i -t --rm --volumes-from db_slave  -v /tmp:/backup mtek/postgres:9.3 backup --overwrite
+docker run -it --rm --volumes-from db_master -v /tmp:/backup mtek/postgres:9.3 backup --overwrite
+docker run -it --rm --volumes-from db_slave  -v /tmp:/backup mtek/postgres:9.3 backup --overwrite
 
 # restore backup from /tmp
-docker run -i -t --rm --volumes-from db_master -v /tmp:/backup:ro mtek/postgres:9.3 restore
-docker run -i -t --rm --volumes-from db_slave  -v /tmp:/backup:ro mtek/postgres:9.3 restore
+docker run -it --rm --volumes-from db_master -v /tmp:/backup:ro mtek/postgres:9.3 restore
+docker run -it --rm --volumes-from db_slave  -v /tmp:/backup:ro mtek/postgres:9.3 restore
 
 # Create syncuser
-docker run -i -t --rm --volumes-from db_master mtek/postgres:9.3 syncuser syncuser
+docker run -it --rm --volumes-from db_master mtek/postgres:9.3 syncuser syncuser_password
 
 # psql
-docker run -i -t --rm --volumes-from db_master mtek/postgres:9.3 psql
+docker run -it --rm --volumes-from db_master mtek/postgres:9.3 psql
