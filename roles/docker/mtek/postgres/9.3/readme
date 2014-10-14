@@ -9,9 +9,9 @@ docker run --name db_master_volume -v /data busybox
 docker run --name db_slave_volume  -v /data busybox
 
 # Run server
-docker run -i -t --rm --name db_master --volumes-from db_master_volume -e WAL_KEEP_SEGMENTS=20 mtek/postgres:9.3
-docker run -i -t --rm --name db_slave  --volumes-from db_slave_volume  --link db_master:master -e WAL_KEEP_SEGMENTS=20 -e MASTER_SERVER=master mtek/postgres:9.3
-docker run -i -t --rm --name db_master  --volumes-from db_master_volume  --link db_slave:master -e WAL_KEEP_SEGMENTS=20 -e MASTER_SERVER=master mtek/postgres:9.3
+docker run -i -t --rm --name db_master --volumes-from db_master_volume -e wal_keep_segments=20 mtek/postgres:9.3
+docker run -i -t --rm --name db_slave  --volumes-from db_slave_volume  --link db_master:master -e wal_keep_segments=20 -e master_server=master mtek/postgres:9.3
+docker run -i -t --rm --name db_master  --volumes-from db_master_volume  --link db_slave:master -e wal_keep_segments=20 -e master_server=master mtek/postgres:9.3
 
 # Backup to /tmp
 docker run -i -t --rm --volumes-from db_master -v /tmp:/backup mtek/postgres:9.3 backup --overwrite

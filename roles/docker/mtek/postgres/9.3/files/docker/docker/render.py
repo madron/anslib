@@ -1,9 +1,15 @@
 #!/usr/bin/env python
 
 import argparse
+import os
 import sys
 from jinja2 import Template
-from data import data
+
+
+data = dict(
+    wal_keep_segments=os.getenv('wal_keep_segments', 0),
+    master_server = os.getenv('master_server', None),
+)
 
 
 if __name__ == '__main__':

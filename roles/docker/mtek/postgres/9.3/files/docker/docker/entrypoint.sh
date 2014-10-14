@@ -29,7 +29,7 @@ if [[ "$1" = "postgres" ]]; then
 
     # recovery.conf is always overwritten
     rm -f /data/recovery.conf
-    if [ ! "${MASTER_SERVER}" == "" ]; then
+    if [ ! "${master_server}" == "" ]; then
         /docker/render.py --template /docker/conf/recovery.conf --outfile /data/recovery.conf
     fi
 
