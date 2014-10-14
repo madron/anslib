@@ -22,7 +22,7 @@ docker run -i -t --rm --volumes-from db_master -v /tmp:/backup:ro mtek/postgres:
 docker run -i -t --rm --volumes-from db_slave  -v /tmp:/backup:ro mtek/postgres:9.3 restore
 
 # Create syncuser
-docker run -i -t --rm --link db_master:postgres mtek/postgres:9.3 syncuser syncuser
+docker run -i -t --rm --volumes-from db_master mtek/postgres:9.3 syncuser syncuser
 
 # psql
 docker run -i -t --rm --volumes-from db_master mtek/postgres:9.3 psql

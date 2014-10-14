@@ -41,7 +41,7 @@ elif [[ "$1" = "psql" ]]; then
     sudo -i -u postgres $@
 
 elif [[ "$1" = "syncuser" ]]; then
-    psql -h postgres -U postgres -c "CREATE USER syncuser REPLICATION LOGIN CONNECTION LIMIT 1 ENCRYPTED PASSWORD '$2';"
+    sudo -i -u postgres psql -c "CREATE USER syncuser REPLICATION LOGIN CONNECTION LIMIT 1 ENCRYPTED PASSWORD '$2';"
 
 elif [[ "$1" = "backup" ]]; then
     if [[ "$2" = "--overwrite" ]]; then
