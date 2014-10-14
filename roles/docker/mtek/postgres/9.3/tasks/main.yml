@@ -10,7 +10,7 @@
 
 - name: docker image
   docker_image:
-    path: /var/lib/ansible/mtek-postgres-9.3
+    path: /var/lib/ansible/mtek-postgres-9.3/docker
     name: mtek/postgres
     tag: '9.3'
     state: present
