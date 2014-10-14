@@ -1,0 +1,4 @@
+zabbix_prefix: ''
+zabbix_version: 2.4
+
+allowed_networks: ['172.17.0.0/16']

@@ -1,0 +1,26 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - zabbix-db
+
+
+- name: upstart zabbix-server-db-volume
+  template:
+    src: zabbix-server-db-volume.conf
+    dest: '/etc/init/{{ zabbix_prefix }}-zabbix-server-db-volume.conf'
+    mode: 0644
+    owner: root
+    group: root
+  tags:
+    - zabbix-db
+
+
+- name: upstart zabbix-server-db
+  template:
+    src: zabbix-server-db.conf
+    dest: '/etc/init/{{ zabbix_prefix }}-zabbix-server-db.conf'
+    mode: 0644
+    owner: root
+    group: root
+  tags:
+    - zabbix-db
