@@ -10,6 +10,14 @@
     - docker
 
 
+- name: fix ubuntu trusty pip installation
+  command: easy_install -U pip
+    creates=/usr/local/bin/pip
+  when: ansible_lsb.id == 'Ubuntu' and ansible_lsb.codename == 'trusty'
+  tags:
+    - docker
+
+
 - name: docker-py
   pip: >
     name=docker-py
