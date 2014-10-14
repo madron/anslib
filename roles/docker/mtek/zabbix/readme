@@ -6,7 +6,7 @@ docker build -t mtek/zabbix_web:2.4 roles/docker/mtek/zabbix/web/files/docker/
 
 # Database
 docker run --name mtr_zabbix_server_db_volume -v /data busybox
-docker run -d --name mtr_zabbix_server_db --volumes-from mtr_zabbix_server_db_volume -e wal_keep_segments=20 mtek/zabbix_db:2.4
+docker run -d --name mtr_zabbix_server_db --volumes-from mtr_zabbix_server_db_volume -e wal_keep_segments=20 -e allowed_networks=172.17.0.0/16 mtek/zabbix_db:2.4
 
 # Zabbix server
 docker run -d --name mtr_zabbix_server --link mtr_zabbix_server_db:zabbix_server_db -p 10051:10051 mtek/zabbix_server:2.4
