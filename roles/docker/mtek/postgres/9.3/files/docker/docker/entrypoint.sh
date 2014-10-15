@@ -38,7 +38,7 @@ if [[ "$1" = "postgres" ]]; then
 
     # Start postgres
     echo "Starting postgres"
-    exec sudo -i -u postgres ${PGBIN}/postgres -D /data -c config_file=/data/postgresql.conf
+    exec sudo -i -u postgres exec ${PGBIN}/postgres -D /data -c config_file=/data/postgresql.conf
 
 elif [[ "$1" = "pg_hba" ]]; then
     /docker/render.py --template /docker/conf/pg_hba.conf --outfile /data/pg_hba.conf
