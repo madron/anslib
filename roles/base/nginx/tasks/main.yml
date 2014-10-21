@@ -52,6 +52,38 @@
   tags: nginx
 
 
+- name: certificate directory
+  file:
+    path: '{{ nginx_certificates_directory }}'
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  tags: nginx
+
+
+- name: certificate
+  copy:
+    src: '{{ inventory_dir }}/files/nginx_certificates/{{ item }}/certificate'
+    dest: '{{ nginx_certificates_directory }}/{{ item }}.crt'
+    mode: 0644
+    owner: root
+    group: root
+  with_items: nginx_certificates
+  tags: nginx
+
+
+- name: certificate key
+  copy:
+    src: '{{ inventory_dir }}/files/nginx_certificates/{{ item }}/certificate_key'
+    dest: '{{ nginx_certificates_directory }}/{{ item }}.key'
+    mode: 0644
+    owner: root
+    group: root
+  with_items: nginx_certificates
+  tags: nginx
+
+
 - name: proxy pass - sites-available
   template:
     src: proxy_pass.conf.j2

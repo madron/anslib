@@ -8,3 +8,6 @@ nginx_proxy_pass: []
 
 
 nginx_server_names_hash_bucket_size: 32
+
+nginx_certificates_directory: '/etc/nginx/certificates'
+nginx_certificates: []
