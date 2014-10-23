@@ -70,6 +70,7 @@
     owner: root
     group: root
   with_items: nginx_certificates
+  notify: reload nginx
   tags: nginx
 
 
@@ -81,6 +82,7 @@
     owner: root
     group: root
   with_items: nginx_certificates
+  notify: reload nginx
   tags: nginx
 
 

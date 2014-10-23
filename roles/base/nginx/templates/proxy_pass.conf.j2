@@ -1,26 +1,25 @@
 # {{ ansible_managed }}
 
-
 {% if item.https_redirect|default(False) %}
 # Permanent redirect to https
 server {
-    listen          {{ item.http_port|default(80) }};
+    listen          {{ item.http_port }};
     server_name     {{ item.server_name }};
-    return 301      https://$host:{{ item.https_port|default(443) }}$request_uri;
+    return 301      https://$host:{{ item.https_port }}$request_uri;
     access_log      /var/log/nginx/{{ item.server_name }}-access.log;
     error_log       /var/log/nginx/{{ item.server_name }}-error.log;
-}
+}{% else %}
 
-{% else %}
+{% if item.http_port is defined %}
 server {
-    listen          {{ item.http_port|default(80) }};
+    listen          {{ item.http_port }};
     server_name     {{ item.server_name }};
     access_log      /var/log/nginx/{{ item.server_name }}-access.log;
     error_log       /var/log/nginx/{{ item.server_name }}-error.log;
 
     location / {
         # client_max_body_size    1M;
-        proxy_pass              {{ item.dest_protocol|default('http')}}://{{ item.dest_host }}:{{ item.dest_port|default(80) }}{{ item.dest_path|default('') }};
+        proxy_pass              http://{{ item.dest_host }}:{{ item.dest_http_port|default(80) }}{{ item.dest_path|default('') }};
         proxy_redirect          off;
         proxy_set_header        Host              $host;
         proxy_set_header        X-Real-IP         $remote_addr;
@@ -28,28 +27,30 @@ server {
         proxy_set_header        X-Forwarded-Proto $http_x_forwarded_proto;
     }
 }
+{% endif %}{% endif %}
 
-{% endif %}
-
-{#
-    
-# Certificates
-ssl_certificate     certificates/registroelettronico-chain.crt ;
-ssl_certificate_key certificates/registroelettronico.key ;
-
-# Decode ssl request and pass to load balancer in plain html - apache cluster
+{% if item.https_port is defined %}
 server {
-    listen 443;
-    server_name api-scuole.registroelettronico.com banner.registroelettronico.com;
-    ssl on;
-    location / {
-        proxy_pass http://127.0.0.1:8002;
-        proxy_redirect    off;
-        proxy_set_header  Host              $host;
-        proxy_set_header  X-Real-IP         $remote_addr;
-        proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
-        proxy_set_header  X-Forwarded-Proto $http_x_forwarded_proto;
-    }
-}
+    listen          {{ item.https_port }};
+    server_name     {{ item.server_name }};
+    access_log      /var/log/nginx/{{ item.server_name }}-access.log;
+    error_log       /var/log/nginx/{{ item.server_name }}-error.log;
 
-#}
+    ssl_certificate     /etc/nginx/certificates/{{ item.certificate_name }}.crt ;
+    ssl_certificate_key /etc/nginx/certificates/{{ item.certificate_name }}.key ;
+    ssl on;
+
+    location / {
+        # client_max_body_size    1M;
+{% if item.https_redirect|default(False) %}
+        proxy_pass              http://{{ item.dest_host }}:{{ item.dest_http_port|default(80) }}{{ item.dest_path|default('') }};
+{% else %}
+        proxy_pass              https://{{ item.dest_host }}:{{ item.dest_https_port|default(443) }}{{ item.dest_path|default('') }};
+{% endif %}
+        proxy_redirect          off;
+        proxy_set_header        Host              $host;
+        proxy_set_header        X-Real-IP         $remote_addr;
+        proxy_set_header        X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header        X-Forwarded-Proto $http_x_forwarded_proto;
+    }
+}{% endif %}
