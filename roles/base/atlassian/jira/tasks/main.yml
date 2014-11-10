@@ -1,3 +1,14 @@
+- name: download directory
+  file:
+    path: /var/lib/ansible/atlassian/jira/
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - base-atlassian-jira
+
+
 - name: download installer
   get_url:
     url: 'http://www.atlassian.com/software/jira/downloads/binary/{{ atlassian_jira_installer }}'
