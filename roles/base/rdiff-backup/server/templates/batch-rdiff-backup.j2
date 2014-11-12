@@ -72,6 +72,11 @@ def remote_command(logger, ssh_client, command, no_errors=[]):
         logger.info(line)
     for line in stderr_lines:
         logger.error(line)
+    rc_message = 'Return code: %d' % rc
+    if rc == 0:
+        logger.info(rc_message)
+    else:
+        logger.error(rc_message)
     return rc, stdout.read(), stderr.read()
 
 
@@ -162,6 +167,7 @@ def backup(**kwargs):
         args.append('ssh -C -p %d ' % port + ' %s rdiff-backup --server')
         args.append('%s@%s::/' % (user, host))
     args.append(backup_dir)
+    logger.info('File transfer started.')
     return rdiff_backup_command(logger, args)
 
 
