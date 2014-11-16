@@ -2,3 +2,4 @@ network_interfaces_directory: yes
 network_resolvconf_support: yes
 network_packages:
     - bridge-utils
+    - vlan
