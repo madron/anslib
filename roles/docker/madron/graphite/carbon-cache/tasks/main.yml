@@ -1,0 +1,17 @@
+- name: dockerfile
+  copy:
+    src: docker
+    dest: /var/lib/ansible/madron-graphite-carbon-cache
+  register: dockerfile
+  tags:
+    - madron-graphite-carbon-cache
+
+
+- name: docker image
+  docker_image:
+    path: /var/lib/ansible/madron-graphite-carbon-cache/docker
+    name: madron/graphite-carbon-cache
+    state: present
+  when: dockerfile.changed
+  tags:
+    - madron-graphite-carbon-cache

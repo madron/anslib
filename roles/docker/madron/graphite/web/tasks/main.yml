@@ -1,0 +1,17 @@
+- name: dockerfile
+  copy:
+    src: docker
+    dest: /var/lib/ansible/madron-graphite-web
+  register: dockerfile
+  tags:
+    - madron-graphite-web
+
+
+- name: docker image
+  docker_image:
+    path: /var/lib/ansible/madron-graphite-web/docker
+    name: madron/graphite-web
+    state: present
+  when: dockerfile.changed
+  tags:
+    - madron-graphite-web

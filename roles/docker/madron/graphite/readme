@@ -1,0 +1,15 @@
+# Build images
+docker build -t madron/graphite-carbon-cache roles/docker/madron/graphite/carbon-cache/files/docker/
+docker build -t madron/graphite-web roles/docker/madron/graphite/web/files/docker/
+
+# Carbon cache
+docker run -it --rm --name carbon_cache  madron/graphite-carbon-cache
+
+# Graphite web
+docker run -it --rm --name graphite_web --volumes-from carbon_cache --link carbon_cache:carbon -p 80:80 madron/graphite-web
+
+# Carbon client
+docker run -it --rm --link carbon_cache:carbon ubuntu:trusty bash -c "echo 'loc.rnd.diceroll 4 `date +%s`' | nc -q0 carbon 2003"
+
+
+docker build -t madron/graphite-web roles/docker/madron/graphite/web/files/docker/ && docker run -it --rm --name graphite_web --volumes-from carbon_cache --link carbon_cache:carbon -p 80:80 madron/graphite-web
