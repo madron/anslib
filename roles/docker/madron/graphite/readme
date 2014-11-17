@@ -1,12 +1,16 @@
 # Build images
 docker build -t madron/graphite-carbon-cache roles/docker/madron/graphite/carbon-cache/files/docker/
 docker build -t madron/graphite-web roles/docker/madron/graphite/web/files/docker/
+docker build -t madron/graphite-nginx roles/docker/madron/graphite/nginx/files/docker/
 
 # Carbon cache
 docker run -it --rm --name carbon_cache  madron/graphite-carbon-cache
 
 # Graphite web
-docker run -it --rm --name graphite_web --volumes-from carbon_cache --link carbon_cache:carbon -p 80:80 madron/graphite-web
+docker run -it --rm --name graphite_web --volumes-from carbon_cache --link carbon_cache:carbon madron/graphite-web
+
+# Nginx frontend
+docker run -it --rm --name graphite_nginx --link graphite_web:graphite -p 80:80 madron/graphite-nginx
 
 # Carbon client
 docker run -it --rm --link carbon_cache:carbon ubuntu:trusty bash -c "echo 'loc.rnd.diceroll 4 `date +%s`' | nc -q0 carbon 2003"
