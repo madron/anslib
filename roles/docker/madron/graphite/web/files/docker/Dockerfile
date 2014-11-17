@@ -13,7 +13,6 @@ RUN pip install django==1.6.5
 RUN pip install django-tagging
 RUN pip install pytz
 RUN pip install pyparsing
-#RUN pip install pycairo
 
 # Config
 ADD docker /docker/
