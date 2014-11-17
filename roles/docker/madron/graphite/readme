@@ -16,4 +16,4 @@ docker run -it --rm --name graphite_nginx --link graphite_web:graphite -p 80:80 
 docker run -it --rm --link carbon_cache:carbon ubuntu:trusty bash -c "echo 'loc.rnd.diceroll 4 `date +%s`' | nc -q0 carbon 2003"
 
 
-docker build -t madron/graphite-web roles/docker/madron/graphite/web/files/docker/ && docker run -it --rm --name graphite_web --volumes-from carbon_cache --link carbon_cache:carbon -p 80:80 madron/graphite-web
+docker build -t madron/graphite-web roles/docker/madron/graphite/web/files/docker/ && docker run -it --rm --name graphite_web --volumes-from carbon_cache --link carbon_cache:carbon madron/graphite-web
