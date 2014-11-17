@@ -9,6 +9,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y python-cairo
 
 RUN pip install gunicorn
 RUN pip install https://github.com/graphite-project/graphite-web/tarball/master
+RUN pip install whisper
 RUN pip install django==1.6.5
 RUN pip install django-tagging
 RUN pip install pytz
