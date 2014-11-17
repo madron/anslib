@@ -1,0 +1,5 @@
+# Build
+docker build -t mtek/memcached roles/docker/mtek/memcached/files/docker/
+
+# Run
+docker run -it --rm mtek/memcached
