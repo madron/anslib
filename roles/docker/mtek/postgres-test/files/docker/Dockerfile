@@ -1,12 +1,14 @@
-FROM mtek/postgres:precise
+FROM mtek/postgres:9.1
 MAINTAINER Massimiliano Ravelli, m.ravelli@mastervoice.it
 
-# docker build -t mtek/postgres-test:precise roles/docker/mtek/postgres-test/files/docker/
 
-# Scripts
-ADD create-table.sh /
-ADD insert.sh /
-ADD select.sh /
-ADD delete.sh /
+# Packages
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y python-psycopg2
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y rdiff-backup
 
-RUN chmod 755 /*.sh
+
+# Files
+ADD sql /sql/
+ADD docker /docker/
+RUN chmod 755 /docker/*.sh
+RUN chmod 755 /docker/*.py
