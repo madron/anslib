@@ -9,7 +9,7 @@
 
 - name: docker image
   docker_image:
-    path: /var/lib/ansible/mtek-memcached
+    path: /var/lib/ansible/mtek-memcached/docker
     name: mtek/memcached
     state: present
   when: dockerfile.changed
