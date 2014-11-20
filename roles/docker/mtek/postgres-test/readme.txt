@@ -14,7 +14,31 @@ docker run -it --rm --name db_master --volumes-from db_master_data_volume --volu
 
 # Backup
 docker exec -it db_master /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
 
 
 # Load data
-docker run -it --rm --volumes-from db_master mtek/postgres-test sudo -i -u postgres /docker/load_bytea.py
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/data.sh insert
+docker build -t mtek/postgres-test roles/docker/mtek/postgres-test/files/docker/ && docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/data.sh insert
+
+
+# Psql
+docker run -it --rm --volumes-from db_master mtek/postgres-test psql -c "SELECT COUNT(*) FROM bytea;" test
+
+
+### Before every scenario
+docker rm -fv db_master_volume
+docker run --name db_master_volume -v /data -v /backup busybox
+docker run -it --rm --name db_master --volumes-from db_master_volume mtek/postgres-test
+
+### Scenario 1 (bytea)
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/data.sh bytea insert --files 100
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/data.sh bytea delete --id 20
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/data.sh bytea update --id 50
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
