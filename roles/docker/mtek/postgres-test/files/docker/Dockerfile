@@ -8,7 +8,6 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y rdiff-backup
 
 
 # Files
-ADD sql /sql/
 ADD docker /docker/
 RUN chmod 755 /docker/*.sh
 RUN chmod 755 /docker/*.py
