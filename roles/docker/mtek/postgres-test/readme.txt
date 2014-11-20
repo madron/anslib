@@ -18,8 +18,8 @@ docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
 
 
 # Load data
-docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/data.sh insert
-docker build -t mtek/postgres-test roles/docker/mtek/postgres-test/files/docker/ && docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/data.sh insert
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/data.sh lobj insert
+docker build -t mtek/postgres-test roles/docker/mtek/postgres-test/files/docker/ && docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/data.sh lobj insert
 
 
 # Psql
@@ -41,4 +41,20 @@ docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
 docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
 docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/data.sh bytea update --id 50
 docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test psql -c "VACUUM FULL;" test
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+
+### Scenario 2 (lobj)
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/data.sh lobj insert --files 100
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/data.sh lobj delete --id 20
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/data.sh lobj update --id 50
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test psql -c "VACUUM FULL;" test
 docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh

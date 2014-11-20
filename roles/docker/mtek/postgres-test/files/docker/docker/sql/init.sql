@@ -16,3 +16,10 @@ CREATE TABLE bytea (
     insert_time     timestamp   not null default CURRENT_TIMESTAMP,
     data            bytea
 );
+
+
+CREATE TABLE lobj (
+    id              SERIAL,
+    insert_time     timestamp   not null default CURRENT_TIMESTAMP,
+    data            oid
+);

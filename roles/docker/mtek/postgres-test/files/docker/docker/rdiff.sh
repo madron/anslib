@@ -7,3 +7,5 @@ mv /backup/base.tar.gz /backup/source/
 rdiff-backup --print-statistics /backup/source /backup/destination
 echo "Size of postgres data directory in MB: "
 du -sm /data
+echo "Size of backup increments directory in MB: "
+du -sm /backup/destination/rdiff-backup-data/increments
