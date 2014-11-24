@@ -2,8 +2,8 @@
 docker build -t mtek/postgres-test roles/docker/mtek/postgres-test/files/docker/
 
 # remove db data
-docker rm db_master_data_volume
-docker rm db_master_backup_volume
+docker rm -fv db_master_data_volume
+docker rm -fv db_master_backup_volume
 
 # db data
 docker run --name db_master_data_volume -v /data busybox
@@ -14,37 +14,47 @@ docker run -it --rm --name db_master --volumes-from db_master_data_volume --volu
 
 # Backup
 docker exec -it db_master /docker/rdiff.sh
-docker exec -it db_master ls -lh /backup
-docker exec -it db_master bash
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
 
 
-
-# restore backup from ~/tmp
-docker run -it --rm --volumes-from db_master_data_volume -v ~/tmp:/backup busybox cp -a /backup/data /
-
-
-# Create database and schema
-docker run -it --rm --volumes-from db_master mtek/postgres-test psql -f /sql/schema.sql
+# Load data
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/data.sh lobj insert
+docker build -t mtek/postgres-test roles/docker/mtek/postgres-test/files/docker/ && docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/data.sh lobj insert
 
 
-
-docker run -it --rm --volumes-from db_master mtek/postgres-test sudo -i -u postgres /docker/load_bytea.py
-
-
-
-# Insert 10Mb row every second
-docker run -it --rm --name db_master_insert --volumes-from db_master mtek/postgres-test /insert.sh 10000
-docker run -it --rm --name db_master_insert --volumes-from db_master mtek/postgres-test /insert.sh <size_in_kb>
-
-# Keep only last 100 rows
-docker run -it --rm --name db_master_delete --volumes-from db_master mtek/postgres-test /delete.sh 100
+# Psql
+docker run -it --rm --volumes-from db_master mtek/postgres-test psql -c "SELECT COUNT(*) FROM bytea;" test
 
 
-# Check last row every second
-docker run -it --rm --name db_master_select --volumes-from db_master mtek/postgres-test /select.sh
+### Before every scenario
+docker rm -fv db_master_volume
+docker run --name db_master_volume -v /data -v /backup busybox
+docker run -it --rm --name db_master --volumes-from db_master_volume mtek/postgres-test
 
+### Scenario 1 (bytea)
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/data.sh bytea insert --files 100
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/data.sh bytea delete --id 20
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/data.sh bytea update --id 50
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test psql -c "VACUUM FULL;" test
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
 
-# utility container
-docker run -it --rm --hostname db_master_util --volumes-from db_master -v /tmp:/backup --volumes-from db_master mtek/postgres-test bash
-docker run -it --rm --hostname db_backup_util --volumes-from db_backup -v /tmp:/backup --link db_backup:postgres mtek/postgres-test bash
-docker run -it --rm --hostname db_slave_util  --volumes-from db_slave  -v /tmp:/backup --link db_slave:postgres  mtek/postgres-test bash
+### Scenario 2 (lobj)
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/data.sh lobj insert --files 100
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/data.sh lobj delete --id 20
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/data.sh lobj update --id 50
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
+docker run -it --rm --volumes-from db_master mtek/postgres-test psql -c "VACUUM FULL;" test
+docker run -it --rm --volumes-from db_master mtek/postgres-test /docker/rdiff.sh
