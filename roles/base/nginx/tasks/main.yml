@@ -62,9 +62,9 @@
   tags: nginx
 
 
-- name: certificate
+- name: certificate chain
   copy:
-    src: '{{ inventory_dir }}/files/nginx_certificates/{{ item }}/server.crt'
+    src: '{{ inventory_dir }}/files/nginx_certificates/{{ item }}/chain.crt'
     dest: '{{ nginx_certificates_directory }}/{{ item }}.crt'
     mode: 0644
     owner: root
