@@ -64,7 +64,7 @@
 
 - name: certificate
   copy:
-    src: '{{ inventory_dir }}/files/nginx_certificates/{{ item }}/certificate'
+    src: '{{ inventory_dir }}/files/nginx_certificates/{{ item }}/server.crt'
     dest: '{{ nginx_certificates_directory }}/{{ item }}.crt'
     mode: 0644
     owner: root
@@ -76,7 +76,7 @@
 
 - name: certificate key
   copy:
-    src: '{{ inventory_dir }}/files/nginx_certificates/{{ item }}/certificate_key'
+    src: '{{ inventory_dir }}/files/nginx_certificates/{{ item }}/server.key'
     dest: '{{ nginx_certificates_directory }}/{{ item }}.key'
     mode: 0644
     owner: root
