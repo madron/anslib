@@ -22,10 +22,21 @@
     - rdiff-backup-server
 
 
-- name: /etc/cron.daily/rdiff_backup
+- name: /etc/logrotate.d/rdiff-backup
   template:
-    src: cron_daily.j2
-    dest: /etc/cron.daily/rdiff_backup
+    src: logrotate
+    dest: /etc/logrotate.d/rdiff-backup
+    mode: 0644
+    owner: root
+    group: root
+  tags:
+    - rdiff-backup-server
+
+
+- name: /etc/cron.daily/rdiff-backup
+  template:
+    src: cron.daily
+    dest: /etc/cron.daily/rdiff-backup
     mode: 0755
     owner: root
     group: root
