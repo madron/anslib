@@ -1,0 +1,5 @@
+virtualenvwrapper_packages:
+  - python-pip
+  - python-virtualenv
+  - python-dev
+  - build-essential

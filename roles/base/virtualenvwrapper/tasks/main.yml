@@ -1,0 +1,36 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - virtualenvwrapper
+
+
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - virtualenvwrapper
+
+
+- name: pip download cache
+  lineinfile:
+    dest: /etc/bash.bashrc
+    line: 'export PIP_DOWNLOAD_CACHE=~/.pip_download_cache'
+  tags:
+    - virtualenvwrapper
+
+
+- name: virtualenvwrapper package
+  pip:
+    name: virtualenvwrapper
+  tags:
+    - virtualenvwrapper
+
+
+- name: virtualenvwrapper bash.bashrc configuration
+  lineinfile:
+    dest: /etc/bash.bashrc
+    line: '{{ item }}'
+  with_items:
+    - 'export WORKON_HOME=~/environments'
+    - 'source /usr/local/bin/virtualenvwrapper.sh'
+  tags:
+    - virtualenvwrapper
