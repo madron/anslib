@@ -1,0 +1,20 @@
+- name: apt key
+  apt_key:
+    url: http://packages.icinga.org/icinga.key
+    state: present
+
+
+- name: apt repository
+  apt_repository:
+    repo: 'deb http://packages.icinga.org/ubuntu icinga-trusty-snapshots main'
+    state: present
+
+
+- name: required package
+  apt: >
+    name={{ item }}
+    state=latest
+  with_items: icinga2_packages
+  tags:
+    - icinga2
+
