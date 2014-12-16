@@ -1,0 +1,17 @@
+- name: dockerfile
+  copy:
+    src: docker
+    dest: /var/lib/ansible/mtek-icinga2-db
+  register: dockerfile
+  tags:
+    - mtek-icinga2-db
+
+
+- name: docker image
+  docker_image:
+    path: /var/lib/ansible/mtek-icinga2-db/docker
+    name: mtek/icinga2_server
+    state: present
+  when: dockerfile.changed
+  tags:
+    - mtek-icinga2-db

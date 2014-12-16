@@ -1,0 +1,44 @@
+icinga2-ido-pgsql   icinga2-ido-pgsql/app-password-confirm  password
+# PostgreSQL application password for icinga2-ido-pgsql:
+icinga2-ido-pgsql   icinga2-ido-pgsql/pgsql/app-pass    password
+icinga2-ido-pgsql   icinga2-ido-pgsql/pgsql/admin-pass  password
+icinga2-ido-pgsql   icinga2-ido-pgsql/password-confirm  password
+# Perform upgrade on database for icinga2-ido-pgsql with dbconfig-common?
+icinga2-ido-pgsql   icinga2-ido-pgsql/dbconfig-upgrade  boolean true
+# Database type to be used by icinga2-ido-pgsql:
+icinga2-ido-pgsql   icinga2-ido-pgsql/database-type select  pgsql
+icinga2-ido-pgsql   icinga2-ido-pgsql/pgsql/no-empty-passwords  error
+icinga2-ido-pgsql   icinga2-ido-pgsql/install-error select  abort
+# Do you want to purge the database for icinga2-ido-pgsql?
+icinga2-ido-pgsql   icinga2-ido-pgsql/purge boolean false
+icinga2-ido-pgsql   icinga2-ido-pgsql/upgrade-error select  abort
+# Host name of the PostgreSQL database server for icinga2-ido-pgsql:
+icinga2-ido-pgsql   icinga2-ido-pgsql/remote/host   select
+# Deconfigure database for icinga2-ido-pgsql with dbconfig-common?
+icinga2-ido-pgsql   icinga2-ido-pgsql/dbconfig-remove   boolean false
+icinga2-ido-pgsql   icinga2-ido-pgsql/pgsql/manualconf  note
+# Do you want to back up the database for icinga2-ido-pgsql before upgrading?
+icinga2-ido-pgsql   icinga2-ido-pgsql/upgrade-backup    boolean true
+icinga2-ido-pgsql   icinga2-ido-pgsql/pgsql/authmethod-user select  password
+icinga2-ido-pgsql   icinga2-ido-pgsql/pgsql/authmethod-admin    select  ident
+# Host running the PostgreSQL server for icinga2-ido-pgsql:
+icinga2-ido-pgsql   icinga2-ido-pgsql/remote/newhost    string
+icinga2-ido-pgsql   icinga2-ido-pgsql/remote/port   string
+icinga2-ido-pgsql   icinga2-ido-pgsql/pgsql/changeconf  boolean false
+icinga2-ido-pgsql   icinga2-ido-pgsql/enable    boolean false
+icinga2-ido-pgsql   icinga2-ido-pgsql/internal/reconfiguring    boolean false
+# PostgreSQL database name for icinga2-ido-pgsql:
+icinga2-ido-pgsql   icinga2-ido-pgsql/db/dbname string
+# Configure database for icinga2-ido-pgsql with dbconfig-common?
+icinga2-ido-pgsql   icinga2-ido-pgsql/dbconfig-install  boolean false
+# Connection method for PostgreSQL database of icinga2-ido-pgsql:
+icinga2-ido-pgsql   icinga2-ido-pgsql/pgsql/method  select  unix socket
+icinga2-ido-pgsql   icinga2-ido-pgsql/pgsql/admin-user  string  postgres
+icinga2-ido-pgsql   icinga2-ido-pgsql/passwords-do-not-match    error
+icinga2-ido-pgsql   icinga2-ido-pgsql/remove-error  select  abort
+# Reinstall database for icinga2-ido-pgsql?
+icinga2-ido-pgsql   icinga2-ido-pgsql/dbconfig-reinstall    boolean false
+# PostgreSQL username for icinga2-ido-pgsql:
+icinga2-ido-pgsql   icinga2-ido-pgsql/db/app-user   string
+icinga2-ido-pgsql   icinga2-ido-pgsql/missing-db-package-error  select  abort
+icinga2-ido-pgsql   icinga2-ido-pgsql/internal/skip-preseed boolean true
