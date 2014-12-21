@@ -28,9 +28,9 @@
     name=uwsgi
     version={{ uwsgi_version }}
 
-- name: uwsgitop package
-  pip: >
-    name='git+https://github.com/madron/uwsgitop.git@769e875fafbde6e1c22235ff837a6cea2b6e83be#egg=uwsgitop'
+# - name: uwsgitop package
+#   pip: >
+#     name='git+https://github.com/madron/uwsgitop.git@769e875fafbde6e1c22235ff837a6cea2b6e83be#egg=uwsgitop'
 
 - name: directories
   file: >
