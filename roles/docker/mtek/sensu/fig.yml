@@ -1,0 +1,44 @@
+data:
+  image: busybox
+  volumes:
+    - /data
+  hostname: data
+
+redis:
+  image: redis:2.8
+  command: redis-server --appendonly yes
+  volumes_from:
+    - data
+  ports:
+    - "6379:6379"
+  hostname: redis
+
+rabbitmq:
+  build: rabbitmq
+  ports:
+    - "5672:5672"
+    - "15672:15672"
+  hostname: rabbitmq
+
+api:
+  build: api
+  command: /opt/sensu/bin/sensu-api --config /etc/sensu/config.json
+  links:
+    - rabbitmq
+    - redis
+  hostname: api
+
+server:
+  build: server
+  command: /opt/sensu/bin/sensu-server --config /etc/sensu/config.json
+  links:
+    - rabbitmq
+    - redis
+  hostname: server
+
+client:
+  build: client
+  command: /opt/sensu/bin/sensu-client --config /etc/sensu/config.json
+  links:
+    - rabbitmq
+  hostname: client
