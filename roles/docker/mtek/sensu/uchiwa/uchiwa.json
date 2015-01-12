@@ -1,0 +1,21 @@
+{
+    "sensu": [
+        {
+            "name": "Sensu",
+            "host": "api",
+            "ssl": false,
+            "port": 4567,
+            "user": "",
+            "pass": "",
+            "path": "",
+            "timeout": 5
+        }
+    ],
+    "uchiwa": {
+        "user": "",
+        "pass": "",
+        "port": 3000,
+        "stats": 10,
+        "refresh": 5
+    }
+}
