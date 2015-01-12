@@ -18,9 +18,12 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y icinga2 icinga2-ido-pgsql
 
 # Configuration
 RUN mkdir -p /run/icinga2/cmd
-RUN chown nagios.nagios /run/icinga2
+RUN chown -R nagios.nagios /run/icinga2
 ADD docker/ido-pgsql.conf /etc/icinga2/features-available/ido-pgsql.conf
 RUN icinga2 feature enable ido-pgsql
+RUN icinga2 feature enable command
+RUN icinga2 feature enable livestatus
 
+VOLUME ["/run/icinga2/cmd"]
 
 CMD ["/usr/sbin/icinga2", "daemon"]
