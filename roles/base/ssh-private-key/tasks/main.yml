@@ -23,7 +23,7 @@
     owner: '{{ ssh_private_key_owner }}'
     group: '{{ ssh_private_key_group }}'
   with_items:
-    - '{{ inventory_dir }}/files/ssh_private_key/{{ ssh_private_key_name }}/id_rsa'
-    - '{{ inventory_dir }}/files/ssh_private_key/{{ ssh_private_key_name }}/id_rsa.pub'
+    - '{{ inventory_dir }}/../files/ssh_private_key/{{ ssh_private_key_name }}/id_rsa'
+    - '{{ inventory_dir }}/../files/ssh_private_key/{{ ssh_private_key_name }}/id_rsa.pub'
   tags:
     - ssh-private-key
