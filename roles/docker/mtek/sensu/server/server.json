@@ -23,12 +23,36 @@
     }
   },
   "checks": {
-    "test": {
+    // "check-load": {
+    //   "handlers": ["default"],
+    //   "command": "/opt/community/plugins/system/check-load.rb",
+    //   "subscribers": [
+    //     "test-servers"
+    //   ],
+    //   "interval": 30
+    // },
+    "load-metrics": {
+      "type": "metric",
+      "command": "/opt/community/plugins/system/load-metrics.rb",
+      "subscribers": ["test-servers"],
+      "interval": 30
+    },
+    // "check-procs": {
+    //   "command": "/opt/community/plugins/processes/check-procs.rb -C 2",
+    //   "subscribers": ["test-servers"],
+    //   "interval": 30
+    // },
+    "test-ok": {
       "command": "echo -n OK",
       "subscribers": [
         "test-servers"
       ],
-      "interval": 60
+      "interval": 30
+    },
+    "test-ko": {
+      "command": "false",
+      "subscribers": ["client2"],
+      "interval": 30
     }
   }
 }
