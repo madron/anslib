@@ -22,7 +22,6 @@ rabbitmq:
 
 api:
   build: api
-  command: /opt/sensu/bin/sensu-api --config /etc/sensu/config.json
   links:
     - rabbitmq
     - redis
@@ -30,7 +29,6 @@ api:
 
 server:
   build: server
-  command: /opt/sensu/bin/sensu-server --config /etc/sensu/config.json
   links:
     - rabbitmq
     - redis
@@ -38,7 +36,6 @@ server:
 
 uchiwa:
   build: uchiwa
-  command: /opt/uchiwa/bin/uchiwa -c /etc/sensu/uchiwa.json -p /opt/uchiwa/src/public
   links:
     - api
   ports:
@@ -47,7 +44,6 @@ uchiwa:
 
 client:
   build: client
-  command: /opt/sensu/bin/sensu-client --config /etc/sensu/config.json
   links:
     - rabbitmq
   hostname: client

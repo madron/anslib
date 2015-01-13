@@ -2,4 +2,6 @@ FROM sensu_base
 MAINTAINER Massimiliano Ravelli, m.ravelli@mastervoice.it
 
 
-ADD config.json /etc/sensu/config.json
+ADD client.json /etc/sensu/client.json
+
+CMD ["/opt/sensu/bin/sensu-client", "--config", "/etc/sensu/client.json"]
