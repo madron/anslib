@@ -26,16 +26,9 @@
     "test": {
       "command": "echo -n OK",
       "subscribers": [
-        "test"
+        "test-servers"
       ],
       "interval": 60
     }
-  },
-  "client": {
-    "name": "localhost",
-    "address": "127.0.0.1",
-    "subscriptions": [
-      "test"
-    ]
   }
 }

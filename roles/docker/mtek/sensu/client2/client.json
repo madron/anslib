@@ -7,10 +7,11 @@
     "vhost": "/"
   },
   "client": {
-    "name": "localhost",
+    "name": "client2",
     "address": "localhost",
     "subscriptions": [
-      "test"
+      "test-servers",
+      "client2"
     ]
   }
 }

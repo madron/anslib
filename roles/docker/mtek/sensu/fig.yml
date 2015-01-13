@@ -42,8 +42,14 @@ uchiwa:
     - "80:3000"
   hostname: uchiwa
 
-client:
-  build: client
+client1:
+  build: client1
   links:
     - rabbitmq
-  hostname: client
+  hostname: client1
+
+client2:
+  build: client2
+  links:
+    - rabbitmq
+  hostname: client2
