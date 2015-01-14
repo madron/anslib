@@ -1,0 +1,39 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - sensu-client
+
+
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - sensu-client
+
+
+- name: sensu-plugin
+  gem:
+    name: sensu-plugin
+    version: '{{ sensu_client_plugin_version }}'
+    state: present
+  tags:
+    - sensu-client
+
+
+- name: download directory
+  file:
+    path: /var/lib/ansible/sensu/client/
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - sensu-client
+
+
+- name: sensu-community-plugins tarball
+  get_url:
+    url: 'https://github.com/sensu/sensu-community-plugins/archive/{{ sensu_client_community_plugins_version }}.tar.gz'
+    dest: '/var/lib/ansible/sensu/client/community_plugins.{{ sensu_client_community_plugins_version }}.tar.gz'
+    mode: 0644
+  tags:
+    - sensu-client

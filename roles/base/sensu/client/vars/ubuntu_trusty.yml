@@ -1,0 +1,4 @@
+sensu_client_packages:
+  - python-software-properties
+  - ruby-dev
+  - build-essential
