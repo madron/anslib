@@ -14,8 +14,9 @@ redis:
   hostname: redis
 
 rabbitmq:
-  build: rabbitmq
+  build: rabbitmq/files/docker
   ports:
+    - "5671:5671"
     - "5672:5672"
     - "15672:15672"
   hostname: rabbitmq
