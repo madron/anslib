@@ -8,6 +8,6 @@ sensu_client_rabbitmq_user: guest
 sensu_client_rabbitmq_password: guest
 sensu_client_rabbitmq_vhost: /
 
-sensu_client_name: localhost
-sensu_client_address: 127.0.0.1
+sensu_client_name: ''
+sensu_client_address: ''
 sensu_client_subscriptions: []

@@ -7,8 +7,8 @@
     "vhost": "{{ sensu_client_rabbitmq_vhost }}"
   },
   "client": {
-    "name": "{{ sensu_client_name }}",
-    "address": "{{ sensu_client_address }}",
+    "name": "{{ sensu_client_name|default(ansible_fqdn, true) }}",
+    "address": "{{ sensu_client_address|default(ansible_default_ipv4.address, true) }}",
     "subscriptions": [{% for s in sensu_client_subscriptions %}"{{ s }}"{% if not loop.last %}, {% endif %}{% endfor %}]
   }
 }
