@@ -35,5 +35,24 @@
     url: 'https://github.com/sensu/sensu-community-plugins/archive/{{ sensu_client_community_plugins_version }}.tar.gz'
     dest: '/var/lib/ansible/sensu/client/community_plugins.{{ sensu_client_community_plugins_version }}.tar.gz'
     mode: 0644
+  register: community_plugins_tarball
+  tags:
+    - sensu-client
+
+
+- name: sensu-community-plugins
+  command: 'tar --strip-components 2 -x -z -f /var/lib/ansible/sensu/client/community_plugins.{{ sensu_client_community_plugins_version }}.tar.gz sensu-community-plugins-{{ sensu_client_community_plugins_version }}/plugins'
+  args:
+    chdir: /etc/sensu/plugins/
+  when: community_plugins_tarball.changed
+  tags:
+    - sensu-client
+
+
+- name: sensu-community-plugins
+  command: 'tar --strip-components 2 -x -z -f /var/lib/ansible/sensu/client/community_plugins.{{ sensu_client_community_plugins_version }}.tar.gz sensu-community-plugins-{{ sensu_client_community_plugins_version }}/plugins'
+  args:
+    chdir: /etc/sensu/plugins/
+    creates: '/etc/sensu/plugins/system'
   tags:
     - sensu-client

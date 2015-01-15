@@ -1,4 +1,5 @@
 sensu_client_packages:
   - python-software-properties
+  - nagios-plugins
   - ruby-dev
   - build-essential
