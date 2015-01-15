@@ -1,3 +1,13 @@
 sensu_client_version: 0.16.0-1
 sensu_client_plugin_version: 1.1.0
 sensu_client_community_plugins_version: 5fdba6050f59f518073016849e33c097ad696914
+
+sensu_client_rabbitmq_host: localhost
+sensu_client_rabbitmq_port: 5672
+sensu_client_rabbitmq_user: guest
+sensu_client_rabbitmq_password: guest
+sensu_client_rabbitmq_vhost: /
+
+sensu_client_name: localhost
+sensu_client_address: 127.0.0.1
+sensu_client_subscriptions: []

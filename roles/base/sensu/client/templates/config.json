@@ -1,0 +1,14 @@
+{
+  "rabbitmq": {
+    "host": "{{ sensu_client_rabbitmq_host }}",
+    "port": {{ sensu_client_rabbitmq_port }},
+    "user": "{{ sensu_client_rabbitmq_user }}",
+    "password": "{{ sensu_client_rabbitmq_password }}",
+    "vhost": "{{ sensu_client_rabbitmq_vhost }}"
+  },
+  "client": {
+    "name": "{{ sensu_client_name }}",
+    "address": "{{ sensu_client_address }}",
+    "subscriptions": [{% for s in sensu_client_subscriptions %}"{{ s }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+  }
+}

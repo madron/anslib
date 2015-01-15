@@ -56,3 +56,21 @@
     creates: '/etc/sensu/plugins/system'
   tags:
     - sensu-client
+
+
+- name: /etc/sensu/config.json
+  template:
+    src: config.json
+    dest: /etc/sensu/config.json
+    mode: 0644
+    owner: root
+    group: root
+  notify: restart sensu-client
+  tags:
+    - sensu-client
+
+
+- name: sensu-client service
+  service:
+    name: sensu-client
+    state: started
