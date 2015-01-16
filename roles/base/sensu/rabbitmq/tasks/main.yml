@@ -1,0 +1,23 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - sensu-rabbitmq
+
+
+- name: upstart sensu-rabbitmq
+  template:
+    src: sensu-rabbitmq.conf
+    dest: '/etc/init/{{ sensu_prefix }}-sensu-rabbitmq.conf'
+    mode: 0644
+    owner: root
+    group: root
+  tags:
+    - sensu-rabbitmq
+
+
+- name: sensu-rabbitmq service
+  service:
+    name: '{{ sensu_prefix }}-sensu-rabbitmq'
+    state: started
+  tags:
+    - sensu-rabbitmq

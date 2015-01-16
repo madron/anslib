@@ -1,0 +1,4 @@
+- name: 'restart {{ sensu_prefix }}-sensu-rabbitmq'
+  service: >
+    name='{{ sensu_prefix }}-sensu-rabbitmq'
+    state=restarted
