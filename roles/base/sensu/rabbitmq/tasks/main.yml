@@ -4,6 +4,33 @@
     - sensu-rabbitmq
 
 
+- name: ssl sertificates directory
+  file:
+    path: '{{ sensu_rabbitmq_ssl_base_dir }}/{{ sensu_prefix }}'
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - sensu-rabbitmq
+
+
+- name: ssl sertificates
+  template:
+    src: '{{ item }}'
+    dest: '{{ sensu_rabbitmq_ssl_base_dir }}/{{ sensu_prefix }}/'
+    mode: 0644
+    owner: root
+    group: root
+  with_items:
+    - cacert.pem
+    - cert.pem
+    - key.pem
+  notify: 'restart {{ sensu_prefix }}-sensu-rabbitmq'
+  tags:
+    - sensu-rabbitmq
+
+
 - name: upstart sensu-rabbitmq
   template:
     src: sensu-rabbitmq.conf

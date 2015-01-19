@@ -1,6 +1,6 @@
 sensu_prefix: ''
 
-sensu_rabbitmq_ssl_dir: /etc/rabbitmq/ssl
+sensu_rabbitmq_ssl_base_dir: /etc/rabbitmq/ssl
 sensu_rabbitmq_port: 5671
 sensu_rabbitmq_web_port: 15672
 
