@@ -1,10 +1,14 @@
 {
   "rabbitmq": {
+    "ssl": {
+      "cert_chain_file": "/etc/sensu/ssl/cert.pem",
+      "private_key_file": "/etc/sensu/ssl/key.pem"
+    },
     "host": "{{ sensu_client_rabbitmq_host }}",
     "port": {{ sensu_client_rabbitmq_port }},
-    "user": "{{ sensu_client_rabbitmq_user }}",
-    "password": "{{ sensu_client_rabbitmq_password }}",
-    "vhost": "{{ sensu_client_rabbitmq_vhost }}"
+    "user": "sensu",
+    "password": "{{ sensu_rabbitmq_password }}",
+    "vhost": "/sensu"
   },
   "client": {
     "name": "{{ sensu_client_name|default(ansible_fqdn, true) }}",

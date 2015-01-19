@@ -54,6 +54,33 @@
   args:
     chdir: /etc/sensu/plugins/
     creates: '/etc/sensu/plugins/system'
+  notify: restart sensu-client
+  tags:
+    - sensu-client
+
+
+- name: ssl sertificates directory
+  file:
+    path: /etc/sensu/ssl
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - sensu-client
+
+
+- name: ssl sertificates
+  template:
+    src: '{{ item }}'
+    dest: /etc/sensu/ssl/
+    mode: 0644
+    owner: root
+    group: root
+  with_items:
+    - cert.pem
+    - key.pem
+  notify: restart sensu-client
   tags:
     - sensu-client
 
