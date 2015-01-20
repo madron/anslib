@@ -31,6 +31,11 @@ RUN DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y uchiwa
 
 
+ADD docker-entrypoint.sh /
+RUN chmod 0755 /docker-entrypoint.sh
 ADD uchiwa.json /etc/sensu/uchiwa.json
 
-CMD ["/opt/uchiwa/bin/uchiwa", "-c", "/etc/sensu/uchiwa.json", "-p", "/opt/uchiwa/src/public"]
+EXPOSE 3000
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["sensu-web"]

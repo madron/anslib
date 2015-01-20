@@ -2,9 +2,9 @@
     "sensu": [
         {
             "name": "Sensu",
-            "host": "api",
+            "host": "REPLACE_HOST",
             "ssl": false,
-            "port": 4567,
+            "port": REPLACE_PORT,
             "user": "",
             "pass": "",
             "path": "",

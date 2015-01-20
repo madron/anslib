@@ -3,7 +3,7 @@ set -e
 
 if [ "$1" = 'sensu-server' ]; then
     sed -i "s/REPLACEME/$RABBITMQ_PASSWORD/g" /etc/sensu/server.json
-    exec /opt/sensu/bin/sensu-server --config /etc/sensu/server.json
+    exec /opt/sensu/bin/sensu-server --config /etc/sensu/server.json --config_dir /etc/sensu/conf.d
 fi
 
 exec "$@"

@@ -36,6 +36,7 @@ RUN chmod 0755 /docker-entrypoint.sh
 ADD api.json /etc/sensu/api.json
 
 VOLUME ["/etc/sensu/ssl"]
+EXPOSE 4567
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["sensu-api"]

@@ -1,3 +1,6 @@
 sensu_prefix: ''
 
+sensu_rabbitmq_host: localhost
+sensu_api_port: 4567
+
 sensu_web_port: 80
