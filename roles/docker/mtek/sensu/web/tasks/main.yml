@@ -1,0 +1,17 @@
+- name: dockerfile
+  copy:
+    src: docker
+    dest: /var/lib/ansible/mtek-sensu-web
+  register: dockerfile
+  tags:
+    - mtek-sensu-web
+
+
+- name: docker image
+  docker_image:
+    path: /var/lib/ansible/mtek-sensu-web/docker
+    name: mtek/sensu_web
+    state: build
+  when: dockerfile.changed
+  tags:
+    - mtek-sensu-web
