@@ -1,0 +1,3 @@
+sensu_prefix: ''
+
+sensu_redis_port: 6379

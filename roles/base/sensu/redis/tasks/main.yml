@@ -1,0 +1,23 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - sensu-redis
+
+
+- name: sensu-redis upstart
+  template:
+    src: sensu-redis.conf
+    dest: '/etc/init/{{ sensu_prefix }}-sensu-redis.conf'
+    mode: 0644
+    owner: root
+    group: root
+  tags:
+    - sensu-redis
+
+
+- name: sensu-redis service
+  service:
+    name: '{{ sensu_prefix }}-sensu-redis'
+    state: started
+  tags:
+    - sensu-redis
