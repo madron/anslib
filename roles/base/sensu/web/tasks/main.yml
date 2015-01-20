@@ -1,0 +1,23 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - sensu-web
+
+
+- name: sensu-web upstart
+  template:
+    src: sensu-web.conf
+    dest: '/etc/init/{{ sensu_prefix }}-sensu-web.conf'
+    mode: 0644
+    owner: root
+    group: root
+  tags:
+    - sensu-web
+
+
+- name: sensu-web service
+  service:
+    name: '{{ sensu_prefix }}-sensu-web'
+    state: started
+  tags:
+    - sensu-web

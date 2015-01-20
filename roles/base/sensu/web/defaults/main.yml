@@ -1,0 +1,3 @@
+sensu_prefix: ''
+
+sensu_web_port: 80
