@@ -3,5 +3,3 @@ sensu_client_packages:
   - nagios-plugins
   - nagios-plugins-contrib
   - nagios-plugins-extra
-  - ruby-dev
-  - build-essential
