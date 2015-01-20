@@ -4,8 +4,8 @@
       "cert_chain_file": "/etc/sensu/ssl/cert.pem",
       "private_key_file": "/etc/sensu/ssl/key.pem"
     },
-    "host": "{{ sensu_client_rabbitmq_host }}",
-    "port": {{ sensu_client_rabbitmq_port }},
+    "host": "{{ sensu_rabbitmq_host }}",
+    "port": {{ sensu_rabbitmq_port }},
     "user": "sensu",
     "password": "{{ sensu_rabbitmq_password }}",
     "vhost": "/sensu"
@@ -13,6 +13,6 @@
   "client": {
     "name": "{{ sensu_client_name|default(ansible_fqdn, true) }}",
     "address": "{{ sensu_client_address|default(ansible_default_ipv4.address, true) }}",
-    "subscriptions": [{% for s in sensu_client_subscriptions %}"{{ s }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+    "subscriptions": [{% for s in sensu_subscriptions %}"{{ s }}"{% if not loop.last %}, {% endif %}{% endfor %}]
   }
 }
