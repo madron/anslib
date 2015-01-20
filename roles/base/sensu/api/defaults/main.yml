@@ -1,0 +1,6 @@
+sensu_prefix: ''
+
+sensu_rabbitmq_port: 5671
+sensu_rabbitmq_password: changeme
+
+sensu_api_etc_base_dir: /etc/sensu
