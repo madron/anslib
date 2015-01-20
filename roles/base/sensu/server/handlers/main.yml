@@ -1,0 +1,4 @@
+- name: 'restart {{ sensu_prefix }}-sensu-server'
+  service: >
+    name='{{ sensu_prefix }}-sensu-server'
+    state=restarted

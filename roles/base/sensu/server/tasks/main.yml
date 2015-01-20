@@ -1,0 +1,52 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - sensu-server
+
+
+- name: etc directories
+  file:
+    path: '{{ item }}'
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  with_items:
+    - '{{ sensu_server_etc_base_dir }}/{{ sensu_prefix }}/ssl'
+    - '{{ sensu_server_etc_base_dir }}/{{ sensu_prefix }}/conf.d'
+  tags:
+    - sensu-server
+
+
+- name: ssl sertificates
+  template:
+    src: '{{ item }}'
+    dest: '{{ sensu_server_etc_base_dir }}/{{ sensu_prefix }}/ssl/'
+    mode: 0644
+    owner: root
+    group: root
+  with_items:
+    - cert.pem
+    - key.pem
+  notify: 'restart {{ sensu_prefix }}-sensu-server'
+  tags:
+    - sensu-server
+
+
+- name: sensu-server upstart
+  template:
+    src: sensu-server.conf
+    dest: '/etc/init/{{ sensu_prefix }}-sensu-server.conf'
+    mode: 0644
+    owner: root
+    group: root
+  tags:
+    - sensu-server
+
+
+- name: sensu-server service
+  service:
+    name: '{{ sensu_prefix }}-sensu-server'
+    state: started
+  tags:
+    - sensu-server
