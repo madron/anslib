@@ -39,6 +39,7 @@
     mode: 0644
     owner: root
     group: root
+  notify: 'restart {{ sensu_prefix }}-sensu-api'
   tags:
     - sensu-api
 

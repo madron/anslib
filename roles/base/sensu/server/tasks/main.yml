@@ -40,6 +40,7 @@
     mode: 0644
     owner: root
     group: root
+  notify: 'restart {{ sensu_prefix }}-sensu-server'
   tags:
     - sensu-server
 
