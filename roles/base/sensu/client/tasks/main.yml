@@ -48,6 +48,29 @@
     - sensu-client
 
 
+- name: /etc/rc0.d
+  file:
+    src: /etc/init.d/sensu-client
+    dest: '/etc/rc0.d/K01sensu-client'
+    state: link
+    owner: root
+    group: root
+  tags:
+    - sensu-client
+
+
+- name: /etc/rc*.d
+  file:
+    src: /etc/init.d/sensu-client
+    dest: '/etc/rc{{ item }}.d/S99sensu-client'
+    state: link
+    owner: root
+    group: root
+  with_items: [2, 3, 4, 5]
+  tags:
+    - sensu-client
+
+
 - name: sensu-client service
   service:
     name: sensu-client
