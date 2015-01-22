@@ -35,6 +35,9 @@ ADD docker-entrypoint.sh /
 RUN chmod 0755 /docker-entrypoint.sh
 ADD uchiwa.json /etc/sensu/uchiwa.json
 
+ENV SENSU_API_HOST api
+ENV SENSU_API_PORT 4567
+
 EXPOSE 3000
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
