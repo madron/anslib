@@ -7,6 +7,15 @@
     - sensu-client
 
 
+- name: ruby alternative
+  alternatives:
+    name: ruby
+    path: /usr/bin/ruby1.9.1
+  when: ansible_lsb.id == 'Ubuntu' and (ansible_lsb.codename == 'precise')
+  tags:
+    - sensu-client
+
+
 - name: sensu repository key
   apt_key:
     url: http://repos.sensuapp.org/apt/pubkey.gpg
@@ -27,5 +36,57 @@
   apt:
     name: 'sensu={{ sensu_client_version }}'
     state: present
+  tags:
+    - sensu-client
+
+
+- name: /etc/rc0.d
+  file:
+    src: /etc/init.d/sensu-client
+    dest: '/etc/rc0.d/K01sensu-client'
+    state: link
+    owner: root
+    group: root
+  tags:
+    - sensu-client
+
+
+- name: /etc/rc*.d
+  file:
+    src: /etc/init.d/sensu-client
+    dest: '/etc/rc{{ item }}.d/S99sensu-client'
+    state: link
+    owner: root
+    group: root
+  with_items: [2, 3, 4, 5]
+  tags:
+    - sensu-client
+
+
+- name: ruby-sensu-plugin package
+  copy:
+    src: ruby-sensu-plugin_1.1.0-1_all.deb
+    dest: /var/lib/ansible/sensu/client/ruby-sensu-plugin_1.1.0-1_all.deb
+    mode: 0644
+    owner: root
+    group: root
+  register: package
+  when: sensu_plugins
+  tags:
+    - sensu-client
+
+
+- name: ruby-sensu-plugin install
+  command: dpkg -i /var/lib/ansible/sensu/client/ruby-sensu-plugin_1.1.0-1_all.deb
+  when: sensu_plugins and package.changed
+  tags:
+    - sensu-client
+
+
+- name: ruby-sensu-plugin install
+  command: dpkg -i /var/lib/ansible/sensu/client/ruby-sensu-plugin_1.1.0-1_all.deb
+  args:
+    creates: /usr/share/doc/ruby-sensu-plugin
+  when: sensu_plugins
   tags:
     - sensu-client
