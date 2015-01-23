@@ -1,0 +1,61 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - sentry
+
+
+- name: set variables
+  set_fact:
+    prefix: '{{ sentry_prefix }}'
+  tags:
+    - sentry
+
+
+- name: dockerfile
+  copy:
+    src: worker
+    dest: /var/lib/ansible/sentry
+  register: dockerfile
+  tags:
+    - sentry
+
+
+- name: docker image
+  docker_image:
+    path: /var/lib/ansible/sentry/worker
+    name: mtek/sentry-worker
+    state: build
+  when: dockerfile.changed
+  notify: 'restart {{ prefix }}-container'
+  tags:
+    - sentry
+
+
+- name: docker image
+  docker_image:
+    path: /var/lib/ansible/sentry/worker
+    name: mtek/sentry-worker
+    state: present
+  notify: 'restart {{ prefix }}-container'
+  tags:
+    - sentry
+
+
+- name: upstart file
+  template:
+    src: container.conf
+    dest: /etc/init/{{ prefix }}-container.conf
+    mode: 0644
+    owner: root
+    group: root
+  notify: 'restart {{ prefix }}-container'
+  tags:
+    - sentry
+
+
+- name: sentry service
+  service:
+    name: '{{ prefix }}-container'
+    state: started
+  tags:
+    - sentry

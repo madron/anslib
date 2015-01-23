@@ -1,0 +1,14 @@
+sentry_prefix: 'sentry'
+
+sentry_port: 80
+
+
+# sentry.conf
+sentry_email_host: 'localhost'
+sentry_email_host_password: ''
+sentry_email_host_user: ''
+sentry_email_port: 25
+sentry_email_use_tls: false
+
+# The email address to send on behalf of
+sentry_server_email: 'root@localhost'
