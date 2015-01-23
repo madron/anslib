@@ -12,8 +12,8 @@
     owner: root
     group: root
   with_items:
-    - '{{ sensu_server_etc_base_dir }}/{{ sensu_prefix }}/ssl'
-    - '{{ sensu_server_etc_base_dir }}/{{ sensu_prefix }}/conf.d'
+    - '{{ sensu_prefix_dir }}/{{ sensu_prefix }}/ssl'
+    - '{{ sensu_prefix_dir }}/{{ sensu_prefix }}/conf.d'
   tags:
     - sensu-server
 
@@ -21,14 +21,14 @@
 - name: ssl sertificates
   template:
     src: '{{ item }}'
-    dest: '{{ sensu_server_etc_base_dir }}/{{ sensu_prefix }}/ssl/'
+    dest: '{{ sensu_prefix_dir }}/{{ sensu_prefix }}/ssl/'
     mode: 0644
     owner: root
     group: root
   with_items:
     - cert.pem
     - key.pem
-  notify: 'restart {{ sensu_prefix }}-sensu-server'
+  notify: 'restart {{ sensu_prefix }}-server'
   tags:
     - sensu-server
 
@@ -36,18 +36,18 @@
 - name: sensu-server upstart
   template:
     src: sensu-server.conf
-    dest: '/etc/init/{{ sensu_prefix }}-sensu-server.conf'
+    dest: '/etc/init/{{ sensu_prefix }}-server.conf'
     mode: 0644
     owner: root
     group: root
-  notify: 'restart {{ sensu_prefix }}-sensu-server'
+  notify: 'restart {{ sensu_prefix }}-server'
   tags:
     - sensu-server
 
 
 - name: sensu-server service
   service:
-    name: '{{ sensu_prefix }}-sensu-server'
+    name: '{{ sensu_prefix }}-server'
     state: started
   tags:
     - sensu-server

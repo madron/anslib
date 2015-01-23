@@ -7,18 +7,18 @@
 - name: sensu-redis upstart
   template:
     src: sensu-redis.conf
-    dest: '/etc/init/{{ sensu_prefix }}-sensu-redis.conf'
+    dest: '/etc/init/{{ sensu_prefix }}-redis.conf'
     mode: 0644
     owner: root
     group: root
-  notify: 'restart {{ sensu_prefix }}-sensu-redis'
+  notify: 'restart {{ sensu_prefix }}-redis'
   tags:
     - sensu-redis
 
 
 - name: sensu-redis service
   service:
-    name: '{{ sensu_prefix }}-sensu-redis'
+    name: '{{ sensu_prefix }}-redis'
     state: started
   tags:
     - sensu-redis

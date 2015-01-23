@@ -7,18 +7,18 @@
 - name: sensu-web upstart
   template:
     src: sensu-web.conf
-    dest: '/etc/init/{{ sensu_prefix }}-sensu-web.conf'
+    dest: '/etc/init/{{ sensu_prefix }}-web.conf'
     mode: 0644
     owner: root
     group: root
-  notify: 'restart {{ sensu_prefix }}-sensu-web'
+  notify: 'restart {{ sensu_prefix }}-web'
   tags:
     - sensu-web
 
 
 - name: sensu-web service
   service:
-    name: '{{ sensu_prefix }}-sensu-web'
+    name: '{{ sensu_prefix }}-web'
     state: started
   tags:
     - sensu-web

@@ -21,10 +21,18 @@
     - sensu-client
 
 
+- name: set variables
+  set_fact:
+    tarball_file: '/var/lib/ansible/sensu/client/community_plugins.{{ sensu_client_community_plugins_version }}.tar.gz'
+    base_dir: 'sensu-community-plugins-{{ sensu_client_community_plugins_version }}'
+  tags:
+    - sensu-client
+
+
 - name: sensu-community-plugins tarball
   get_url:
     url: 'https://github.com/sensu/sensu-community-plugins/archive/{{ sensu_client_community_plugins_version }}.tar.gz'
-    dest: '/var/lib/ansible/sensu/client/community_plugins.{{ sensu_client_community_plugins_version }}.tar.gz'
+    dest: '{{ tarball_file }}'
     mode: 0644
   register: community_plugins_tarball
   when: sensu_plugins
@@ -33,7 +41,7 @@
 
 
 - name: sensu-community-plugins
-  command: 'tar --strip-components 2 -x -z -f /var/lib/ansible/sensu/client/community_plugins.{{ sensu_client_community_plugins_version }}.tar.gz sensu-community-plugins-{{ sensu_client_community_plugins_version }}/plugins'
+  command: 'tar --strip-components 2 -x -z -f {{ tarball_file }} {{ base_dir }}/plugins'
   args:
     chdir: /etc/sensu/plugins/
   when: sensu_plugins and community_plugins_tarball.changed
@@ -42,7 +50,7 @@
 
 
 - name: sensu-community-plugins
-  command: 'tar --strip-components 2 -x -z -f /var/lib/ansible/sensu/client/community_plugins.{{ sensu_client_community_plugins_version }}.tar.gz sensu-community-plugins-{{ sensu_client_community_plugins_version }}/plugins'
+  command: 'tar --strip-components 2 -x -z -f {{ tarball_file }} {{ base_dir }}/plugins'
   args:
     chdir: /etc/sensu/plugins/
     creates: '/etc/sensu/plugins/system'
@@ -52,7 +60,7 @@
     - sensu-client
 
 
-- name: ssl sertificates directory
+- name: ssl certificates directory
   file:
     path: /etc/sensu/ssl
     state: directory
@@ -63,7 +71,7 @@
     - sensu-client
 
 
-- name: ssl sertificates
+- name: ssl certificates
   template:
     src: '{{ item }}'
     dest: /etc/sensu/ssl/
