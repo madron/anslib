@@ -5,6 +5,9 @@ rabbitmq_management_port: 15672
 rabbitmq_admin_password: admin
 rabbitmq_admin_user_force: false
 
+rabbitmq_vhosts: []
+rabbitmq_users: []
+
 rabbitmq_ssl_cacert: [
 '-----BEGIN CERTIFICATE-----',
 'Drop here certificate',
