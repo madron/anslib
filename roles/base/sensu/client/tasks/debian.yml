@@ -34,7 +34,7 @@
 
 - name: sensu package
   apt:
-    name: 'sensu={{ sensu_client_version }}'
+    name: 'sensu={{ sensu_version }}'
     state: present
   tags:
     - sensu-client
@@ -59,34 +59,5 @@
     owner: root
     group: root
   with_items: [2, 3, 4, 5]
-  tags:
-    - sensu-client
-
-
-- name: ruby-sensu-plugin package
-  copy:
-    src: ruby-sensu-plugin_1.1.0-1_all.deb
-    dest: /var/lib/ansible/sensu/client/ruby-sensu-plugin_1.1.0-1_all.deb
-    mode: 0644
-    owner: root
-    group: root
-  register: package
-  when: sensu_plugins
-  tags:
-    - sensu-client
-
-
-- name: ruby-sensu-plugin install
-  command: dpkg -i /var/lib/ansible/sensu/client/ruby-sensu-plugin_1.1.0-1_all.deb
-  when: sensu_plugins and package.changed
-  tags:
-    - sensu-client
-
-
-- name: ruby-sensu-plugin install
-  command: dpkg -i /var/lib/ansible/sensu/client/ruby-sensu-plugin_1.1.0-1_all.deb
-  args:
-    creates: /usr/share/doc/ruby-sensu-plugin
-  when: sensu_plugins
   tags:
     - sensu-client

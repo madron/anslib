@@ -35,7 +35,7 @@
     dest: '{{ tarball_file }}'
     mode: 0644
   register: community_plugins_tarball
-  when: sensu_plugins
+  when: sensu_plugin
   tags:
     - sensu-client
 
@@ -44,7 +44,7 @@
   command: 'tar --strip-components 2 -x -z -f {{ tarball_file }} {{ base_dir }}/plugins'
   args:
     chdir: /etc/sensu/plugins/
-  when: sensu_plugins and community_plugins_tarball.changed
+  when: sensu_plugin and community_plugins_tarball.changed
   tags:
     - sensu-client
 
@@ -55,7 +55,7 @@
     chdir: /etc/sensu/plugins/
     creates: '/etc/sensu/plugins/system'
   notify: restart sensu-client
-  when: sensu_plugins
+  when: sensu_plugin
   tags:
     - sensu-client
 
