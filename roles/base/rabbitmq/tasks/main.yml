@@ -1,0 +1,89 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - rabbitmq
+
+
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - rabbitmq
+
+
+- name: management plugin
+  rabbitmq_plugin:
+    names: rabbitmq_management
+    state: enabled
+  notify: restart rabbitmq
+  tags:
+    - rabbitmq
+
+
+- name: /etc/rabbitmq/rabbitmq.config
+  template:
+    src: rabbitmq.config
+    dest: /etc/rabbitmq/rabbitmq.config
+    mode: 0644
+    owner: root
+    group: root
+  notify: restart rabbitmq
+  tags:
+    - rabbitmq
+
+
+- name: ssl certificates directory
+  file:
+    path: /etc/rabbitmq/ssl
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - rabbitmq
+
+
+- name: ssl certificates
+  template:
+    src: '{{ item }}'
+    dest: /etc/rabbitmq/ssl/
+    mode: 0644
+    owner: root
+    group: root
+  with_items:
+    - cacert.pem
+    - cert.pem
+    - key.pem
+  notify: restart rabbitmq
+  tags:
+    - rabbitmq
+
+
+- name: rabbitmq service
+  service:
+    name: rabbitmq-server
+    state: started
+  tags:
+    - rabbitmq
+
+
+- name: guest user
+  rabbitmq_user:
+    user: guest
+    state: absent
+  tags:
+    - rabbitmq
+
+
+- name: admin user
+  rabbitmq_user:
+    user: admin
+    force: '{{ rabbitmq_admin_user_force }}'
+    password: '{{ rabbitmq_admin_password }}'
+    vhost: /
+    configure_priv: .*
+    read_priv: .*
+    write_priv: .*
+    tags: administrator
+    state: present
+  tags:
+    - rabbitmq
