@@ -1,0 +1,4 @@
+sensu_plugin_packages:
+  - python-software-properties
+  - ruby1.9.1
+  - libmixlib-cli-ruby1.9.1

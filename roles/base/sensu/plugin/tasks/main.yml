@@ -1,0 +1,21 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - sensu-plugin
+
+
+- name: download directory
+  file:
+    path: /var/lib/ansible/sensu/plugin/
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - sensu-plugin
+
+
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - sensu-plugin
