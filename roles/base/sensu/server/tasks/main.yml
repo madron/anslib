@@ -40,19 +40,19 @@
 
 
 - name: sensu-community-plugins
-  command: 'tar --strip-components 2 -x -z -f {{ tarball_file }} {{ base_dir }}/plugins'
+  command: 'tar --strip-components 1 -x -z -f {{ tarball_file }} {{ base_dir }}/extensions {{ base_dir }}/handlers {{ base_dir }}/mutators'
   args:
-    chdir: /etc/sensu/plugins/
+    chdir: /etc/sensu/
   when: community_plugins_tarball.changed
   tags:
     - sensu-server
 
 
 - name: sensu-community-plugins
-  command: 'tar --strip-components 2 -x -z -f {{ tarball_file }} {{ base_dir }}/plugins'
+  command: 'tar --strip-components 1 -x -z -f {{ tarball_file }} {{ base_dir }}/extensions {{ base_dir }}/handlers {{ base_dir }}/mutators'
   args:
-    chdir: /etc/sensu/plugins/
-    creates: '/etc/sensu/handlerszzz'
+    chdir: /etc/sensu/
+    creates: '/etc/sensu/handlers/notification'
   tags:
     - sensu-server
 
