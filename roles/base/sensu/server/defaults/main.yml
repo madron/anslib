@@ -1,6 +1,25 @@
-sensu_prefix: 'sensu'
-
+sensu_rabbitmq_host: localhost
 sensu_rabbitmq_port: 5671
 sensu_rabbitmq_password: changeme
 
-sensu_prefix_dir: /etc/sensu/prefix
+sensu_redis_host: localhost
+sensu_redis_port: 6379
+
+sensu_api_host: localhost
+sensu_api_port: 4567
+sensu_api_admin_password: changeme
+
+sensu_version: 0.16.0-1
+sensu_community_plugins_version: 5fdba6050f59f518073016849e33c097ad696914
+
+
+rabbitmq_ssl_client_cert: [
+'-----BEGIN CERTIFICATE-----',
+'Drop here certificate',
+'-----END CERTIFICATE-----'
+]
+rabbitmq_ssl_client_key: [
+'-----BEGIN RSA PRIVATE KEY-----',
+'Drop here private key',
+'-----END RSA PRIVATE KEY-----'
+]

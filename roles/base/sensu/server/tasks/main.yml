@@ -4,50 +4,119 @@
     - sensu-server
 
 
-- name: etc directories
+- name: download directory
   file:
-    path: '{{ item }}'
+    path: /var/lib/ansible/sensu/server/
     state: directory
     mode: 0755
     owner: root
     group: root
-  with_items:
-    - '{{ sensu_prefix_dir }}/{{ sensu_prefix }}/ssl'
-    - '{{ sensu_prefix_dir }}/{{ sensu_prefix }}/conf.d'
   tags:
     - sensu-server
 
 
-- name: ssl sertificates
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - sensu-server
+
+
+- name: set variables
+  set_fact:
+    tarball_file: '/var/lib/ansible/sensu/server/community_plugins.{{ sensu_community_plugins_version }}.tar.gz'
+    base_dir: 'sensu-community-plugins-{{ sensu_community_plugins_version }}'
+  tags:
+    - sensu-server
+
+
+- name: sensu-community-plugins tarball
+  get_url:
+    url: 'https://github.com/sensu/sensu-community-plugins/archive/{{ sensu_community_plugins_version }}.tar.gz'
+    dest: '{{ tarball_file }}'
+    mode: 0644
+  register: community_plugins_tarball
+  tags:
+    - sensu-server
+
+
+- name: sensu-community-plugins
+  command: 'tar --strip-components 2 -x -z -f {{ tarball_file }} {{ base_dir }}/plugins'
+  args:
+    chdir: /etc/sensu/plugins/
+  when: community_plugins_tarball.changed
+  tags:
+    - sensu-server
+
+
+- name: sensu-community-plugins
+  command: 'tar --strip-components 2 -x -z -f {{ tarball_file }} {{ base_dir }}/plugins'
+  args:
+    chdir: /etc/sensu/plugins/
+    creates: '/etc/sensu/handlerszzz'
+  tags:
+    - sensu-server
+
+
+- name: ssl certificates directory
+  file:
+    path: /etc/sensu/ssl
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - sensu-server
+
+
+- name: ssl certificates
   template:
     src: '{{ item }}'
-    dest: '{{ sensu_prefix_dir }}/{{ sensu_prefix }}/ssl/'
+    dest: /etc/sensu/ssl/
     mode: 0644
     owner: root
     group: root
   with_items:
     - cert.pem
     - key.pem
-  notify: 'restart {{ sensu_prefix }}-server'
+  notify:
+    - restart sensu-api
+    - restart sensu-server
   tags:
     - sensu-server
 
 
-- name: sensu-server upstart
+- name: /etc/sensu/api.json
   template:
-    src: sensu-server.conf
-    dest: '/etc/init/{{ sensu_prefix }}-server.conf'
+    src: api.json
+    dest: /etc/sensu/api.json
     mode: 0644
     owner: root
     group: root
-  notify: 'restart {{ sensu_prefix }}-server'
+  notify:
+    - restart sensu-api
   tags:
     - sensu-server
 
 
-- name: sensu-server service
+- name: /etc/sensu/server.json
+  template:
+    src: server.json
+    dest: /etc/sensu/server.json
+    mode: 0644
+    owner: root
+    group: root
+  notify:
+    - restart sensu-server
+  tags:
+    - sensu-server
+
+
+- name: sensu services
   service:
-    name: '{{ sensu_prefix }}-server'
+    name: '{{ item }}'
     state: started
+  with_items:
+    - sensu-api
+    - sensu-server
   tags:
     - sensu-server

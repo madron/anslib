@@ -1,0 +1,68 @@
+- name: required package
+  apt:
+    name: '{{ item }}'
+    state: latest
+  with_items: sensu_server_packages
+  tags:
+    - sensu-server
+
+
+- name: sensu repository key
+  apt_key:
+    url: http://repos.sensuapp.org/apt/pubkey.gpg
+    state: present
+  tags:
+    - sensu-server
+
+
+- name: sensu repository
+  apt_repository:
+    repo: 'deb http://repos.sensuapp.org/apt sensu main'
+    state: present
+  tags:
+    - sensu-server
+
+
+- name: sensu package
+  apt:
+    name: 'sensu={{ sensu_version }}'
+    state: present
+  tags:
+    - sensu-server
+
+
+- name: remove init.d scripts
+  file:
+    path: '/etc/init.d/{{ item }}'
+    state: absent
+  with_items:
+    - sensu-api
+    - sensu-server
+  tags:
+    - sensu-server
+
+
+- name: upstart script - /etc/init/sensu-api.conf
+  template:
+    src: sensu-api.conf
+    dest: /etc/init/
+    mode: 0644
+    owner: root
+    group: root
+  notify:
+    - restart sensu-api
+  tags:
+    - sensu-server
+
+
+- name: upstart script - /etc/init/sensu-server.conf
+  template:
+    src: sensu-server.conf
+    dest: /etc/init/
+    mode: 0644
+    owner: root
+    group: root
+  notify:
+    - restart sensu-server
+  tags:
+    - sensu-server
