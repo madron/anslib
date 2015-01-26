@@ -7,6 +7,8 @@ import os.path
 
 CONF_ROOT = os.path.dirname(__file__)
 
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '')
+
 postgres = os.getenv('POSTGRES_PORT_5432_TCP_ADDR')
 mysql = os.getenv('MYSQL_PORT_3306_TCP_ADDR')
 if postgres:

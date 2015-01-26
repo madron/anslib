@@ -1,9 +1,9 @@
-sentry_prefix: 'sentry'
-
 sentry_port: 80
 
 
 # sentry.conf
+sentry_allowed_hosts: '*'
+sentry_url_prefix: 'http://localhost'
 sentry_email_host: 'localhost'
 sentry_email_host_password: ''
 sentry_email_host_user: ''

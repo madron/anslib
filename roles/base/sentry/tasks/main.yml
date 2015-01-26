@@ -4,13 +4,6 @@
     - sentry
 
 
-- name: set variables
-  set_fact:
-    prefix: '{{ sentry_prefix }}'
-  tags:
-    - sentry
-
-
 - name: dockerfile
   copy:
     src: worker
@@ -26,7 +19,7 @@
     name: mtek/sentry-worker
     state: build
   when: dockerfile.changed
-  notify: 'restart {{ prefix }}-container'
+  notify: 'restart sentry-container'
   tags:
     - sentry
 
@@ -36,7 +29,7 @@
     path: /var/lib/ansible/sentry/worker
     name: mtek/sentry-worker
     state: present
-  notify: 'restart {{ prefix }}-container'
+  notify: 'restart sentry-container'
   tags:
     - sentry
 
@@ -44,18 +37,18 @@
 - name: upstart file
   template:
     src: container.conf
-    dest: /etc/init/{{ prefix }}-container.conf
+    dest: /etc/init/sentry-container.conf
     mode: 0644
     owner: root
     group: root
-  notify: 'restart {{ prefix }}-container'
+  notify: 'restart sentry-container'
   tags:
     - sentry
 
 
 - name: sentry service
   service:
-    name: '{{ prefix }}-container'
+    name: 'sentry-container'
     state: started
   tags:
     - sentry

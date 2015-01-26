@@ -1,4 +1,4 @@
-- name: 'restart {{ prefix }}-container'
+- name: 'restart sentry-container'
   service: >
-    name='{{ prefix }}-container'
+    name='sentry-container'
     state=restarted
