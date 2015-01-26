@@ -10,3 +10,15 @@ sensu_client_name: ''
 sensu_client_address: ''
 
 sensu_subscriptions: []
+
+
+rabbitmq_ssl_client_cert: [
+'-----BEGIN CERTIFICATE-----',
+'Drop here certificate',
+'-----END CERTIFICATE-----'
+]
+rabbitmq_ssl_client_key: [
+'-----BEGIN RSA PRIVATE KEY-----',
+'Drop here private key',
+'-----END RSA PRIVATE KEY-----'
+]
