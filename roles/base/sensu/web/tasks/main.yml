@@ -4,21 +4,39 @@
     - sensu-web
 
 
-- name: sensu-web upstart
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - sensu-web
+
+
+- name: log directory
+  file:
+    path: /var/log/uchiwa
+    state: directory
+    mode: 0755
+    owner: uchiwa
+    group: uchiwa
+  tags:
+    - sensu-web
+
+
+- name: /etc/sensu/uchiwa.json
   template:
-    src: sensu-web.conf
-    dest: '/etc/init/{{ sensu_prefix }}-web.conf'
+    src: uchiwa.json
+    dest: /etc/sensu/uchiwa.json
     mode: 0644
     owner: root
     group: root
-  notify: 'restart {{ sensu_prefix }}-web'
+  notify:
+    - restart sensu-web
   tags:
     - sensu-web
 
 
 - name: sensu-web service
   service:
-    name: '{{ sensu_prefix }}-web'
+    name: sensu-web
     state: started
   tags:
     - sensu-web

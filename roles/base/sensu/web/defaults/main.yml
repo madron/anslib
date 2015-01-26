@@ -1,3 +1,4 @@
-sensu_prefix: 'sensu'
+sensu_web_run_as_root: false  # Needed to listen on ports < 1024
+sensu_web_port: 3000
 
-sensu_web_port: 80
+sensu_web_uchiwa_version: 0.4.0-1
