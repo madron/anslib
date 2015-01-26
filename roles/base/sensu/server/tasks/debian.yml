@@ -66,3 +66,38 @@
     - restart sensu-server
   tags:
     - sensu-server
+
+
+- name: remove sensu logrotate
+  file:
+    name: /etc/logrotate.d/sensu
+    state: absent
+  tags:
+    - sensu-server
+
+
+- name: logrotate
+  template:
+    src: 'logrotate-{{ item }}'
+    dest: '/etc/logrotate.d/sensu-{{ item }}'
+    mode: 0644
+    owner: root
+    group: root
+  with_items:
+    - api
+    - server
+  tags:
+    - sensu-server
+
+
+- name: upstart script - /etc/init/sensu-server.conf
+  template:
+    src: sensu-server.conf
+    dest: /etc/init/
+    mode: 0644
+    owner: root
+    group: root
+  notify:
+    - restart sensu-server
+  tags:
+    - sensu-server

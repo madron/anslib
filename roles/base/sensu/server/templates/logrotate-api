@@ -1,0 +1,12 @@
+/var/log/sensu/sensu-api.log {
+    rotate 7
+    daily
+    missingok
+    notifempty
+    sharedscripts
+    copytruncate
+    compress
+    postrotate
+        restart --quiet sensu-api || true
+    endscript
+}
