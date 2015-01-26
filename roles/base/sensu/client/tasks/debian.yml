@@ -40,6 +40,25 @@
     - sensu-client
 
 
+- name: remove sensu logrotate
+  file:
+    name: /etc/logrotate.d/sensu
+    state: absent
+  tags:
+    - sensu-client
+
+
+- name: sensu-client logrotate - /etc/logrotate.d/sensu
+  template:
+    src: logrotate
+    dest: /etc/logrotate.d/sensu-client
+    mode: 0644
+    owner: root
+    group: root
+  tags:
+    - sensu-client
+
+
 - name: /etc/rc0.d
   file:
     src: /etc/init.d/sensu-client
