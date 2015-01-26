@@ -1,8 +1,0 @@
-sensu_prefix: 'sensu'
-
-sensu_rabbitmq_ssl_base_dir: /etc/rabbitmq/ssl
-sensu_rabbitmq_port: 5671
-sensu_rabbitmq_web_port: 15672
-
-sensu_rabbitmq_password: changeme
-sensu_rabbitmq_admin_password: changeme

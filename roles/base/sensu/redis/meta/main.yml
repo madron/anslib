@@ -1,3 +1,0 @@
-dependencies:
-  - { role: base/ntpdate }
-  - { role: base/docker }
