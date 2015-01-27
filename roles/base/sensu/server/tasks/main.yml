@@ -57,13 +57,17 @@
     - sensu-server
 
 
-- name: ssl certificates directory
+- name: etc directories
   file:
     path: /etc/sensu/ssl
     state: directory
     mode: 0755
     owner: root
     group: root
+  with_items:
+    - /etc/sensu/ssl
+    - /etc/sensu/server-conf.d
+    - /etc/sensu/enabled-extensions
   tags:
     - sensu-server
 
