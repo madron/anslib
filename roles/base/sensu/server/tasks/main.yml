@@ -21,6 +21,16 @@
     - sensu-server
 
 
+- name: gem packages
+  gem:
+    name: '{{ item.name }}'
+    version: '{{ item.version }}'
+    state: present
+  with_items: sensu_server_gems
+  tags:
+    - sensu-server
+
+
 - name: set variables
   set_fact:
     tarball_file: '/var/lib/ansible/sensu/server/community_plugins.{{ sensu_community_plugins_version }}.tar.gz'
@@ -130,6 +140,17 @@
     group: root
   notify:
     - restart sensu-server
+  tags:
+    - sensu-server
+
+
+- name: additional handlers
+  file:
+    src: handlers
+    dest: /etc/sensu/
+    mode: 0755
+    owner: root
+    group: root
   tags:
     - sensu-server
 
