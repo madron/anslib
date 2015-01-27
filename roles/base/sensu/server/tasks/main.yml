@@ -29,6 +29,22 @@
     - sensu-server
 
 
+- name: etc directories
+  file:
+    path: '{{ item }}'
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  with_items:
+    - /etc/sensu/ssl
+    - /etc/sensu/server-conf.d
+    - /etc/sensu/available-extensions
+    - /etc/sensu/enabled-extensions
+  tags:
+    - sensu-server
+
+
 - name: sensu-community-plugins tarball
   get_url:
     url: 'https://github.com/sensu/sensu-community-plugins/archive/{{ sensu_community_plugins_version }}.tar.gz'
@@ -40,7 +56,7 @@
 
 
 - name: sensu-community-plugins
-  command: 'tar --strip-components 1 -x -z -f {{ tarball_file }} {{ base_dir }}/extensions {{ base_dir }}/handlers {{ base_dir }}/mutators'
+  command: 'tar --strip-components 1 -x -z -f {{ tarball_file }} {{ base_dir }}/handlers {{ base_dir }}/mutators'
   args:
     chdir: /etc/sensu/
   when: community_plugins_tarball.changed
@@ -49,7 +65,7 @@
 
 
 - name: sensu-community-plugins
-  command: 'tar --strip-components 1 -x -z -f {{ tarball_file }} {{ base_dir }}/extensions {{ base_dir }}/handlers {{ base_dir }}/mutators'
+  command: 'tar --strip-components 1 -x -z -f {{ tarball_file }} {{ base_dir }}/handlers {{ base_dir }}/mutators'
   args:
     chdir: /etc/sensu/
     creates: '/etc/sensu/handlers/notification'
@@ -57,17 +73,20 @@
     - sensu-server
 
 
-- name: etc directories
-  file:
-    path: /etc/sensu/ssl
-    state: directory
-    mode: 0755
-    owner: root
-    group: root
-  with_items:
-    - /etc/sensu/ssl
-    - /etc/sensu/server-conf.d
-    - /etc/sensu/enabled-extensions
+- name: sensu-community-plugins extensions
+  command: 'tar --strip-components 2 -x -z -f {{ tarball_file }} {{ base_dir }}/extensions'
+  args:
+    chdir: /etc/sensu/available-extensions/
+  when: community_plugins_tarball.changed
+  tags:
+    - sensu-server
+
+
+- name: sensu-community-plugins extensions
+  command: 'tar --strip-components 2 -x -z -f {{ tarball_file }} {{ base_dir }}/extensions'
+  args:
+    chdir: /etc/sensu/available-extensions/
+    creates: '/etc/sensu/extensions/checks'
   tags:
     - sensu-server
 
