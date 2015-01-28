@@ -1,0 +1,22 @@
+- name: apt repository proxy
+  template:
+    src: 01proxy
+    dest: /etc/apt/apt.conf.d/01proxy
+    mode: 0644
+    owner: root
+    group: root
+  when: common_repository_proxy_host is defined
+  notify: apt-get update
+  tags:
+    - common-repository
+
+- name: apt sources.list
+  template:
+    src: '{{ ansible_distribution|lower() }}_sources.list'
+    dest: /etc/apt/sources.list
+    mode: 0644
+    owner: root
+    group: root
+  notify: apt-get update
+  tags:
+    - common-repository

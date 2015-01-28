@@ -1,0 +1,6 @@
+# {{ ansible_managed }}
+
+deb http://archive.ubuntu.com/ubuntu  {{ ansible_lsb.codename }}             main universe multiverse
+deb http://archive.ubuntu.com/ubuntu  {{ ansible_lsb.codename }}-security    main universe multiverse
+deb http://archive.ubuntu.com/ubuntu  {{ ansible_lsb.codename }}-updates     main universe multiverse
+deb http://archive.ubuntu.com/ubuntu  {{ ansible_lsb.codename }}-backports   main universe multiverse

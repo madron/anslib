@@ -1,0 +1,1 @@
+Acquire::http::proxy "http://{{ common_repository_proxy_host }}:{{ common_repository_proxy_port }}/";
