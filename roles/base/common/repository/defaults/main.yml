@@ -1,4 +1,5 @@
 common_repository_apt_mirror_code: us
+common_repository_apt_backports: false
 
 # common_repository_proxy_host: ''
 common_repository_proxy_port: 3128

@@ -3,4 +3,6 @@
 deb http://archive.ubuntu.com/ubuntu  {{ ansible_lsb.codename }}             main universe multiverse
 deb http://archive.ubuntu.com/ubuntu  {{ ansible_lsb.codename }}-security    main universe multiverse
 deb http://archive.ubuntu.com/ubuntu  {{ ansible_lsb.codename }}-updates     main universe multiverse
+{% if common_repository_apt_backports %}
 deb http://archive.ubuntu.com/ubuntu  {{ ansible_lsb.codename }}-backports   main universe multiverse
+{% endif %}
