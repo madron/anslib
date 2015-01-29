@@ -17,6 +17,7 @@
     mode: 0644
     owner: root
     group: root
+    backup: yes
   notify: apt-get update
   tags:
     - common-repository
