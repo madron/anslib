@@ -1,9 +1,12 @@
 # {{ ansible_managed }}
 
 {% if ansible_lsb.codename in ('wheezy') %}
-deb http://ftp.{{ common_apt_mirror_code }}.debian.org/debian  {{ ansible_lsb.codename }}          main contrib
-deb http://ftp.debian.org/debian/    {{ ansible_lsb.codename }}-updates  main contrib
-deb http://security.debian.org/      {{ ansible_lsb.codename }}/updates  main contrib
+deb http://http.debian.net/debian/   {{ ansible_lsb.codename }}           main contrib
+deb http://http.debian.net/debian/   {{ ansible_lsb.codename }}-updates   main contrib
+deb http://security.debian.org/      {{ ansible_lsb.codename }}/updates   main contrib
+{% if common_repository_apt_backports %}
+deb http://http.debian.net/debian/   {{ ansible_lsb.codename }}-backports main contrib
+{% endif %}
 {% endif %}
 {% if ansible_lsb.codename in ('squeeze', 'lenny', 'etch') %}
 deb http://archive.debian.org/debian/ {{ ansible_lsb.codename }} main contrib
