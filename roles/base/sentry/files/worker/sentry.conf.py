@@ -9,8 +9,8 @@ CONF_ROOT = os.path.dirname(__file__)
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '')
 
-postgres = os.getenv('POSTGRES_PORT_5432_TCP_ADDR')
-mysql = os.getenv('MYSQL_PORT_3306_TCP_ADDR')
+postgres = os.getenv('POSTGRES_NAME')
+mysql = os.getenv('MYSQL_NAME')
 if postgres:
     DATABASES = {
         'default': {
@@ -18,7 +18,7 @@ if postgres:
             'NAME': os.getenv('SENTRY_DB_NAME') or 'postgres',
             'USER': os.getenv('SENTRY_DB_USER') or 'postgres',
             'PASSWORD': os.getenv('SENTRY_DB_PASSWORD') or '',
-            'HOST': postgres,
+            'HOST': 'postgres',
             'PORT': '',
 
             'OPTIONS': {
@@ -121,13 +121,13 @@ else:
 #     }
 # }
 
-redis = os.getenv('REDIS_PORT_6379_TCP_ADDR')
+redis = os.getenv('REDIS_NAME')
 if redis:
     SENTRY_BUFFER = 'sentry.buffer.redis.RedisBuffer'
     SENTRY_REDIS_OPTIONS = {
         'hosts': {
             0: {
-                'host': redis,
+                'host': 'redis',
                 'port': 6379,
             },
         },
