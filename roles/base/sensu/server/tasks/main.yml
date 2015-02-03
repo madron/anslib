@@ -96,7 +96,7 @@
   command: 'tar --strip-components 2 -x -z -f {{ tarball_file }} {{ base_dir }}/extensions'
   args:
     chdir: /etc/sensu/available-extensions/
-    creates: '/etc/sensu/extensions/checks'
+    creates: /etc/sensu/available-extensions/checks/
   tags:
     - sensu-server
 
