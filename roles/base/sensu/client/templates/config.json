@@ -13,6 +13,6 @@
   "client": {
     "name": "{{ sensu_client_name|default(ansible_fqdn, true) }}",
     "address": "{{ sensu_client_address|default(ansible_default_ipv4.address, true) }}",
-    "subscriptions": ["os-{{ ansible_lsb.id|lower() }}", "os-{{ ansible_lsb.id|lower() }}-{{ ansible_lsb.codename }}"{% for s in sensu_subscriptions %}, "{{ s }}"{% endfor %}]
+    "subscriptions": ["os-{{ ansible_lsb.id|lower() }}", "os-{{ ansible_lsb.id|lower() }}-{{ ansible_lsb.codename }}", "host-{{ sensu_client_name|default(ansible_fqdn, true) }}"{% for s in sensu_subscriptions %}, "{{ s }}"{% endfor %}]
   }
 }
