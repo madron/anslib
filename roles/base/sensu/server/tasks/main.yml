@@ -145,7 +145,7 @@
 
 
 - name: additional handlers
-  file:
+  copy:
     src: handlers
     dest: /etc/sensu/
     mode: 0755
