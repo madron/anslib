@@ -1,6 +1,7 @@
 rdiff_backup_server_packages:
   - rdiff-backup
   - rdiff-backup-fs
+  - python-paramiko
   - python-pip
   - parallel
 
