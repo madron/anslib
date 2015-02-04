@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# {{ ansible_managed }}
+
+docker exec sentry-worker sentry cleanup --days=30  2>&1 | /usr/bin/logger -t sentry

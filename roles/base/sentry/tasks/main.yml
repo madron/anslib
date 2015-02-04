@@ -46,6 +46,17 @@
     - sentry
 
 
+- name: cron.daily sentry-cleanup
+  template:
+    src: sentry-cleanup
+    dest: /etc/cron.daily/sentry-cleanup
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - sentry
+
+
 - name: sentry service
   service:
     name: 'sentry-container'
