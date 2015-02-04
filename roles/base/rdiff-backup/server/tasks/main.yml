@@ -11,6 +11,15 @@
     - rdiff-backup-server
 
 
+- name: pip packages
+  pip:
+    name: '{{ item.name }}'
+    version: '{{ item.version }}'
+  with_items: rdiff_backup_server_pip_packages
+  tags:
+    - rdiff-backup-server
+
+
 - name: /usr/local/sbin/batch-rdiff-backup
   template:
     src: batch-rdiff-backup.j2

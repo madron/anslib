@@ -1,5 +1,9 @@
 rdiff_backup_server_packages:
   - rdiff-backup
   - rdiff-backup-fs
-  - python-paramiko
+  - python-pip
   - parallel
+
+rdiff_backup_server_pip_packages:
+  - { name: ecdsa, version: 0.11 }
+  - { name: paramiko, version: 1.15.2 }
