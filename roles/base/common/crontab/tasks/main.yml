@@ -1,0 +1,16 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - common-crontab
+
+
+- name: /etc/crontab
+  template:
+    src: crontab
+    dest: /etc/crontab
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  tags:
+    - common-crontab
