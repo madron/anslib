@@ -7,11 +7,20 @@
     - mtek-sensu-server
 
 
-- name: docker image
+- name: docker image build
   docker_image:
     path: /var/lib/ansible/mtek-sensu-server/docker
-    name: mtek/sensu_server
+    name: mtek/sensu-server
     state: build
   when: dockerfile.changed
+  tags:
+    - mtek-sensu-server
+
+
+- name: docker image present
+  docker_image:
+    path: /var/lib/ansible/mtek-sensu-server/docker
+    name: mtek/sensu-server
+    state: present
   tags:
     - mtek-sensu-server

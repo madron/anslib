@@ -22,10 +22,5 @@ RUN DEBIAN_FRONTEND=noninteractive \
     && wget -q http://repos.sensuapp.org/apt/pubkey.gpg -O- | sudo apt-key add - \
     && echo "deb     http://repos.sensuapp.org/apt sensu main" > /etc/apt/sources.list.d/sensu.list \
     && apt-get -y --purge remove wget \
-    && apt-get -y --purge autoremove
-
-
-# Required packages
-RUN DEBIAN_FRONTEND=noninteractive \
-       apt-get update \
-    && apt-get install -y sensu
+    && apt-get -y --purge autoremove \
+    && apt-get update
