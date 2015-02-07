@@ -1,0 +1,28 @@
+- name: dockerfile
+  copy:
+    src: docker
+    dest: /var/lib/ansible/mtek-rabbitmq
+  register: dockerfile
+  tags:
+    - mtek-rabbitmq
+
+
+- name: docker image build
+  docker_image:
+    path: /var/lib/ansible/mtek-rabbitmq/docker
+    name: mtek/rabbitmq
+    tag: 3.2.4
+    state: build
+  when: dockerfile.changed
+  tags:
+    - mtek-rabbitmq
+
+
+- name: docker image present
+  docker_image:
+    path: /var/lib/ansible/mtek-rabbitmq/docker
+    name: mtek/rabbitmq
+    tag: 3.2.4
+    state: present
+  tags:
+    - mtek-rabbitmq
