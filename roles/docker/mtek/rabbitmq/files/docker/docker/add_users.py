@@ -32,7 +32,7 @@ def main():
             check_output(["rabbitmqctl", "add_user", user['name'], user['password']])
             print('user "%s" added.' % user['name'])
             users = get_user_list()
-        wanted_permission = user['permission']
+        wanted_permission = user.get('permission', dict())
         current_permission = None
         current_tags = None
         for u in users:
