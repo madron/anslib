@@ -4,36 +4,9 @@
     - rabbitmq
 
 
-- include: debian.yml
-  when: ansible_os_family == 'Debian'
-  tags:
-    - rabbitmq
-
-
-- name: management plugin
-  rabbitmq_plugin:
-    names: rabbitmq_management
-    state: enabled
-  notify: restart rabbitmq
-  tags:
-    - rabbitmq
-
-
-- name: /etc/rabbitmq/rabbitmq.config
-  template:
-    src: rabbitmq.config
-    dest: /etc/rabbitmq/rabbitmq.config
-    mode: 0644
-    owner: root
-    group: root
-  notify: restart rabbitmq
-  tags:
-    - rabbitmq
-
-
 - name: ssl certificates directory
   file:
-    path: /etc/rabbitmq/ssl
+    path: /etc/rabbitmq/prefix/{{ rabbitmq_prefix }}/ssl
     state: directory
     mode: 0755
     owner: root
@@ -45,7 +18,7 @@
 - name: ssl certificates
   template:
     src: '{{ item }}'
-    dest: /etc/rabbitmq/ssl/
+    dest: '/etc/rabbitmq/prefix/{{ rabbitmq_prefix }}/ssl'
     mode: 0644
     owner: root
     group: root
@@ -53,60 +26,64 @@
     - cacert.pem
     - cert.pem
     - key.pem
-  notify: restart rabbitmq
+  notify: 'restart {{ rabbitmq_prefix }}'
+  tags:
+    - rabbitmq
+
+
+- name: upstart script
+  template:
+    src: upstart.conf
+    dest: '/etc/init/{{ rabbitmq_prefix }}.conf'
+    mode: 0644
+    owner: root
+    group: root
+  notify: 'restart {{ rabbitmq_prefix }}'
   tags:
     - rabbitmq
 
 
 - name: rabbitmq service
   service:
-    name: rabbitmq-server
+    name: '{{ rabbitmq_prefix }}'
     state: started
   tags:
     - rabbitmq
 
 
-- name: guest user
-  rabbitmq_user:
-    user: guest
-    state: absent
-  tags:
-    - rabbitmq
+# - name: admin user
+#   rabbitmq_user:
+#     user: admin
+#     force: '{{ rabbitmq_admin_user_force }}'
+#     password: '{{ rabbitmq_admin_password }}'
+#     vhost: /
+#     configure_priv: .*
+#     read_priv: .*
+#     write_priv: .*
+#     tags: administrator
+#     state: present
+#   tags:
+#     - rabbitmq
 
 
-- name: admin user
-  rabbitmq_user:
-    user: admin
-    force: '{{ rabbitmq_admin_user_force }}'
-    password: '{{ rabbitmq_admin_password }}'
-    vhost: /
-    configure_priv: .*
-    read_priv: .*
-    write_priv: .*
-    tags: administrator
-    state: present
-  tags:
-    - rabbitmq
+# - name: vhosts
+#   rabbitmq_vhost:
+#     name: '{{ item.name }}'
+#     state: present
+#   with_items: rabbitmq_vhosts
+#   tags:
+#     - rabbitmq
 
 
-- name: vhosts
-  rabbitmq_vhost:
-    name: '{{ item.name }}'
-    state: present
-  with_items: rabbitmq_vhosts
-  tags:
-    - rabbitmq
-
-
-- name: users
-  rabbitmq_user:
-    user: '{{ item.username }}'
-    password: '{{ item.password }}'
-    vhost: '{{ item.vhost }}'
-    configure_priv: '{{ item.configure_priv }}'
-    read_priv: '{{ item.read_priv }}'
-    write_priv: '{{ item.write_priv }}'
-    state: present
-  with_items: rabbitmq_users
-  tags:
-    - rabbitmq
+# - name: users
+#   rabbitmq_user:
+#     user: '{{ item.username }}'
+#     password: '{{ item.password }}'
+#     vhost: '{{ item.vhost }}'
+#     configure_priv: '{{ item.configure_priv }}'
+#     read_priv: '{{ item.read_priv }}'
+#     write_priv: '{{ item.write_priv }}'
+#     state: present
+#   with_items: rabbitmq_users
+#   tags:
+#     - rabbitmq

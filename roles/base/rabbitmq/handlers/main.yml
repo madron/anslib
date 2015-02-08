@@ -1,4 +1,4 @@
-- name: restart rabbitmq
+- name: 'restart {{ rabbitmq_prefix }}'
   service: >
-    name=rabbitmq-server
+    name='{{ rabbitmq_prefix }}'
     state=restarted

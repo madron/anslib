@@ -1,10 +1,11 @@
-rabbitmq_port: 5672
-rabbitmq_ssl_port: 5671
-rabbitmq_management_port: 15672
+rabbitmq_prefix: rabbitmq
+# rabbitmq_port: 5672
+# rabbitmq_ssl_port: 5671
+# rabbitmq_management_port: 15672
 
-rabbitmq_admin_password: admin
-rabbitmq_admin_user_force: false
-
+rabbitmq_default_vhost: /
+rabbitmq_default_user: admin
+rabbitmq_default_pass: admin
 rabbitmq_vhosts: []
 rabbitmq_users: []
 
