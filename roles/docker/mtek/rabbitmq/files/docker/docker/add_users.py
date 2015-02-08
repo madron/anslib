@@ -17,7 +17,7 @@ def get_user_list():
         permissions = [x.decode("utf-8") for x in permissions]
         permissions = [x for x in permissions if not x.startswith('Listing permissions for user')]
         permissions = [x.split('\t') for x in permissions]
-        permissions = [(x[0], dict(conf=x[1], write=x[2], read=x[3])) for x in permissions]
+        permissions = [(x[0], dict(configure=x[1], write=x[2], read=x[3])) for x in permissions]
         user['permission'] = dict(permissions)
     return user_list
 
@@ -49,11 +49,11 @@ def main():
             if vhost in current_permission.keys():
                 if not permission == current_permission[vhost]:
                     check_output(['rabbitmqctl', 'set_permissions', '-p', vhost, user['name'],
-                        permission['conf'], permission['write'], permission['read']])
+                        permission['configure'], permission['write'], permission['read']])
                     print('User "%s": updated vhost "%s" permissions' % (user['name'], vhost))
             else:
                 check_output(['rabbitmqctl', 'set_permissions', '-p', vhost, user['name'],
-                    permission['conf'], permission['write'], permission['read']])
+                    permission['configure'], permission['write'], permission['read']])
                 print('User "%s": added vhost "%s" permissions' % (user['name'], vhost))
         # Tags
         tags = user.get('tags', [])
