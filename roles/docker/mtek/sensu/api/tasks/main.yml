@@ -7,11 +7,20 @@
     - mtek-sensu-api
 
 
-- name: docker image
+- name: docker image build
   docker_image:
     path: /var/lib/ansible/mtek-sensu-api/docker
-    name: mtek/sensu_api
+    name: mtek/sensu-api
     state: build
   when: dockerfile.changed
+  tags:
+    - mtek-sensu-api
+
+
+- name: docker image present
+  docker_image:
+    path: /var/lib/ansible/mtek-sensu-api/docker
+    name: mtek/sensu-api
+    state: present
   tags:
     - mtek-sensu-api

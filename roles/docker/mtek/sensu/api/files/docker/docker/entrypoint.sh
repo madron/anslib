@@ -2,7 +2,7 @@
 set -e
 
 if [ "$1" = 'sensu-api' ]; then
-    sed -i "s/REPLACEME/$RABBITMQ_PASSWORD/g" /etc/sensu/api.json
+    /docker/render.py --template /docker/conf/api.json --outfile /etc/sensu/api.json
     exec /opt/sensu/bin/sensu-api --config /etc/sensu/api.json
 fi
 
