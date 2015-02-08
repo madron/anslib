@@ -1,0 +1,13 @@
+# Install sensu-client
+gem install sensu-client
+
+# Install sensu-raven
+gem install sentry-raven
+
+# cd into the repository root
+# E.g. cd ~/dev/anslib
+
+# Configure environment
+export SENSU_CONFIG_FILES="roles/docker/mtek/sensu/server/tests/config.json"
+
+cat roles/base/sensu/server/tests/event.json | roles/docker/mtek/sensu/server/files/docker/sensu/handlers/notification/sentry.rb

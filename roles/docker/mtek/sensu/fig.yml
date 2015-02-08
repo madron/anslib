@@ -38,12 +38,16 @@ api:
     rabbitmq_password: sensu
   hostname: api
 
-# server:
-#   build: server
-#   links:
-#     - rabbitmq
-#     - redis
-#   hostname: server
+server:
+  build: server/files/docker
+  links:
+    - rabbitmq
+    - redis
+    - api
+  environment:
+    ssl: false
+    rabbitmq_password: sensu
+  hostname: server
 
 # uchiwa:
 #   build: uchiwa

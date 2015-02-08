@@ -1,0 +1,25 @@
+{
+  "rabbitmq": {
+    {% if rabbitmq_ssl %}
+    "ssl": {
+      "cert_chain_file": "/etc/sensu/ssl/cert.pem",
+      "private_key_file": "/etc/sensu/ssl/key.pem"
+    },
+    {% endif %}
+    "host": "rabbitmq",
+    "port": {{ rabbitmq_port }},
+    "user": "sensu",
+    "password": "{{ rabbitmq_password }}",
+    "vhost": "/sensu"
+  },
+  "redis": {
+    "host": "redis",
+    "port": 6379
+  },
+  "api": {
+    "host": "api",
+    "port": 4567,
+    "user": "admin",
+    "password": "{{ api_password }}"
+  }
+}
