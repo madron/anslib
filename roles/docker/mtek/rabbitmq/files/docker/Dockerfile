@@ -32,9 +32,12 @@ COPY docker /docker
 
 VOLUME ["/var/lib/rabbitmq", "/etc/rabbitmq/ssl"]
 
-ENV RABBITMQ_VHOST=/
-ENV RABBITMQ_USER=admin
-ENV RABBITMQ_PASS=admin
+ENV default_vhost="/"
+ENV default_user=admin
+ENV default_pass=admin
+ENV vhosts="[]"
+ENV users="[]"
+
 
 EXPOSE 5671 5672 15672
 
