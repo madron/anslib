@@ -28,7 +28,13 @@ RUN sed -E 's!^(\s*-rabbit\s+error_logger)\s+\S*!\1 tty!' /usr/lib/rabbitmq/lib/
 RUN rabbitmq-plugins enable --offline rabbitmq_management
 
 
+# /docker directory
 COPY docker /docker
+RUN chmod 0755 /docker/entrypoint.sh
+RUN chmod 0755 /docker/render.py
+RUN chmod 0755 /docker/add_users.py
+RUN chmod 0755 /docker/add_vhosts.py
+
 
 VOLUME ["/var/lib/rabbitmq", "/etc/rabbitmq/ssl"]
 
@@ -37,7 +43,6 @@ ENV default_user=admin
 ENV default_pass=admin
 ENV vhosts="[]"
 ENV users="[]"
-
 
 EXPOSE 5671 5672 15672
 
