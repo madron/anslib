@@ -1,2 +1,2 @@
-dependencies: 
-  - { role: 'base/docker' }
+dependencies:
+  - { role: 'docker/mtek/sensu/base' }
