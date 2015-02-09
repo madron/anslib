@@ -14,4 +14,5 @@ data = dict(
     rabbitmq_ssl=ssl,
     rabbitmq_port=rabbitmq_port,
     rabbitmq_password=os.getenv('rabbitmq_password', 'sensu'),
+    api_password=os.getenv('api_password', 'admin'),
 )
