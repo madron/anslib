@@ -1,0 +1,23 @@
+{
+  {% for server in servers %}
+    "{{ server.slug }}": [
+        {
+            "name": "{{ server.name }}",
+            "host": "{{ server.host }}",
+            "ssl": false,
+            "port": {{ server.port }},
+            "user": "{{ server.username }}",
+            "pass": "{{ server.password }}",
+            "path": "",
+            "timeout": 5
+        }
+    ],
+  {% endfor %}
+    "uchiwa": {
+        "user": "{{ username }}",
+        "pass": "{{ password }}",
+        "port": 3000,
+        "stats": 10,
+        "refresh": 5
+    }
+}

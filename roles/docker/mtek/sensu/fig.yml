@@ -1,6 +1,7 @@
 # docker build -t mtek/sensu-base   roles/docker/mtek/sensu/base/files/docker/
 # docker build -t sensu_api         roles/docker/mtek/sensu/api/files/docker/
 # docker build -t sensu_server      roles/docker/mtek/sensu/server/files/docker/
+# docker build -t sensu_web         roles/docker/mtek/sensu/web/files/docker/
 
 data:
   image: busybox
@@ -49,10 +50,14 @@ server:
     rabbitmq_password: sensu
   hostname: server
 
-# uchiwa:
-#   build: uchiwa
-#   links:
-#     - api
-#   ports:
-#     - "80:3000"
-#   hostname: uchiwa
+web:
+  build: web/files/docker
+  links:
+    - api
+  ports:
+    - "80:3000"
+  environment:
+    username: ''
+    password: ''
+    servers: '[{"slug": "sensu", "name": "Sensu", "host": "api", "port": 4567, "username": "admin", "password": "admin"}]'
+  hostname: web
