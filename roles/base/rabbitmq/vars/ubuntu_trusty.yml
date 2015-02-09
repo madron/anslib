@@ -1,2 +1,1 @@
-rabbitmq_packages:
-  - rabbitmq-server
+rabbitmq_packages: []
