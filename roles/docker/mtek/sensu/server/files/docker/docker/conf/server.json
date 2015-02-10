@@ -6,7 +6,7 @@
       "private_key_file": "/etc/sensu/ssl/key.pem"
     },
     {% endif %}
-    "host": "rabbitmq",
+    "host": "{{ rabbitmq_host }}",
     "port": {{ rabbitmq_port }},
     "user": "sensu-server",
     "password": "{{ rabbitmq_sensu_server_password }}",
