@@ -3,9 +3,10 @@
     "host": "stage1",
     "port": 4567,
     "user": "admin",
-    "password": "changeme"
+    "password": "admin"
   },
   "sentry": {
+    "timeout": 5,
     "dsn": "http://fc5c2ec6ff7047189478f899dbde8861:93630de9ec3f4eef86e45f24640bc571@stage1:81/1"
   }
 }

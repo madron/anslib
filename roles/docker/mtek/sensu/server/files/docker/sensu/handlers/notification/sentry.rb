@@ -22,6 +22,11 @@ class Sentry < Sensu::Handler
     # Configure raven
     Raven.configure() do |config|
       config.dsn = settings['sentry']['dsn']
+      if settings['sentry']['timeout']
+        config.timeout = settings['sentry']['timeout']
+      else
+        config.timeout = 5
+      end
     end
 
     # Send message
@@ -36,6 +41,7 @@ class Sentry < Sensu::Handler
         tags: {
             version: @event['client']['version']
         }
-    end
+
+  end
 
 end
