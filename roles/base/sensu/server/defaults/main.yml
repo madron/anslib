@@ -1,16 +1,15 @@
-sensu_server_rabbitmq_host: localhost
+sensu_server_prefix: sensu
+
+sensu_server_rabbitmq_host: rabbitmq
 sensu_server_rabbitmq_port: 5671
-sensu_server_rabbitmq_password: changeme
+sensu_server_rabbitmq_ssl: true
+sensu_server_rabbitmq_password: sensu-server
 
-sensu_redis_host: localhost
-sensu_redis_port: 6379
-
-sensu_api_host: localhost
-sensu_api_port: 4567
-sensu_api_admin_password: changeme
-
-sensu_version: 0.16.0-1
-sensu_community_plugins_version: 5fdba6050f59f518073016849e33c097ad696914
+sensu_server_api_admin_password: admin
+# 'sensu_server_api_port' publishes api port to host machine
+# Needed if sensu dashboard is located on a different host.
+# Leave commented to keep the port private to the containers.
+# sensu_server_api_port: 4567
 
 
 rabbitmq_ssl_client_cert: [

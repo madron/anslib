@@ -4,42 +4,7 @@
     - sensu-server
 
 
-- name: download directory
-  file:
-    path: /var/lib/ansible/sensu/server/
-    state: directory
-    mode: 0755
-    owner: root
-    group: root
-  tags:
-    - sensu-server
-
-
-- include: debian.yml
-  when: ansible_os_family == 'Debian'
-  tags:
-    - sensu-server
-
-
-- name: gem packages
-  gem:
-    name: '{{ item.name }}'
-    version: '{{ item.version }}'
-    state: present
-  with_items: sensu_server_gems
-  tags:
-    - sensu-server
-
-
-- name: set variables
-  set_fact:
-    tarball_file: '/var/lib/ansible/sensu/server/community_plugins.{{ sensu_community_plugins_version }}.tar.gz'
-    base_dir: 'sensu-community-plugins-{{ sensu_community_plugins_version }}'
-  tags:
-    - sensu-server
-
-
-- name: etc directories
+- name: directories
   file:
     path: '{{ item }}'
     state: directory
@@ -47,56 +12,8 @@
     owner: root
     group: root
   with_items:
-    - /etc/sensu/ssl
-    - /etc/sensu/server-conf.d
-    - /etc/sensu/available-extensions
-    - /etc/sensu/enabled-extensions
-  tags:
-    - sensu-server
-
-
-- name: sensu-community-plugins tarball
-  get_url:
-    url: 'https://github.com/sensu/sensu-community-plugins/archive/{{ sensu_community_plugins_version }}.tar.gz'
-    dest: '{{ tarball_file }}'
-    mode: 0644
-  register: community_plugins_tarball
-  tags:
-    - sensu-server
-
-
-- name: sensu-community-plugins
-  command: 'tar --strip-components 1 -x -z -f {{ tarball_file }} {{ base_dir }}/handlers {{ base_dir }}/mutators'
-  args:
-    chdir: /etc/sensu/
-  when: community_plugins_tarball.changed
-  tags:
-    - sensu-server
-
-
-- name: sensu-community-plugins
-  command: 'tar --strip-components 1 -x -z -f {{ tarball_file }} {{ base_dir }}/handlers {{ base_dir }}/mutators'
-  args:
-    chdir: /etc/sensu/
-    creates: '/etc/sensu/handlers/notification'
-  tags:
-    - sensu-server
-
-
-- name: sensu-community-plugins extensions
-  command: 'tar --strip-components 2 -x -z -f {{ tarball_file }} {{ base_dir }}/extensions'
-  args:
-    chdir: /etc/sensu/available-extensions/
-  when: community_plugins_tarball.changed
-  tags:
-    - sensu-server
-
-
-- name: sensu-community-plugins extensions
-  command: 'tar --strip-components 2 -x -z -f {{ tarball_file }} {{ base_dir }}/extensions'
-  args:
-    chdir: /etc/sensu/available-extensions/
-    creates: /etc/sensu/available-extensions/checks/
+    - '/etc/sensu/prefix/{{ sensu_server_prefix }}/ssl'
+    - '/etc/sensu/prefix/{{ sensu_server_prefix }}/conf.d'
   tags:
     - sensu-server
 
@@ -104,63 +21,33 @@
 - name: ssl certificates
   template:
     src: '{{ item }}'
-    dest: /etc/sensu/ssl/
-    mode: 0644
+    dest: '/etc/sensu/prefix/{{ sensu_server_prefix }}/ssl'
+    mode: 0640
     owner: root
-    group: root
+    group: 999
   with_items:
     - cert.pem
     - key.pem
-  notify:
-    - restart sensu-api
-    - restart sensu-server
+  notify: 'restart {{ sensu_server_prefix }}'
   tags:
     - sensu-server
 
 
-- name: /etc/sensu/api.json
+- name: upstart script
   template:
-    src: api.json
-    dest: /etc/sensu/api.json
+    src: upstart.conf
+    dest: '/etc/init/{{ sensu_server_prefix }}.conf'
     mode: 0644
     owner: root
     group: root
-  notify:
-    - restart sensu-api
+  notify: 'restart {{ sensu_server_prefix }}'
   tags:
     - sensu-server
 
 
-- name: /etc/sensu/server.json
-  template:
-    src: server.json
-    dest: /etc/sensu/server.json
-    mode: 0644
-    owner: root
-    group: root
-  notify:
-    - restart sensu-server
-  tags:
-    - sensu-server
-
-
-- name: additional handlers
-  copy:
-    src: handlers
-    dest: /etc/sensu/
-    mode: 0755
-    owner: root
-    group: root
-  tags:
-    - sensu-server
-
-
-- name: sensu services
+- name: ensure service started
   service:
-    name: '{{ item }}'
+    name: '{{ sensu_server_prefix }}'
     state: started
-  with_items:
-    - sensu-api
-    - sensu-server
   tags:
     - sensu-server

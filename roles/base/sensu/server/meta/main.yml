@@ -1,3 +1,4 @@
 dependencies:
   - { role: base/ntpdate }
-  - { role: base/sensu/plugin }
+  - { role: docker/mtek/sensu/api }
+  - { role: docker/mtek/sensu/server }
