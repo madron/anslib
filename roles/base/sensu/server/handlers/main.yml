@@ -2,3 +2,7 @@
   service: >
     name='{{ sensu_server_prefix }}-server'
     state=restarted
+
+
+- name: 'restart {{ sensu_server_prefix }}-server-container'
+  command: 'docker restart {{ sensu_server_prefix }}-server'
