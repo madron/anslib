@@ -1,3 +1,0 @@
-sensu_plugin_packages:
-  - python-software-properties
-  - ruby

@@ -1,4 +1,4 @@
-sensu_plugin: false
+sensu_client_plugin: false
 sensu_client_packages:
   - python-software-properties
   - nagios-plugins
