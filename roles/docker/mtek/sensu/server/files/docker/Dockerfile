@@ -35,6 +35,7 @@ RUN chmod 0755 /docker/render.py
 
 # Custom components
 ADD sensu /etc/sensu/
+RUN chmod -R 0755 /etc/sensu/handlers
 
 ENV rabbitmq_host=rabbitmq'
 ENV rabbitmq_port=5672
