@@ -1,4 +1,10 @@
-sensu_web_run_as_root: false  # Needed to listen on ports < 1024
-sensu_web_port: 3000
+sensu_web_prefix: sensu
 
-sensu_web_uchiwa_version: 0.4.0-1
+# If set a container link will be created for api
+# sensu_web_api_container: 'sensu-api'
+
+sensu_web_username: ''
+sensu_web_password: ''
+sensu_web_servers: '[{"slug": "sensu", "name": "Sensu", "host": "api", "port": 4567, "username": "admin", "password": "admin"}]'
+
+sensu_web_port: 3000
