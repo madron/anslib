@@ -8,8 +8,8 @@
     {% endif %}
     "host": "rabbitmq",
     "port": {{ rabbitmq_port }},
-    "user": "sensu",
-    "password": "{{ rabbitmq_password }}",
+    "user": "sensu-server",
+    "password": "{{ rabbitmq_sensu_server_password }}",
     "vhost": "/sensu"
   },
   "redis": {

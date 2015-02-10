@@ -13,7 +13,7 @@ RUN chmod 0755 /docker/render.py
 
 
 ENV rabbitmq_ssl=false
-ENV rabbitmq_password=sensu
+ENV rabbitmq_sensu_server_password=sensu-server
 ENV api_password=admin
 
 VOLUME ["/etc/sensu/ssl"]

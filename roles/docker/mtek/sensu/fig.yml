@@ -14,19 +14,19 @@ redis:
   command: redis-server --appendonly yes
   volumes_from:
     - data
-  ports:
-    - "6379:6379"
+  # ports:
+  #   - "6379:6379"
   hostname: redis
 
 rabbitmq:
   image: mtek/rabbitmq:3.4.3
   ports:
     - "5671:5671"
-    - "5672:5672"
-    - "15672:15672"
+    # - "5672:5672"
+    # - "15672:15672"
   environment:
     vhosts: '["/sensu"]'
-    users: '[{"name": "sensu", "password": "sensu", "permission": {"/sensu": {"configure": ".*", "write": ".*", "read": ".*"}}}]'
+    users: '[{"name": "sensu", "password": "sensu", "permission": {"/sensu": {"configure": ".*", "write": ".*", "read": ".*"}}}, {"name": "sensu-server", "password": "sensu-server", "permission": {"/sensu": {"configure": ".*", "write": ".*", "read": ".*"}}}]'
   hostname: rabbitmq
 
 api:
@@ -36,7 +36,7 @@ api:
     - redis
   environment:
     ssl: false
-    rabbitmq_password: sensu
+    rabbitmq_sensu_server_password: sensu-server
   hostname: api
 
 server:
@@ -47,7 +47,7 @@ server:
     - api
   environment:
     ssl: false
-    rabbitmq_password: sensu
+    rabbitmq_sensu_server_password: sensu-server
   hostname: server
 
 web:

@@ -13,5 +13,5 @@ else:
 data = dict(
     rabbitmq_ssl=ssl,
     rabbitmq_port=rabbitmq_port,
-    rabbitmq_password=os.getenv('rabbitmq_password', 'sensu'),
+    rabbitmq_sensu_server_password=os.getenv('rabbitmq_sensu_server_password', 'sensu-server'),
 )
