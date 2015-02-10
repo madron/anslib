@@ -12,6 +12,8 @@ RUN chmod 0755 /docker/entrypoint.sh
 RUN chmod 0755 /docker/render.py
 
 
+ENV rabbitmq_host=rabbitmq'
+ENV rabbitmq_port=5672
 ENV rabbitmq_ssl=false
 ENV rabbitmq_sensu_server_password=sensu-server
 ENV api_password=admin

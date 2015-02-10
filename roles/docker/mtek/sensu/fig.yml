@@ -35,7 +35,9 @@ api:
     - rabbitmq
     - redis
   environment:
-    ssl: false
+    rabbitmq_ssl: false
+    rabbitmq_host: rabbitmq
+    rabbitmq_port: 5672
     rabbitmq_sensu_server_password: sensu-server
   hostname: api
 
