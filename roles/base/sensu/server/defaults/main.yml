@@ -1,6 +1,6 @@
-sensu_rabbitmq_host: localhost
-sensu_rabbitmq_port: 5671
-sensu_rabbitmq_password: changeme
+sensu_server_rabbitmq_host: localhost
+sensu_server_rabbitmq_port: 5671
+sensu_server_rabbitmq_password: changeme
 
 sensu_redis_host: localhost
 sensu_redis_port: 6379

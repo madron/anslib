@@ -4,10 +4,10 @@
       "cert_chain_file": "/etc/sensu/ssl/cert.pem",
       "private_key_file": "/etc/sensu/ssl/key.pem"
     },
-    "host": "{{ sensu_rabbitmq_host }}",
-    "port": {{ sensu_rabbitmq_port }},
+    "host": "{{ sensu_server_rabbitmq_host }}",
+    "port": {{ sensu_server_rabbitmq_port }},
     "user": "sensu",
-    "password": "{{ sensu_rabbitmq_password }}",
+    "password": "{{ sensu_server_rabbitmq_password }}",
     "vhost": "/sensu"
   },
   "redis": {
