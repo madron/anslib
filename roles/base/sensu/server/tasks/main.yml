@@ -36,18 +36,18 @@
 - name: upstart script
   template:
     src: upstart.conf
-    dest: '/etc/init/{{ sensu_server_prefix }}.conf'
+    dest: '/etc/init/{{ sensu_server_prefix }}-server.conf'
     mode: 0644
     owner: root
     group: root
-  notify: 'restart {{ sensu_server_prefix }}'
+  notify: 'restart {{ sensu_server_prefix }}-server'
   tags:
     - sensu-server
 
 
 - name: ensure service started
   service:
-    name: '{{ sensu_server_prefix }}'
+    name: '{{ sensu_server_prefix }}-server'
     state: started
   tags:
     - sensu-server
