@@ -28,7 +28,7 @@
   with_items:
     - cert.pem
     - key.pem
-  notify: 'restart {{ sensu_server_prefix }}'
+  notify: 'restart {{ sensu_server_prefix }}-server'
   tags:
     - sensu-server
 
