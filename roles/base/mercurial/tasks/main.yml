@@ -12,7 +12,7 @@
 
 - name: admin directories
   file:
-    path: '/etc/mercurial-server/keys/root/{{ item }}'
+    path: '/etc/mercurial-server/keys/admin/{{ item }}'
     state: directory
     owner: root
     group: root
@@ -24,7 +24,7 @@
 
 - name: user directories
   file:
-    path: '/etc/mercurial-server/keys/users/{{ item }}'
+    path: '/etc/mercurial-server/keys/user/{{ item }}'
     state: directory
     owner: root
     group: root
@@ -34,10 +34,22 @@
     - mercurial
 
 
+- name: deployment user directories
+  file:
+    path: '/etc/mercurial-server/keys/deployment/{{ item }}'
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  with_items: mercurial_deployment_users
+  tags:
+    - mercurial
+
+
 - name: admin keys
   template:
     src: authorized-keys.j2
-    dest: '/etc/mercurial-server/keys/root/{{ item }}/authorized_keys'
+    dest: '/etc/mercurial-server/keys/admin/{{ item }}/authorized_keys'
     mode: 0644
     owner: root
     group: root
@@ -50,11 +62,36 @@
 - name: user keys
   template:
     src: authorized-keys.j2
-    dest: '/etc/mercurial-server/keys/users/{{ item }}/authorized_keys'
+    dest: '/etc/mercurial-server/keys/user/{{ item }}/authorized_keys'
     mode: 0644
     owner: root
     group: root
   with_items: mercurial_users
+  notify: refresh_mercurial_auth
+  tags:
+    - mercurial
+
+
+- name: deployment user keys
+  template:
+    src: authorized-keys.j2
+    dest: '/etc/mercurial-server/keys/deployment/{{ item }}/authorized_keys'
+    mode: 0644
+    owner: root
+    group: root
+  with_items: mercurial_deployment_users
+  notify: refresh_mercurial_auth
+  tags:
+    - mercurial
+
+
+- name: /etc/mercurial-server/access.conf
+  template:
+    src: access.conf
+    dest: /etc/mercurial-server/access.conf
+    mode: 0644
+    owner: root
+    group: root
   notify: refresh_mercurial_auth
   tags:
     - mercurial

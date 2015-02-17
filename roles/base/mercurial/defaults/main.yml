@@ -2,6 +2,7 @@
 
 mercurial_admins: []
 mercurial_users: []
+mercurial_deployment_users: []
 
 # mercurial_admins: [joe]
 # mercurial_users: [sam]
