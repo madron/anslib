@@ -1,0 +1,4 @@
+- name: 'restart etcd-container'
+  service: >
+    name='etcd-container'
+    state=restarted

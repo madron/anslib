@@ -1,0 +1,40 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - etcd
+
+
+# - name: elcolio/etcd image present
+#   docker_image:
+#     name: 'elcolio/etcd'
+#     state: present
+#   tags:
+#     - etcd
+
+
+# - name: cpuguy83/docker-grand-ambassador image present
+#   docker_image:
+#     name: cpuguy83/docker-grand-ambassador
+#     state: present
+#   tags:
+#     - etcd
+
+
+- name: upstart file
+  template:
+    src: container.conf
+    dest: /etc/init/etcd-container.conf
+    mode: 0644
+    owner: root
+    group: root
+  notify: 'restart etcd-container'
+  tags:
+    - etcd
+
+
+- name: etcd service
+  service:
+    name: 'etcd-container'
+    state: started
+  tags:
+    - etcd

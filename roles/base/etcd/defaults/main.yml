@@ -1,0 +1,2 @@
+etcd_client_port: 4001
+etcd_peer_port: 7001
