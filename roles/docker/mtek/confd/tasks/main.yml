@@ -1,0 +1,38 @@
+- name: dockerfile
+  copy:
+    src: docker
+    dest: /var/lib/ansible/mtek-confd
+  register: dockerfile
+  tags:
+    - mtek-confd
+
+
+- name: download binary
+  get_url:
+    url: 'https://github.com/kelseyhightower/confd/releases/download/v{{ confd_version }}/confd-{{ confd_version }}-linux-amd64'
+    dest: /var/lib/ansible/mtek-confd/docker/confd
+    mode: 0755
+  register: download
+  tags:
+    - mtek-confd
+
+
+- name: docker image build
+  docker_image:
+    path: /var/lib/ansible/mtek-confd/docker
+    name: mtek/confd
+    tag: '{{ confd_version }}'
+    state: build
+  when: dockerfile.changed or download.changed
+  tags:
+    - mtek-confd
+
+
+- name: docker image present
+  docker_image:
+    path: /var/lib/ansible/mtek-confd/docker
+    name: mtek/confd
+    tag: '{{ confd_version }}'
+    state: present
+  tags:
+    - mtek-confd
