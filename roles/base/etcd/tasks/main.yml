@@ -4,22 +4,6 @@
     - etcd
 
 
-# - name: elcolio/etcd image present
-#   docker_image:
-#     name: 'elcolio/etcd'
-#     state: present
-#   tags:
-#     - etcd
-
-
-# - name: cpuguy83/docker-grand-ambassador image present
-#   docker_image:
-#     name: cpuguy83/docker-grand-ambassador
-#     state: present
-#   tags:
-#     - etcd
-
-
 - name: upstart file
   template:
     src: container.conf
