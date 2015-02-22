@@ -10,9 +10,18 @@
 - name: download binary
   get_url:
     url: 'https://github.com/kelseyhightower/confd/releases/download/v{{ confd_version }}/confd-{{ confd_version }}-linux-amd64'
-    dest: /var/lib/ansible/mtek-confd/docker/confd
+    dest: /var/lib/ansible/mtek-confd/confd-{{ confd_version }}-linux-amd64
     mode: 0755
   register: download
+  tags:
+    - mtek-confd
+
+
+- name: copy binary
+  command:
+    'cp /var/lib/ansible/mtek-confd/confd-{{ confd_version }}-linux-amd64 /var/lib/ansible/mtek-confd/docker/confd'
+  when: download.changed
+  register: binary
   tags:
     - mtek-confd
 
@@ -23,7 +32,7 @@
     name: mtek/confd
     tag: '{{ confd_version }}'
     state: build
-  when: dockerfile.changed or download.changed
+  when: dockerfile.changed or binary.changed
   tags:
     - mtek-confd
 
