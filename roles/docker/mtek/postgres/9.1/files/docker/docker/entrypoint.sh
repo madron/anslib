@@ -1,54 +1,83 @@
 #!/bin/bash
 set -e
 
-export VERSION=9.1
-export PGBIN=/usr/lib/postgresql/${VERSION}/bin
-
-
 chown -R postgres.postgres /var/run/postgresql
 chmod 775 /var/run/postgresql
 
-if [[ "$1" = "postgres" ]]; then
-    chown -R postgres "/data"
+if [ "$1" = 'postgres' ]; then
+    chown -R postgres "$PGDATA"
 
     # Create cluster if it doesn't exist
-    if [ -z "$(ls -A "/data")" ]; then
-        sudo -i -u postgres ${PGBIN}/initdb --pgdata=/data --encoding=UTF8
+    if [ -z "$(ls -A "$PGDATA")" ]; then
+        gosu postgres initdb --encoding=UTF8
+
         # Config files
-        rm /data/pg_ident.conf
-        /docker/render.py --template /docker/conf/postgresql.conf --outfile /data/postgresql.conf
-        /docker/render.py --template /docker/conf/pg_hba.conf --outfile /data/pg_hba.conf
-        # Init sql
+        /docker/render.py --template /docker/conf/postgresql.conf --outfile $PGDATA/postgresql.conf
+        /docker/render.py --template /docker/conf/pg_hba.conf --outfile $PGDATA/pg_hba.conf
+
+        # Postgres password
+        if [ "$POSTGRES_PASSWORD" ]; then
+            echo ALTER USER "postgres" WITH SUPERUSER PASSWORD '$POSTGRES_PASSWORD'; > $PGDATA/init.sql
+            gosu postgres postgres --single -jE < $PGDATA/init.sql
+            rm $PGDATA/init.sql
+        fi
+
+        if [ "$allowed_replication_networks" ]; then
+            # CREATE USER syncuser REPLICATION LOGIN CONNECTION LIMIT 1 ENCRYPTED PASSWORD '$2';
+            echo "CREATE USER syncuser REPLICATION;" > $PGDATA/init.sql
+            gosu postgres postgres --single -jE < $PGDATA/init.sql
+            rm $PGDATA/init.sql
+        fi
+
+        # init.sql file
         if [ -f "/docker/sql/init.sql" ]; then
             echo "Loading init.sql"
-            sudo -i -u postgres pg_ctl start -w -D /data --silent -o "-c listen_addresses=''"
-            sudo -i -u postgres psql -f /docker/sql/init.sql
-            sudo -i -u postgres pg_ctl stop -w -D /data --silent
+            gosu postgres postgres --single -jE < /docker/sql/init.sql
+        fi
+
+        # initdb.d directory
+        if [ -d /docker/initdb.d ]; then
+            for f in /docker/initdb.d/*.sh; do
+                [ -f "$f" ] && . "$f"
+            done
+        fi
+
+        # INIT_SQL environment variable
+        if [ "$INIT_SQL" ]; then
+            echo $INIT_SQL > $PGDATA/init.sql
+            gosu postgres postgres --single -jE < $PGDATA/init.sql
+            rm $PGDATA/init.sql
         fi
     fi
 
+    # Remove postgresql.conf from $PGDATA and it will be overwritten
+    if [ ! -f "$PGDATA/postgresql.conf" ]; then
+        echo "postgresql.conf file not present: regenerating standard one."
+        /docker/render.py --template /docker/conf/postgresql.conf --outfile $PGDATA/postgresql.conf
+    fi
+
     # pg_hba.conf  is always overwritten
-    /docker/render.py --template /docker/conf/pg_hba.conf --outfile /data/pg_hba.conf
+    /docker/render.py --template /docker/conf/pg_hba.conf --outfile $PGDATA/pg_hba.conf
 
     # recovery.conf is always overwritten
-    rm -f /data/recovery.conf
+    rm -f $PGDATA/recovery.conf
     if [ ! "${master_server}" == "" ]; then
-        /docker/render.py --template /docker/conf/recovery.conf --outfile /data/recovery.conf
+        /docker/render.py --template /docker/conf/recovery.conf --outfile $PGDATA/recovery.conf
     fi
 
     # Start postgres
     echo "Starting postgres"
-    exec sudo -i -u postgres exec ${PGBIN}/postgres -D /data -c config_file=/data/postgresql.conf
+    exec gosu postgres postgres
 
 elif [[ "$1" = "pg_hba" ]]; then
-    /docker/render.py --template /docker/conf/pg_hba.conf --outfile /data/pg_hba.conf
-    exec sudo -i -u postgres psql -c "SELECT pg_reload_conf();" > /dev/null
+    /docker/render.py --template /docker/conf/pg_hba.conf --outfile $PGDATA/pg_hba.conf
+    exec gosu postgres psql -c "SELECT pg_reload_conf();" > /dev/null
 
 elif [[ "$1" = "psql" ]]; then
-    exec sudo -i -u postgres "$@"
+    exec gosu postgres "$@"
 
 elif [[ "$1" = "syncuser" ]]; then
-    exec sudo -i -u postgres psql -c "CREATE USER syncuser REPLICATION LOGIN CONNECTION LIMIT 1 ENCRYPTED PASSWORD '$2';"
+    exec gosu postgres psql -c "CREATE USER syncuser REPLICATION LOGIN CONNECTION LIMIT 1 ENCRYPTED PASSWORD '$2';"
 
 elif [[ "$1" = "backup" ]]; then
     if [[ "$2" = "--overwrite" ]]; then
@@ -68,7 +97,7 @@ elif [[ "$1" = "backup" ]]; then
     rm -rf /backup/pg_basebackup
     mkdir /backup/pg_basebackup
     chown postgres /backup/pg_basebackup
-    sudo -i -u postgres ${PGBIN}/pg_basebackup --pgdata=/backup/pg_basebackup --xlog --format=tar --progress --verbose
+    gosu postgres pg_basebackup --pgdata=/backup/pg_basebackup --xlog --format=tar --progress --verbose
     gzip --rsyncable --stdout /backup/pg_basebackup/base.tar > /backup/base.tar.gz
     rm -rf /backup/pg_basebackup
 
@@ -84,9 +113,10 @@ elif [[ "$1" = "restore" ]]; then
         exit 1
     fi
     # Remove old data and restore
-    cd /data
+    cd $PGDATA
     rm -rf *
     tar xfz /backup/base.tar.gz
+
 else
     exec "$@"
 fi

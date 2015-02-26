@@ -1,29 +1,28 @@
-FROM ubuntu:precise
+FROM postgres:9.1
 MAINTAINER Massimiliano Ravelli, m.ravelli@mastervoice.it
-
-
-# Postgres user and group
-RUN groupadd -g 999 postgres && useradd -d /var/lib/postgresql/9.1 -u 999 -g 999 postgres
 
 
 # Required packages
 RUN DEBIAN_FRONTEND=noninteractive \
        apt-get update \
-    && apt-get install -y postgresql-9.1 postgresql-client sudo python-jinja2 python-netaddr \
-    && rm -rf /etc/postgresql/9.1/main \
-    && rm -rf /var/lib/postgresql/9.1/main \
-    && ln -s /usr/lib/postgresql/9.1/bin/* /usr/local/bin
+    && apt-get install -y python-jinja2 python-netaddr \
+    && rm -rf /var/lib/apt/lists/*
 
+
+RUN rm -rf /docker-entrypoint-initdb.d \
+ && rm docker-entrypoint.sh
 
 # Config
 ADD docker /docker/
-RUN chmod 755 /docker/entrypoint.sh
-RUN chmod 755 /docker/render.py
+RUN chmod 755 /docker/entrypoint.sh \
+ && chmod 755 /docker/render.py
 
 
-VOLUME ["/data", "/var/run/postgresql"]
+# Ephemeral volumes
+# Needed to connect to postgres via unix socket
+VOLUME ["/var/run/postgresql"]
+
 EXPOSE 5432
-
 
 ENTRYPOINT ["/docker/entrypoint.sh"]
 CMD ["postgres"]

@@ -1,0 +1,1 @@
+Every file named *.sh in this directory will be executed just after cluster initialization.

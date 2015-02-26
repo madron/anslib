@@ -1,1 +1,1 @@
-Drop a file named init.sql in this directory and it will be loaded juts after cluster initialization.
+Drop a file named init.sql in this directory and it will be loaded just after cluster initialization.
