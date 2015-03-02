@@ -1,0 +1,24 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - registry
+
+
+- name: upstart file
+  template:
+    src: container.conf
+    dest: /etc/init/registry.conf
+    mode: 0644
+    owner: root
+    group: root
+  notify: 'restart registry'
+  tags:
+    - registry
+
+
+- name: registry service
+  service:
+    name: 'registry'
+    state: started
+  tags:
+    - registry

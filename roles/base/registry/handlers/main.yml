@@ -1,0 +1,4 @@
+- name: 'restart registry'
+  service: >
+    name='registry'
+    state=restarted
