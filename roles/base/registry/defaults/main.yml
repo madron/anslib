@@ -1,4 +1,6 @@
 registry_tag: 0.9.1
 
-# By default port 5000 is not published
+registry_options: []
+
+# Default: port 5000 is exposed but not published
 # registry_port: 5000
