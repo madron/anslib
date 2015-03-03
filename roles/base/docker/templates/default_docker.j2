@@ -7,8 +7,15 @@
 
 # Use DOCKER_OPTS to modify the daemon startup options.
 #DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4"
+{% set DOCKER_OPTS = '' %}
 {% if docker_tcp_bind_host %}
-DOCKER_OPTS="--host=unix:///run/docker.sock --host=tcp://{{ docker_tcp_bind_host }}:{{ docker_tcp_bind_port }}"
+{% set DOCKER_OPTS = DOCKER_OPTS ~ ' --host=unix:///run/docker.sock --host=tcp://' ~ docker_tcp_bind_host ~ ':' ~ docker_tcp_bind_port %}
+{% endif %}
+{% if docker_registry_mirror %}
+{% set DOCKER_OPTS = DOCKER_OPTS ~ ' --registry-mirror=' ~ docker_registry_mirror %}
+{% endif %}
+{% if DOCKER_OPTS %}
+DOCKER_OPTS="{{ DOCKER_OPTS }}"
 {% endif %}
 
 # If you need Docker to use an HTTP proxy, it can also be specified here.
