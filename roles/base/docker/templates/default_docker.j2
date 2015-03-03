@@ -11,7 +11,7 @@
 {% if docker_tcp_bind_host %}
 {% set DOCKER_OPTS = DOCKER_OPTS ~ ' --host=unix:///run/docker.sock --host=tcp://' ~ docker_tcp_bind_host ~ ':' ~ docker_tcp_bind_port %}
 {% endif %}
-{% if docker_registry_mirror %}
+{% if docker_registry_mirror is defined %}
 {% set DOCKER_OPTS = DOCKER_OPTS ~ ' --registry-mirror=' ~ docker_registry_mirror %}
 {% endif %}
 {% if DOCKER_OPTS %}
