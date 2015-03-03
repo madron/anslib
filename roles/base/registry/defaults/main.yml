@@ -5,3 +5,6 @@ registry_options: []
 
 # Default: port 5000 is exposed but not published
 # registry_port: 5000
+
+# Dafault: directory location is up to data container
+# registry_data_dir: /var/lib/registry
