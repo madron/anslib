@@ -4,6 +4,24 @@
     - registry
 
 
+- name: set variables
+  set_fact:
+    registry_nginx_container_name: '{{ registry_prefix }}-nginx'
+  tags:
+    - registry
+
+
+- name: /etc/container directory
+  file:
+    path: '/etc/container/{{ registry_nginx_container_name }}'
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - registry
+
+
 - name: upstart file
   template:
     src: container.conf

@@ -8,3 +8,7 @@ registry_options: []
 
 # Dafault: directory location is up to data container
 # registry_data_dir: /var/lib/registry
+
+# registry_nginx_port: 80
+
+registry_nginx_tag: 1.7
