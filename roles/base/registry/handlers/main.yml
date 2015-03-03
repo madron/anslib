@@ -1,4 +1,4 @@
-- name: 'restart registry'
+- name: 'restart {{ registry_prefix }}'
   service: >
-    name='registry'
+    name='{{ registry_prefix }}'
     state=restarted

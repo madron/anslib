@@ -7,18 +7,18 @@
 - name: upstart file
   template:
     src: container.conf
-    dest: /etc/init/registry.conf
+    dest: '/etc/init/{{ registry_prefix }}.conf'
     mode: 0644
     owner: root
     group: root
-  notify: 'restart registry'
+  notify: 'restart {{ registry_prefix }}'
   tags:
     - registry
 
 
 - name: registry service
   service:
-    name: 'registry'
+    name: '{{ registry_prefix }}'
     state: started
   tags:
     - registry
