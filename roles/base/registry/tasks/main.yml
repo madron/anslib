@@ -18,6 +18,32 @@
     mode: 0755
     owner: root
     group: root
+  when: registry_nginx_port
+  tags:
+    - registry
+
+
+- name: nginx configuration files
+  template:
+    src: '{{ item }}'
+    dest: '/etc/container/{{ registry_nginx_container_name }}/'
+    mode: 0644
+    owner: root
+    group: root
+  notify: 'reload {{ registry_nginx_container_name }}'
+  when: registry_nginx_port
+  with_items:
+    - registry.conf
+    - registry.include
+  tags:
+    - registry
+
+
+- name: htpasswd file
+  command: touch /etc/container/{{ registry_nginx_container_name }}/registry.htpasswd
+  args:
+    creates: /etc/container/{{ registry_nginx_container_name }}/registry.htpasswd
+  when: registry_nginx_port
   tags:
     - registry
 

@@ -2,3 +2,6 @@
   service: >
     name='{{ registry_prefix }}'
     state=restarted
+
+- name: 'reload {{ registry_nginx_container_name }}'
+  command: docker kill --signal="HUP" {{ registry_nginx_container_name }}
