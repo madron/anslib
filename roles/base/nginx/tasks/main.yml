@@ -3,7 +3,7 @@
   tags: nginx
 
 
-- include: packages_debian.yml
+- include: debian.yml
   when: ansible_os_family == 'Debian'
   tags: nginx
 
@@ -89,24 +89,22 @@
 - name: proxy pass - sites-available
   template:
     src: proxy_pass.conf.j2
-    dest: /etc/nginx/sites-available/{{ item.server_name }}.conf
+    dest: /etc/nginx/sites-available/proxy-pass.conf
     mode: 0644
     owner: root
     group: root
-  with_items: nginx_proxy_pass
   notify: reload nginx
   tags: nginx
 
 
 - name: proxy pass - sites-enabled
   file:
-    src: /etc/nginx/sites-available/{{ item.server_name }}.conf
-    dest: /etc/nginx/sites-enabled/{{ item.server_name }}.conf
+    src: /etc/nginx/sites-available/proxy-pass.conf
+    dest: /etc/nginx/sites-enabled/proxy-pass.conf
     state: link
     force: yes
     owner: root
     group: root
-  with_items: nginx_proxy_pass
   notify: reload nginx
   tags: nginx
 

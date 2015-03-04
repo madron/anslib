@@ -5,13 +5,6 @@
   tags: nginx
 
 
-- name: remove old repository
-  apt_repository: >
-    repo='deb http://nginx.org/packages/ubuntu/ precise nginx'
-    state=absent
-  tags: nginx
-
-
 - name: required packages
   apt: >
     pkg={{ item }}

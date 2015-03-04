@@ -1,5 +1,10 @@
 # {{ ansible_managed }}
 
+{% for item in nginx_proxy_pass %}
+
+#------------------------------------------------------------------------------
+# {{ item.server_name }}
+#------------------------------------------------------------------------------
 {% if item.https_redirect|default(False) %}
 # Permanent redirect to https
 server {
@@ -54,3 +59,4 @@ server {
         proxy_set_header        X-Forwarded-Proto $http_x_forwarded_proto;
     }
 }{% endif %}
+{% endfor %}
