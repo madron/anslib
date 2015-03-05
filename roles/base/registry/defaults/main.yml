@@ -12,3 +12,6 @@ registry_options: []
 # registry_nginx_port: 80
 
 registry_nginx_tag: 1.7
+
+registry_read_subnets: []
+registry_write_subnets: []
