@@ -11,6 +11,18 @@
     - registry
 
 
+- name: registry_data_dir directory
+  file:
+    path: '{{ registry_data_dir }}'
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  when: registry_data_dir is defined
+  tags:
+    - registry
+
+
 - name: /etc/container directory
   file:
     path: '/etc/container/{{ registry_nginx_container_name }}'
