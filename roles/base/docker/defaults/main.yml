@@ -6,3 +6,6 @@ docker_tcp_bind_port: 2375
 # docker_registry_mirror: http://mirror.example.com:5000
 
 # docker_http_proxy: 'http://proxy.example.com:3128/'
+
+docker_insecure_registries: []
+# docker_insecure_registries: [insecure.example.com:5000]
