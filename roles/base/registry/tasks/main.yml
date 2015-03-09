@@ -18,7 +18,7 @@
     mode: 0755
     owner: root
     group: root
-  when: registry_data_dir is defined
+  when: registry_data_dir
   tags:
     - registry
 
@@ -30,7 +30,7 @@
     mode: 0755
     owner: root
     group: root
-  when: registry_nginx_port is defined
+  when: registry_nginx_port
   tags:
     - registry
 
@@ -43,7 +43,7 @@
     owner: root
     group: root
   notify: 'reload {{ registry_nginx_container_name }}'
-  when: registry_nginx_port is defined
+  when: registry_nginx_port
   with_items:
     - registry.conf
     - registry.include
@@ -55,7 +55,7 @@
   command: touch /etc/container/{{ registry_nginx_container_name }}/registry.htpasswd
   args:
     creates: /etc/container/{{ registry_nginx_container_name }}/registry.htpasswd
-  when: registry_nginx_port is defined
+  when: registry_nginx_port
   tags:
     - registry
 
