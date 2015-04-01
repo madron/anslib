@@ -1,0 +1,62 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - docker-log
+    - docker-log-download
+
+
+- name: set variables
+  set_fact:
+    docker_log_container_elastic_data: docker-log-elastic-data
+    docker_log_container_elastic: docker-log-elastic
+    docker_log_container_elastic_cron: docker-log-elastic-cron
+  tags:
+    - docker-log
+
+
+- name: docker image busybox
+  command: 'docker pull busybox:latest'
+  tags:
+    - docker-log-download
+
+
+- name: docker image elastic
+  command: 'docker pull elasticsearch:{{ docker_log_elasticsearch_tag }}'
+  tags:
+    - docker-log-download
+
+
+- name: docker image elastic-cron
+  command: 'docker pull madron/elasticsearch-cron:latest'
+  tags:
+    - docker-log-download
+
+
+- name: upstart elastic file
+  template:
+    src: upstart-elastic.conf
+    dest: '/etc/init/{{ docker_log_container_elastic }}.conf'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: upstart_elastic
+  tags:
+    - docker-log
+
+
+- name: service elastic restarted
+  service:
+    name: '{{ docker_log_container_elastic }}'
+    state: restarted
+  when: upstart_elastic.changed
+  tags:
+    - docker-log
+
+
+- name: service elastic started
+  service:
+    name: '{{ docker_log_container_elastic }}'
+    state: started
+  tags:
+    - docker-log
