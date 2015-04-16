@@ -7,15 +7,24 @@
 
 - name: set variables
   set_fact:
-    docker_log_container_elastic_data: docker-log-elastic-data
     docker_log_container_elastic: docker-log-elastic
+    docker_log_container_elastic_data: docker-log-elastic-data
+    docker_log_container_elastic_ambassador: docker-log-elastic-ambassador
     docker_log_container_elastic_cron: docker-log-elastic-cron
+    docker_log_container_collector: docker-log-collector
+    docker_log_container_kibana: docker-log-kibana
   tags:
     - docker-log
 
 
 - name: docker image busybox
   command: 'docker pull busybox:latest'
+  tags:
+    - docker-log-download
+
+
+- name: docker image docker-grand-ambassador
+  command: 'docker pull cpuguy83/docker-grand-ambassador'
   tags:
     - docker-log-download
 
@@ -28,6 +37,18 @@
 
 - name: docker image elastic-cron
   command: 'docker pull madron/elasticsearch-cron:latest'
+  tags:
+    - docker-log-download
+
+
+- name: docker image collector
+  command: 'docker pull bprodoehl/log-collector:latest'
+  tags:
+    - docker-log-download
+
+
+- name: docker image kibana
+  command: 'docker pull madron/kibana:latest'
   tags:
     - docker-log-download
 
@@ -57,6 +78,66 @@
 - name: service elastic started
   service:
     name: '{{ docker_log_container_elastic }}'
+    state: started
+  tags:
+    - docker-log
+
+
+- name: upstart collector file
+  template:
+    src: upstart-collector.conf
+    dest: '/etc/init/{{ docker_log_container_collector }}.conf'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: upstart_collector
+  tags:
+    - docker-log
+
+
+- name: service collector restarted
+  service:
+    name: '{{ docker_log_container_collector }}'
+    state: restarted
+  when: upstart_collector.changed
+  tags:
+    - docker-log
+
+
+- name: service collector started
+  service:
+    name: '{{ docker_log_container_collector }}'
+    state: started
+  tags:
+    - docker-log
+
+
+- name: upstart kibana file
+  template:
+    src: upstart-kibana.conf
+    dest: '/etc/init/{{ docker_log_container_kibana }}.conf'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: upstart_kibana
+  tags:
+    - docker-log
+
+
+- name: service kibana restarted
+  service:
+    name: '{{ docker_log_container_kibana }}'
+    state: restarted
+  when: upstart_kibana.changed
+  tags:
+    - docker-log
+
+
+- name: service kibana started
+  service:
+    name: '{{ docker_log_container_kibana }}'
     state: started
   tags:
     - docker-log
