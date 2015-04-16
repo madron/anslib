@@ -146,7 +146,7 @@
     src={{ item }}
     dest=/var/www/{{ django_site_slug }}/website/website/fragments/settings_2_custom.py
   with_first_found:
-    - '{{ inventory_dir }}/files/django/{{ django_site_slug }}/settings.py'
+    - '{{ inventory_dir }}/../files/django/{{ django_site_slug }}/settings.py'
     - ../templates/website/website/fragments/settings_2_custom.py
 
 - name: '{{ django_site_slug }} - Site - settings fragment 3 auto'
@@ -154,7 +154,7 @@
     src={{ item }}
     dest=/var/www/{{ django_site_slug }}/website/website/fragments/settings_3_auto.py
   with_first_found:
-    - '{{ inventory_dir }}/files/django/{{ django_site_slug }}/settings_override.py'
+    - '{{ inventory_dir }}/../files/django/{{ django_site_slug }}/settings_override.py'
     - ../templates/website/website/fragments/settings_3_auto.py
 
 - name: '{{ django_site_slug }} - Site - compose settings file'
@@ -240,7 +240,7 @@
     src={{ item }}
     dest=/var/www/{{ django_site_slug }}/conf/nginx.conf
   with_first_found:
-    - ../../../files/django_sites/{{ django_site_slug }}/nginx.conf
+    - '{{ inventory_dir }}/../files/django_sites/{{ django_site_slug }}/nginx.conf'
     - ../templates/nginx.conf
   notify:
   - reload nginx
