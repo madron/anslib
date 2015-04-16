@@ -8,6 +8,10 @@
   - python-psycopg2
   - libpq-dev       # pip needs it to compile psycopg2
   when: django_site_db_name is defined
+  tags:
+    - django-site
+    - django-site-database
+
 
 - name: '{{ django_site_slug }} - Database - create user'
   postgresql_user: >
@@ -17,6 +21,10 @@
   sudo_user: postgres
   when: django_site_db_user is defined
   when: django_site_db_pass is defined
+  tags:
+    - django-site
+    - django-site-database
+
 
 - name: '{{ django_site_slug }} - Database - create database'
   postgresql_db: >
@@ -30,6 +38,9 @@
   when: django_site_db_name is defined
   when: django_site_db_user is defined
   when: django_site_db_pass is defined
+  tags:
+    - django-site
+    - django-site-database
 
 
 #
@@ -47,6 +58,9 @@
   - /var/www/{{ django_site_slug }}/log
   - /var/www/{{ django_site_slug }}/website
   - /var/www/{{ django_site_slug }}/website/website
+  tags:
+    - django-site
+    - django-site-application
 
 - name: '{{ django_site_slug }} - Application - base directory'
   file: >
@@ -55,6 +69,10 @@
     mode=0755
     owner={{ django_site_user }}
     group={{ django_site_group }}
+  tags:
+    - django-site
+    - django-site-application
+
 
 - name: '{{ django_site_slug }} - Application - static directory'
   file: >
@@ -63,6 +81,10 @@
     mode=0755
     owner={{ django_site_user }}
     group={{ django_site_group }}
+  tags:
+    - django-site
+    - django-site-application
+
 
 - name: '{{ django_site_slug }} - Application - media directory'
   file: >
@@ -71,6 +93,10 @@
     mode=2755
     owner={{ django_site_user }}
     group={{ django_site_server_group }}
+  tags:
+    - django-site
+    - django-site-application
+
 
 - name: '{{ django_site_slug }} - Application - www-data directories'
   file: >
@@ -81,6 +107,10 @@
     group=www-data
   with_items:
   - /var/www/{{ django_site_slug }}/log/uwsgi
+  tags:
+    - django-site
+    - django-site-application
+
 
 ### Add bitbucket.org to known hosts
 
@@ -93,6 +123,10 @@
   register: hg_repository
   when: django_site_hg_repo is defined
   notify: 'reload uwsgi {{ django_site_slug }}'
+  tags:
+    - django-site
+    - django-site-application
+
 
 - name: '{{ django_site_slug }} - Application - install psycopg2'
   pip: >
@@ -108,6 +142,10 @@
     virtualenv={{ django_site_base_dir }}/{{ django_site_slug }}/env
   when: django_site_requirements_file is defined and hg_repository.changed
   notify: 'reload uwsgi {{ django_site_slug }}'
+  tags:
+    - django-site
+    - django-site-application
+
 
 
 #
@@ -124,22 +162,38 @@
   - /var/www/{{ django_site_slug }}/website
   - /var/www/{{ django_site_slug }}/website/website
   - /var/www/{{ django_site_slug }}/website/website/fragments
+  tags:
+    - django-site
+    - django-site-website
+
 
 - name: '{{ django_site_slug }} - Site - manage.py'
   template: >
     src=website/manage.py
     dest=/var/www/{{ django_site_slug }}/website/
     mode=0755
+  tags:
+    - django-site
+    - django-site-website
+
 
 - name: '{{ django_site_slug }} - Site - __init__.py'
   template: >
     src=website/website/__init__.py
     dest=/var/www/{{ django_site_slug }}/website/website/
+  tags:
+    - django-site
+    - django-site-website
+
 
 - name: '{{ django_site_slug }} - Site - settings fragment 1 warning'
   template: >
     src=website/website/fragments/settings_1_warning.py
     dest=/var/www/{{ django_site_slug }}/website/website/fragments/settings_1_warning.py
+  tags:
+    - django-site
+    - django-site-website
+
 
 - name: '{{ django_site_slug }} - Site - settings fragment 2 custom'
   template: >
@@ -148,6 +202,10 @@
   with_first_found:
     - '{{ inventory_dir }}/../files/django/{{ django_site_slug }}/settings.py'
     - ../templates/website/website/fragments/settings_2_custom.py
+  tags:
+    - django-site
+    - django-site-website
+
 
 - name: '{{ django_site_slug }} - Site - settings fragment 3 auto'
   template: >
@@ -156,6 +214,10 @@
   with_first_found:
     - '{{ inventory_dir }}/../files/django/{{ django_site_slug }}/settings_override.py'
     - ../templates/website/website/fragments/settings_3_auto.py
+  tags:
+    - django-site
+    - django-site-website
+
 
 - name: '{{ django_site_slug }} - Site - compose settings file'
   assemble: >
@@ -165,6 +227,10 @@
     owner=root
     group=root
   notify: 'reload uwsgi {{ django_site_slug }}'
+  tags:
+    - django-site
+    - django-site-website
+
 
 
 - name: '{{ django_site_slug }} - Site - syncdb'
@@ -172,6 +238,10 @@
     command=syncdb
     virtualenv={{ django_site_base_dir }}/{{ django_site_slug }}/env
     app_path=/var/www/{{ django_site_slug }}/website
+  tags:
+    - django-site
+    - django-site-website
+
 
 - name: '{{ django_site_slug }} - Site - migrate'
   django_manage: >
@@ -179,6 +249,10 @@
     virtualenv={{ django_site_base_dir }}/{{ django_site_slug }}/env
     app_path=/var/www/{{ django_site_slug }}/website
   when: django_site_use_south == 'yes'
+  tags:
+    - django-site
+    - django-site-website
+
 
 - name: '{{ django_site_slug }} - Site - initial fixtures'
   django_manage: >
@@ -187,12 +261,20 @@
     app_path=/var/www/{{ django_site_slug }}/website
     fixtures='{{ site_initial_fixtures }}'
   when: create_database.changed and site_initial_fixtures is defined
+  tags:
+    - django-site
+    - django-site-website
+
 
 - name: '{{ django_site_slug }} - Site - collect static'
   django_manage: >
     command=collectstatic
     virtualenv={{ django_site_base_dir }}/{{ django_site_slug }}/env
     app_path=/var/www/{{ django_site_slug }}/website
+  tags:
+    - django-site
+    - django-site-website
+
 
 
 #
@@ -209,6 +291,9 @@
   - '{{ django_site_base_dir }}/{{ django_site_slug }}/env'
   - '{{ django_site_base_dir }}/{{ django_site_slug }}/src'
   - '{{ django_site_base_dir }}/{{ django_site_slug }}/static'
+  tags:
+    - django-site
+    - django-site-website
 
 
 #
@@ -221,6 +306,10 @@
     mode=0644
     owner={{ django_site_user }}
     group={{ django_site_group }}
+  tags:
+    - django-site
+    - django-site-uwsgi
+
 
 - name: '{{ django_site_slug }} - uwsgi - config'
   template: >
@@ -230,6 +319,9 @@
     owner=root
     group=root
   notify: 'reload uwsgi {{ django_site_slug }}'
+  tags:
+    - django-site
+    - django-site-uwsgi
 
 
 #
@@ -244,6 +336,10 @@
     - ../templates/nginx.conf
   notify:
   - reload nginx
+  tags:
+    - django-site
+    - django-site-nginx
+
 
 - name: '{{ django_site_slug }} - Nginx - nginx config symlink'
   file: >
@@ -253,3 +349,7 @@
     force=yes
   notify:
   - reload nginx
+  tags:
+    - django-site
+    - django-site-nginx
+
