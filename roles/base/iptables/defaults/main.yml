@@ -1,0 +1,13 @@
+iptables_force_reload: no
+
+iptables_input_policy: ACCEPT
+
+iptables_input_rules: []
+
+# iptables_input_rules: [
+#   '-i lo -j ACCEPT',
+#   # Icmp
+#   '-p icmp -j ACCEPT',
+#   # Ssh
+#   '-p tcp --dport ssh -j ACCEPT',
+# ]

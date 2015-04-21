@@ -1,0 +1,30 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - iptables
+
+
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - iptables
+
+
+- name: rules
+  template:
+    src: rules
+    dest: /etc/network/if-pre-up.d/000iptables-rules
+    mode: 0755
+    owner: root
+    group: root
+    backup: no
+  register: rules
+  tags:
+    - iptables
+
+
+- name: reload rules
+  command: /etc/network/if-pre-up.d/000iptables-rules
+  when: rules.changed or iptables_force_reload
+  tags:
+    - iptables

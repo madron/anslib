@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# {{ ansible_managed }}
+
+# Drop everything on start
+iptables --policy INPUT DROP
+iptables --flush INPUT
+
+# Policy
+iptables --policy INPUT {{ iptables_input_policy }}
+
+# Rules
+{% for rule in iptables_input_rules %}
+iptables --append INPUT {{ rule }}
+{% endfor %}
