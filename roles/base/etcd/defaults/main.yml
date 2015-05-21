@@ -1,3 +1,5 @@
+etcd_tag: v2.0.10
+
 etcd_host: localhost
 etcd_name: default
 etcd_cluster_token: etcd-cluster
