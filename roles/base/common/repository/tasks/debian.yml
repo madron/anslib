@@ -6,9 +6,10 @@
     owner: root
     group: root
   when: common_repository_proxy_host is defined
-  notify: apt-get update
+  register: proxy
   tags:
     - common-repository
+
 
 - name: apt sources.list
   template:
@@ -18,6 +19,14 @@
     owner: root
     group: root
     backup: yes
-  notify: apt-get update
+  register: source
+  tags:
+    - common-repository
+
+
+- name: apt-get update
+  apt:
+    update_cache: yes
+  when: source.changed or proxy.changed
   tags:
     - common-repository
