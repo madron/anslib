@@ -2,6 +2,8 @@
   include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
   tags:
     - iptables
+    - iptables-rules
+    - iptables-rules-nosave
 
 
 - include: debian.yml
@@ -10,7 +12,45 @@
     - iptables
 
 
-- name: rules
+- name: rules directory
+  file:
+    path: rules
+    dest: /var/lib/ansible/iptables
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - iptables
+    - iptables-rules
+    - iptables-rules-nosave
+
+
+- name: /var/lib/ansible/iptables/rules
+  template:
+    src: rules
+    dest: /var/lib/ansible/iptables/rules
+    mode: 0755
+    owner: root
+    group: root
+    backup: yes
+  register: rules
+  tags:
+    - iptables
+    - iptables-rules
+    - iptables-rules-nosave
+
+
+- name: reload rules
+  command: /var/lib/ansible/iptables/rules
+  when: rules.changed or iptables_force_reload
+  tags:
+    - iptables
+    - iptables-rules
+    - iptables-rules-nosave
+
+
+- name: /etc/network/if-pre-up.d/000iptables-rules
   template:
     src: rules
     dest: /etc/network/if-pre-up.d/000iptables-rules
@@ -18,13 +58,6 @@
     owner: root
     group: root
     backup: no
-  register: rules
   tags:
     - iptables
-
-
-- name: reload rules
-  command: /etc/network/if-pre-up.d/000iptables-rules
-  when: rules.changed or iptables_force_reload
-  tags:
-    - iptables
+    - iptables-rules
