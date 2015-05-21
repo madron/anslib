@@ -10,6 +10,15 @@ iptables --flush INPUT
 iptables --policy INPUT {{ iptables_input_policy }}
 
 # Rules
+{% for rule in iptables_input_rules_0 %}
+iptables --append INPUT {{ rule }}
+{% endfor %}
+{% for rule in iptables_input_rules_1 %}
+iptables --append INPUT {{ rule }}
+{% endfor %}
+{% for rule in iptables_input_rules_2 %}
+iptables --append INPUT {{ rule }}
+{% endfor %}
 {% for rule in iptables_input_rules %}
 iptables --append INPUT {{ rule }}
 {% endfor %}

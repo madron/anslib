@@ -2,12 +2,25 @@ iptables_force_reload: no
 
 iptables_input_policy: ACCEPT
 
+# Multi level rules lists
+iptables_input_rules_0: []
+iptables_input_rules_1: []
+iptables_input_rules_2: []
 iptables_input_rules: []
 
-# iptables_input_rules: [
+# Anti-lockout rules
+# iptables_input_rules_0: [
+#   '-p tcp --dport ssh -j ACCEPT',
+# ]
+
+# Basic rules
+# iptables_input_rules_1: [
 #   '-i lo -j ACCEPT',
 #   # Icmp
 #   '-p icmp -j ACCEPT',
-#   # Ssh
-#   '-p tcp --dport ssh -j ACCEPT',
+# ]
+
+# Services
+# iptables_input_rules: [
+#   '-p tcp --dport http -j ACCEPT',
 # ]
