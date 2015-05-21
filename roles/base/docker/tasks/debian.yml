@@ -30,6 +30,23 @@
     mode: 0644
     owner: root
     group: root
-  notify: restart docker
+  register: default
+  tags:
+    - docker
+
+
+- name: service restarted
+  service:
+    name: docker
+    state: restarted
+  when: default.changed
+  tags:
+    - docker
+
+
+- name: service started
+  service:
+    name: docker
+    state: started
   tags:
     - docker

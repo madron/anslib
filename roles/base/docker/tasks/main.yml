@@ -4,7 +4,7 @@
     - docker
 
 
-- include: packages_debian.yml
+- include: debian.yml
   when: ansible_os_family == 'Debian'
   tags:
     - docker
@@ -23,13 +23,5 @@
   pip:
     name: docker-py
     state: latest
-  tags:
-    - docker
-
-
-- name: docker service
-  service:
-    name: docker
-    state: started
   tags:
     - docker
