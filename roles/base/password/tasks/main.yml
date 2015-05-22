@@ -1,0 +1,7 @@
+- name: set password
+  user:
+    name: '{{ password_user }}'
+    password: '{{ password_crypted }}'
+  when: password_crypted is defined
+  tags:
+    - password
