@@ -22,8 +22,6 @@
     group: root
   tags:
     - iptables
-    - iptables-rules
-    - iptables-rules-nosave
 
 
 - name: /var/lib/ansible/iptables/rules
