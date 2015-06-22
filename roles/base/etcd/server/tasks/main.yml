@@ -1,0 +1,34 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - etcd-server
+
+
+- name: upstart file
+  template:
+    src: upstart.conf
+    dest: /etc/init/dck-etcd-server.conf
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: upstart
+  tags:
+    - etcd-server
+
+
+- name: restart etcd service
+  service:
+    name: 'dck-etcd-server'
+    state: restarted
+  when: upstart.changed
+  tags:
+    - etcd-server
+
+
+- name: start etcd service
+  service:
+    name: 'dck-etcd-server'
+    state: started
+  tags:
+    - etcd-server
