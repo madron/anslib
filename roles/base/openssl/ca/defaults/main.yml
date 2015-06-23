@@ -1,0 +1,9 @@
+openssl_ca_base_dir: /etc/ssl
+openssl_ca: ca
+
+openssl_ca_default_bits: 4096
+openssl_ca_default_days: 365
+openssl_ca_policy: policy_match
+
+openssl_ca_country_name: AU
+openssl_ca_state_or_province_name: Some-State

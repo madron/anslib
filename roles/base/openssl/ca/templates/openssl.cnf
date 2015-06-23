@@ -1,0 +1,58 @@
+# {{ ansible_managed }}
+
+[ ca ]
+default_ca      = CA_default           # The default ca section
+
+[ CA_default ]
+dir            = .                     # top dir
+certificate    = $dir/certs/ca.cert    # The CA cert
+private_key    = $dir/private/ca.key   # CA private key
+
+default_days     = {{ openssl_ca_default_days }}
+default_crl_days = 30                  # how long before next CRL
+default_md       = md5                 # md to use
+email_in_dn      = no                  # Don't add the email into cert DN
+copy_extensions  = none                # Don't copy extensions from request
+policy           = {{ openssl_ca_policy }}
+
+
+[ req ]
+default_bits            = {{ openssl_ca_default_bits }}
+distinguished_name      = req_distinguished_name
+#attributes              = req_attributes
+x509_extensions = v3_ca # The extentions to add to the self signed cert
+
+
+[ req_distinguished_name ]
+countryName                     = Country Name (2 letter code)
+countryName_default             = {{ openssl_ca_country_name }}
+countryName_min                 = 2
+countryName_max                 = 2
+stateOrProvinceName             = State or Province Name (full name)
+stateOrProvinceName_default     = {{ openssl_ca_state_or_province_name }}
+localityName                    = Locality Name (eg, city)
+
+
+
+[ policy_match ]
+countryName             = match
+stateOrProvinceName     = match
+organizationName        = match
+organizationalUnitName  = optional
+commonName              = supplied
+emailAddress            = optional
+
+[ policy_anything ]
+countryName             = optional
+stateOrProvinceName     = optional
+localityName            = optional
+organizationName        = optional
+organizationalUnitName  = optional
+commonName              = supplied
+emailAddress            = optional
+
+
+[ v3_ca ]
+basicConstraints = critical,CA:TRUE
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer:always

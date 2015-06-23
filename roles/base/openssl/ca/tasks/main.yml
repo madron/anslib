@@ -1,0 +1,65 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  when: ansible_distribution != 'MacOSX'
+  tags:
+    - openssl-ca
+
+
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - openssl-ca
+
+
+- name: certs directory
+  file:
+    path: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/certs'
+    state: directory
+    mode: 0755
+  tags:
+    - openssl-ca
+
+
+- name: private directory
+  file:
+    path: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/private'
+    state: directory
+    mode: 0700
+  tags:
+    - openssl-ca
+
+
+- name: openssl.cnf
+  template:
+    src: openssl.cnf
+    dest: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/'
+    mode: 0644
+  tags:
+    - openssl-ca
+
+
+- name: ca private key
+  command: openssl genrsa -out private/ca.key {{ openssl_ca_default_days }}
+  args:
+    chdir: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}'
+    creates: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/private/ca.key'
+  tags:
+    - openssl-ca
+
+
+- name: ca private key permission
+  file:
+    path: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/private/ca.key'
+    state: file
+    mode: 0600
+  tags:
+    - openssl-ca
+
+
+- name: certificate
+  command: openssl req -config openssl.cnf -batch -new -x509 -key private/ca.key -out certs/ca.crt
+  args:
+    chdir: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}'
+    creates: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/certs/ca.crt'
+  tags:
+    - openssl-ca
