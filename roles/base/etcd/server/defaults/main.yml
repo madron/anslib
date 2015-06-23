@@ -1,10 +1,11 @@
 etcd_server_tag: v2.0.12
 
-etcd_server_host: localhost
 etcd_server_name: default
 etcd_server_cluster_token: etcd-cluster
-# etcd_server_initial_cluster: etcd0=http://192.168.12.50:2380,etcd1=http://192.168.12.51:2380,etcd2=http://192.168.12.52:2380
-# etcd_server_advertise_client_urls: http://192.168.12.50:2379,http://192.168.12.51:2379,http://192.168.12.52:2379
+
+etcd_server_node: {
+    default: { host: localhost, ip: 127.0.0.1 }
+}
 
 etcd_server_client_port: 2379
 etcd_server_peer_port: 2380
