@@ -11,3 +11,6 @@ nginx_server_names_hash_bucket_size: 32
 
 nginx_certificates_directory: '/etc/nginx/certificates'
 nginx_certificates: []
+
+nginx_proxy_send_timeout: 60s
+nginx_proxy_read_timeout: 60s
