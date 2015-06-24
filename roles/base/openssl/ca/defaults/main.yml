@@ -7,3 +7,6 @@ openssl_ca_policy: policy_match
 
 openssl_ca_country_name: AU
 openssl_ca_state_or_province_name: Some-State
+
+openssl_ca_certificates: []
+# openssl_ca_certificates: ['cert1', 'cert2']

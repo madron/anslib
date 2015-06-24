@@ -13,9 +13,12 @@
 
 - name: certs directory
   file:
-    path: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/certs'
+    path: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/{{ item }}'
     state: directory
     mode: 0755
+  with_items:
+    - certs
+    - newcerts
   tags:
     - openssl-ca
 
@@ -38,6 +41,24 @@
     - openssl-ca
 
 
+- name: index.txt
+  command: touch index.txt
+  args:
+    chdir: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}'
+    creates: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/index.txt'
+  tags:
+    - openssl-ca
+
+
+- name: serial
+  shell:  "echo '01' > serial"
+  args:
+    chdir: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}'
+    creates: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/serial'
+  tags:
+    - openssl-ca
+
+
 - name: ca private key
   command: openssl genrsa -out private/ca.key {{ openssl_ca_default_days }}
   args:
@@ -56,10 +77,41 @@
     - openssl-ca
 
 
-- name: certificate
+- name: ca certificate
   command: openssl req -config openssl.cnf -batch -new -x509 -key private/ca.key -out certs/ca.crt
   args:
     chdir: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}'
     creates: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/certs/ca.crt'
+  tags:
+    - openssl-ca
+
+
+- name: server private key and csr
+  # -subj '/CN={{ item }}/O=My Company Name LTD./C=US'
+  command: "openssl req -config openssl.cnf -batch -new -nodes -subj '/CN={{ item }}' -keyout private/{{ item }}.key -out private/{{ item }}.csr -days {{ openssl_ca_default_days }}"
+  args:
+    chdir: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}'
+    creates: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/private/{{ item }}.key'
+  with_items: openssl_ca_certificates
+  tags:
+    - openssl-ca
+
+
+- name: server private key permission
+  file:
+    path: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/private/{{ item }}.key'
+    state: file
+    mode: 0600
+  with_items: openssl_ca_certificates
+  tags:
+    - openssl-ca
+
+
+- name: server certificate
+  command: openssl ca -config openssl.cnf -batch -policy {{ openssl_ca_policy }} -out certs/{{ item }}.crt -infiles private/{{ item }}.csr
+  args:
+    chdir: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}'
+    creates: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/certs/{{ item }}.crt'
+  with_items: openssl_ca_certificates
   tags:
     - openssl-ca

@@ -5,8 +5,11 @@ default_ca      = CA_default           # The default ca section
 
 [ CA_default ]
 dir            = .                     # top dir
-certificate    = $dir/certs/ca.cert    # The CA cert
+certificate    = $dir/certs/ca.crt     # The CA cert
 private_key    = $dir/private/ca.key   # CA private key
+new_certs_dir  = $dir/newcerts         # default place for new certs.
+database       = $dir/index.txt        # database index file.
+serial         = $dir/serial           # The current serial number
 
 default_days     = {{ openssl_ca_default_days }}
 default_crl_days = 30                  # how long before next CRL
