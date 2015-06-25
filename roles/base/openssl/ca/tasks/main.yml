@@ -42,10 +42,15 @@
 
 
 - name: index.txt
-  command: touch index.txt
+  command: 'touch {{ item }}'
   args:
     chdir: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}'
-    creates: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/index.txt'
+    creates: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/{{ item }}'
+  with_items:
+    - index.txt
+    - index.txt.old
+    - index.txt.attr
+    - index.txt.attr.old
   tags:
     - openssl-ca
 
@@ -59,8 +64,26 @@
     - openssl-ca
 
 
+- name: serial.old
+  command: touch serial.old
+  args:
+    chdir: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}'
+    creates: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/serial.old'
+  tags:
+    - openssl-ca
+
+
+- name: revoked.crl
+  command: touch revoked.crl
+  args:
+    chdir: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}'
+    creates: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/revoked.crl'
+  tags:
+    - openssl-ca
+
+
 - name: ca private key
-  command: openssl genrsa -out private/ca.key {{ openssl_ca_default_days }}
+  command: "openssl genrsa -out private/ca.key {{ openssl_ca_default_days }}"
   args:
     chdir: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}'
     creates: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/private/ca.key'
@@ -78,7 +101,7 @@
 
 
 - name: ca certificate
-  command: openssl req -config openssl.cnf -batch -new -x509 -key private/ca.key -out certs/ca.crt
+  command: "openssl req -config openssl.cnf -batch -new -x509 -subj '/CN={{ openssl_ca }}' -key private/ca.key -out certs/ca.crt"
   args:
     chdir: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}'
     creates: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/certs/ca.crt'
@@ -92,7 +115,7 @@
   args:
     chdir: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}'
     creates: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/private/{{ item }}.key'
-  with_items: openssl_ca_certificates
+  with_items: openssl_ca_servers
   tags:
     - openssl-ca
 
@@ -102,16 +125,26 @@
     path: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/private/{{ item }}.key'
     state: file
     mode: 0600
-  with_items: openssl_ca_certificates
+  with_items: openssl_ca_servers
   tags:
     - openssl-ca
 
 
 - name: server certificate
-  command: openssl ca -config openssl.cnf -batch -policy {{ openssl_ca_policy }} -out certs/{{ item }}.crt -infiles private/{{ item }}.csr
+  command: 'openssl ca -config openssl.cnf -batch -policy {{ openssl_ca_policy }}  -out certs/{{ item }}.crt -infiles private/{{ item }}.csr'
   args:
     chdir: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}'
     creates: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/certs/{{ item }}.crt'
-  with_items: openssl_ca_certificates
+  with_items: openssl_ca_servers
+  tags:
+    - openssl-ca
+
+
+- name: server certificate revocation
+  shell: 'openssl ca -config openssl.cnf -batch -revoke certs/{{ item }}.crt -gencrl -out revoked.crl && touch private/{{ item }}.revoked'
+  args:
+    chdir: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}'
+    creates: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/private/{{ item }}.revoked'
+  with_items: openssl_ca_revoked_servers
   tags:
     - openssl-ca

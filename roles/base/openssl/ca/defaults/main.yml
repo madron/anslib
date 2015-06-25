@@ -1,12 +1,15 @@
 openssl_ca_base_dir: /etc/ssl
 openssl_ca: ca
 
-openssl_ca_default_bits: 4096
+openssl_ca_default_bits: 2048
 openssl_ca_default_days: 365
 openssl_ca_policy: policy_match
 
 openssl_ca_country_name: AU
 openssl_ca_state_or_province_name: Some-State
 
-openssl_ca_certificates: []
-# openssl_ca_certificates: ['cert1', 'cert2']
+openssl_ca_servers: []
+# openssl_ca_servers: ['cn1', 'cn2']
+
+openssl_ca_revoked_servers: []
+# openssl_ca_revoked_servers: ['cn1']
