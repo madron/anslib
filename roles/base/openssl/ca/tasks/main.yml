@@ -110,11 +110,11 @@
 
 
 - name: server private key and csr
-  # -subj '/CN={{ item }}/O=My Company Name LTD./C=US'
-  command: "openssl req -config openssl.cnf -batch -new -nodes -subj '/CN={{ item }}' -keyout private/{{ item }}.key -out private/{{ item }}.csr -days {{ openssl_ca_default_days }}"
+  # -subj '/CN={{ item.name }}/O=My Company Name LTD./C=US'
+  command: "openssl req -config openssl.cnf -batch -new -nodes -subj '/CN={{ item.cn }}' -keyout private/{{ item.name }}.key -out private/{{ item.name }}.csr -days {{ openssl_ca_default_days }}"
   args:
     chdir: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}'
-    creates: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/private/{{ item }}.key'
+    creates: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/private/{{ item.name }}.key'
   with_items: openssl_ca_servers
   tags:
     - openssl-ca
@@ -122,7 +122,7 @@
 
 - name: server private key permission
   file:
-    path: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/private/{{ item }}.key'
+    path: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/private/{{ item.name }}.key'
     state: file
     mode: 0600
   with_items: openssl_ca_servers
@@ -131,10 +131,10 @@
 
 
 - name: server certificate
-  command: 'openssl ca -config openssl.cnf -batch -policy {{ openssl_ca_policy }}  -out certs/{{ item }}.crt -infiles private/{{ item }}.csr'
+  command: 'openssl ca -config openssl.cnf -batch -policy {{ openssl_ca_policy }}  -out certs/{{ item.name }}.crt -infiles private/{{ item.name }}.csr'
   args:
     chdir: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}'
-    creates: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/certs/{{ item }}.crt'
+    creates: '{{ openssl_ca_base_dir }}/{{ openssl_ca }}/certs/{{ item.name }}.crt'
   with_items: openssl_ca_servers
   tags:
     - openssl-ca

@@ -4,6 +4,69 @@
     - etcd-server
 
 
+- name: set ssl peer variables
+  set_fact:
+    etcd_server_peer_protocol: https
+  when: etcd_server_openssl_peer_ca is defined
+  tags:
+    - etcd-server
+
+
+- name: set ssl client variables
+  set_fact:
+    etcd_server_client_protocol: https
+  when: etcd_server_openssl_client_ca is defined
+  tags:
+    - etcd-server
+
+
+- name: openssl directory
+  file:
+    path: /etc/container/etcd-server
+    state: directory
+    mode: 0644
+    owner: root
+    group: root
+  tags:
+    - etcd-server
+
+
+- name: openssl peer-cert-file
+  copy:
+    src: '{{ etcd_server_openssl_dir }}/{{ etcd_server_openssl_peer_ca }}/certs/{{ etcd_server_name }}.crt'
+    dest: '/etc/container/etcd-server/peer-cert-file'
+    mode: 0644
+    owner: root
+    group: root
+  when: etcd_server_openssl_peer_ca is defined
+  tags:
+    - etcd-server
+
+
+- name: openssl peer-key-file
+  copy:
+    src: '{{ etcd_server_openssl_dir }}/{{ etcd_server_openssl_peer_ca }}/private/{{ etcd_server_name }}.key'
+    dest: '/etc/container/etcd-server/peer-key-file'
+    mode: 0644
+    owner: root
+    group: root
+  when: etcd_server_openssl_peer_ca is defined
+  tags:
+    - etcd-server
+
+
+- name: openssl peer-trusted-ca-file
+  copy:
+    src: '{{ etcd_server_openssl_dir }}/{{ etcd_server_openssl_peer_ca }}/certs/ca.crt'
+    dest: '/etc/container/etcd-server/peer-trusted-ca-file'
+    mode: 0644
+    owner: root
+    group: root
+  when: etcd_server_openssl_peer_ca is defined
+  tags:
+    - etcd-server
+
+
 - name: upstart file
   template:
     src: upstart.conf

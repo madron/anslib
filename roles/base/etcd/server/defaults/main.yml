@@ -1,4 +1,7 @@
-etcd_server_tag: v2.0.12
+etcd_server_tag: v2.0.13
+etcd_server_openssl_dir: 'files/openssl'
+etcd_server_peer_protocol: http
+etcd_server_client_protocol: http
 
 etcd_server_name: default
 etcd_server_cluster_token: etcd-cluster
@@ -9,3 +12,6 @@ etcd_server_node: {
 
 etcd_server_client_port: 2379
 etcd_server_peer_port: 2380
+
+# etcd_server_openssl_peer_ca: ''
+# etcd_server_openssl_client_ca: ''

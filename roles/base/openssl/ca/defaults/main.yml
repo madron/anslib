@@ -9,7 +9,9 @@ openssl_ca_country_name: AU
 openssl_ca_state_or_province_name: Some-State
 
 openssl_ca_servers: []
-# openssl_ca_servers: ['cn1', 'cn2']
+# openssl_ca_servers:
+#     - { 'name': 'cn1', 'cn': '*' }
+#     - { 'name': 'cn2', 'cn': '*' }
 
 openssl_ca_revoked_servers: []
 # openssl_ca_revoked_servers: ['cn1']
