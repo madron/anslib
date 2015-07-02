@@ -1,0 +1,15 @@
+etcd_ca_base_dir: /etc/etcd
+
+etcd_ca_passphrase: ''
+etcd_ca_key_bits: 4096
+etcd_ca_years: 10
+etcd_ca_organization: etcd-ca
+etcd_ca_country: USA
+
+etcd_ca_server: {}
+# etcd_ca_server: {
+#   'server1': {},
+#   'server2': { 'ips': [192.168.1.1,] },
+#   'server3': { 'domains': [server3.example.com,] },
+#   'test-server': { 'ips': [192.168.1.1,], 'domains': [server3.example.com,] },
+# }

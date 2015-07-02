@@ -1,0 +1,47 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  when: ansible_distribution != 'MacOSX'
+  tags:
+    - etcd-ca
+
+
+- name: base directory
+  file:
+    path: '{{ etcd_ca_base_dir }}'
+    state: directory
+    mode: 0755
+  tags:
+    - etcd-ca
+
+
+- name: set variables
+  set_fact:
+    etcd_ca: 'docker run --rm --volume {{ etcd_ca_base_dir }}:/ca nightling/etcd-ca /go/bin/app --depot-path "/ca/{{ etcd_ca_organization }}"'
+  tags:
+    - etcd-ca
+
+
+- name: init
+  command: '{{ etcd_ca }} init --passphrase "{{ etcd_ca_passphrase }}" --key-bits "{{ etcd_ca_key_bits }}" --years "{{ etcd_ca_years }}" --organization "{{ etcd_ca_organization }}" --country "{{ etcd_ca_country }}"'
+  args:
+    creates: '{{ etcd_ca_base_dir }}/{{ etcd_ca_organization }}/ca.key'
+  tags:
+    - etcd-ca
+
+
+- name: certificate sign requests
+  command: '{{ etcd_ca }} new-cert {{ item.key }} --passphrase "" {% if item.value.ips is defined %}-ip {{ item.value.ips|join(",") }}{% endif %} {% if item.value.domains is defined %}-domain {{ item.value.domains|join(",") }}{% endif %}'
+  args:
+    creates: '{{ etcd_ca_base_dir }}/{{ etcd_ca_organization }}/{{ item.key }}.host.key'
+  with_dict: etcd_ca_server
+  tags:
+    - etcd-ca
+
+
+- name: sign certificates
+  command: '{{ etcd_ca }} sign {{ item.key }} --passphrase "" --years "{{ etcd_ca_years }}"'
+  args:
+    creates: '{{ etcd_ca_base_dir }}/{{ etcd_ca_organization }}/{{ item.key }}.host.crt'
+  with_dict: etcd_ca_server
+  tags:
+    - etcd-ca
