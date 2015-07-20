@@ -21,6 +21,13 @@
     - etcd-ca
 
 
+- name: debug
+  debug:
+    msg: '{{ etcd_ca }}'
+  tags:
+    - etcd-ca
+
+
 - name: init
   command: '{{ etcd_ca }} init --passphrase "{{ etcd_ca_passphrase }}" --key-bits "{{ etcd_ca_key_bits }}" --years "{{ etcd_ca_years }}" --organization "{{ etcd_ca_organization }}" --country "{{ etcd_ca_country }}"'
   args:
@@ -42,6 +49,15 @@
   command: '{{ etcd_ca }} sign {{ item.key }} --passphrase "" --years "{{ etcd_ca_years }}"'
   args:
     creates: '{{ etcd_ca_base_dir }}/{{ etcd_ca_organization }}/{{ item.key }}.host.crt'
+  with_dict: etcd_ca_server
+  tags:
+    - etcd-ca
+
+
+- name: export unencrypted certificates
+  shell: '{{ etcd_ca }} export --insecure {{ item.key }} | tar -C {{ etcd_ca_base_dir }}/{{ etcd_ca_organization }} -x -v -f -'
+  args:
+    creates: '{{ etcd_ca_base_dir }}/{{ etcd_ca_organization }}/{{ item.key }}.key.insecure'
   with_dict: etcd_ca_server
   tags:
     - etcd-ca
