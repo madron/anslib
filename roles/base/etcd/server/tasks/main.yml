@@ -33,7 +33,7 @@
 
 - name: openssl peer-cert-file
   copy:
-    src: '{{ etcd_server_openssl_dir }}/{{ etcd_server_openssl_peer_ca }}/certs/{{ etcd_server_name }}.crt'
+    src: '{{ etcd_server_openssl_dir }}/{{ etcd_server_openssl_peer_ca }}/{{ etcd_server_name }}.host.crt'
     dest: '/etc/container/etcd-server/peer-cert-file'
     mode: 0644
     owner: root
@@ -45,7 +45,7 @@
 
 - name: openssl peer-key-file
   copy:
-    src: '{{ etcd_server_openssl_dir }}/{{ etcd_server_openssl_peer_ca }}/private/{{ etcd_server_name }}.key'
+    src: '{{ etcd_server_openssl_dir }}/{{ etcd_server_openssl_peer_ca }}/{{ etcd_server_name }}.key.insecure'
     dest: '/etc/container/etcd-server/peer-key-file'
     mode: 0644
     owner: root
@@ -57,7 +57,7 @@
 
 - name: openssl peer-trusted-ca-file
   copy:
-    src: '{{ etcd_server_openssl_dir }}/{{ etcd_server_openssl_peer_ca }}/certs/ca.crt'
+    src: '{{ etcd_server_openssl_dir }}/{{ etcd_server_openssl_peer_ca }}/ca.crt'
     dest: '/etc/container/etcd-server/peer-trusted-ca-file'
     mode: 0644
     owner: root
