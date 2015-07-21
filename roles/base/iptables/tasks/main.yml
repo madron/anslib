@@ -59,3 +59,38 @@
   tags:
     - iptables
     - iptables-rules
+
+
+- name: /etc/init/iptables-docker.conf
+  template:
+    src: upstart-iptables-docker.conf
+    dest: /etc/init/iptables-docker.conf
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: upstart
+  when: iptables_docker_filter
+  tags:
+    - iptables
+    - iptables-rules
+
+
+- name: service iptables-docker restarted
+  service:
+    name: iptables-docker
+    state: restarted
+  when: iptables_docker_filter and (upstart.changed or iptables_force_reload)
+  tags:
+    - iptables
+    - iptables-rules
+
+
+- name: service iptables-docker started
+  service:
+    name: iptables-docker
+    state: started
+  when: iptables_docker_filter
+  tags:
+    - iptables
+    - iptables-rules

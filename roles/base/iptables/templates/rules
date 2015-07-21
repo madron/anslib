@@ -19,6 +19,76 @@ iptables --append INPUT {{ rule }}
 {% for rule in iptables_input_rules_2 %}
 iptables --append INPUT {{ rule }}
 {% endfor %}
+{% for rule in iptables_input_rules_3 %}
+iptables --append INPUT {{ rule }}
+{% endfor %}
+{% for rule in iptables_input_rules_4 %}
+iptables --append INPUT {{ rule }}
+{% endfor %}
+{% for rule in iptables_input_rules_5 %}
+iptables --append INPUT {{ rule }}
+{% endfor %}
+{% for rule in iptables_input_rules_6 %}
+iptables --append INPUT {{ rule }}
+{% endfor %}
+{% for rule in iptables_input_rules_7 %}
+iptables --append INPUT {{ rule }}
+{% endfor %}
+{% for rule in iptables_input_rules_8 %}
+iptables --append INPUT {{ rule }}
+{% endfor %}
+{% for rule in iptables_input_rules_9 %}
+iptables --append INPUT {{ rule }}
+{% endfor %}
 {% for rule in iptables_input_rules %}
 iptables --append INPUT {{ rule }}
 {% endfor %}
+
+{% if iptables_docker_filter %}
+
+# create PRE_DOCKER chain
+if ! iptables --numeric --list PRE_DOCKER 2>&1 >/dev/null; then
+    iptables --new PRE_DOCKER
+fi
+
+# Flush chain
+iptables --flush PRE_DOCKER
+
+# Rules
+{% for rule in iptables_input_rules_0 %}
+iptables --append PRE_DOCKER {{ rule }}
+{% endfor %}
+{% for rule in iptables_input_rules_1 %}
+iptables --append PRE_DOCKER {{ rule }}
+{% endfor %}
+{% for rule in iptables_input_rules_2 %}
+iptables --append PRE_DOCKER {{ rule }}
+{% endfor %}
+{% for rule in iptables_input_rules_3 %}
+iptables --append PRE_DOCKER {{ rule }}
+{% endfor %}
+{% for rule in iptables_input_rules_4 %}
+iptables --append PRE_DOCKER {{ rule }}
+{% endfor %}
+{% for rule in iptables_input_rules_5 %}
+iptables --append PRE_DOCKER {{ rule }}
+{% endfor %}
+{% for rule in iptables_input_rules_6 %}
+iptables --append PRE_DOCKER {{ rule }}
+{% endfor %}
+{% for rule in iptables_input_rules_7 %}
+iptables --append PRE_DOCKER {{ rule }}
+{% endfor %}
+{% for rule in iptables_input_rules_8 %}
+iptables --append PRE_DOCKER {{ rule }}
+{% endfor %}
+{% for rule in iptables_input_rules_9 %}
+iptables --append PRE_DOCKER {{ rule }}
+{% endfor %}
+{% for rule in iptables_input_rules %}
+iptables --append PRE_DOCKER {{ rule }}
+{% endfor %}
+
+# Drop everything else
+iptables --append PRE_DOCKER -j DROP
+{% endif %}

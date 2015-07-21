@@ -2,10 +2,19 @@ iptables_force_reload: no
 
 iptables_input_policy: ACCEPT
 
+iptables_docker_filter: no
+
 # Multi level rules lists
 iptables_input_rules_0: []
 iptables_input_rules_1: []
 iptables_input_rules_2: []
+iptables_input_rules_3: []
+iptables_input_rules_4: []
+iptables_input_rules_5: []
+iptables_input_rules_6: []
+iptables_input_rules_7: []
+iptables_input_rules_8: []
+iptables_input_rules_9: []
 iptables_input_rules: []
 
 # Anti-lockout rules
@@ -18,6 +27,9 @@ iptables_input_rules: []
 #   '-i lo -j ACCEPT',
 #   # Icmp
 #   '-p icmp -j ACCEPT',
+#   #
+#   '-m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT',
+#   '-m state --state ESTABLISHED,RELATED -j ACCEPT',
 # ]
 
 # Services
