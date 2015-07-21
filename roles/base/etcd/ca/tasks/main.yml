@@ -61,3 +61,12 @@
   with_dict: etcd_ca_server
   tags:
     - etcd-ca
+
+
+- name: chain certificates
+  shell: '{{ etcd_ca }} chain {{ item.key }} > {{ etcd_ca_base_dir }}/{{ etcd_ca_organization }}/{{ item.key }}.chain.pem'
+  args:
+    creates: '{{ etcd_ca_base_dir }}/{{ etcd_ca_organization }}/{{ item.key }}.chain.pem'
+  with_dict: etcd_ca_server
+  tags:
+    - etcd-ca
