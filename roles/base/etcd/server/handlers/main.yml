@@ -1,0 +1,4 @@
+- name: dck-etcd-server restarted
+  service: >
+    name=dck-etcd-server
+    state=restarted

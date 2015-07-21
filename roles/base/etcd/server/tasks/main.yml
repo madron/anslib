@@ -39,6 +39,7 @@
     owner: root
     group: root
   when: etcd_server_openssl_peer_ca is defined
+  notify: dck-etcd-server restarted
   tags:
     - etcd-server
 
@@ -51,6 +52,7 @@
     owner: root
     group: root
   when: etcd_server_openssl_peer_ca is defined
+  notify: dck-etcd-server restarted
   tags:
     - etcd-server
 
@@ -63,6 +65,46 @@
     owner: root
     group: root
   when: etcd_server_openssl_peer_ca is defined
+  notify: dck-etcd-server restarted
+  tags:
+    - etcd-server
+
+
+- name: openssl client-cert-file
+  copy:
+    src: '{{ etcd_server_openssl_dir }}/{{ etcd_server_openssl_client_ca }}/{{ etcd_server_name }}.host.crt'
+    dest: '/etc/container/etcd-server/client-cert-file'
+    mode: 0644
+    owner: root
+    group: root
+  when: etcd_server_openssl_client_ca is defined
+  notify: dck-etcd-server restarted
+  tags:
+    - etcd-server
+
+
+- name: openssl client-key-file
+  copy:
+    src: '{{ etcd_server_openssl_dir }}/{{ etcd_server_openssl_client_ca }}/{{ etcd_server_name }}.key.insecure'
+    dest: '/etc/container/etcd-server/client-key-file'
+    mode: 0644
+    owner: root
+    group: root
+  when: etcd_server_openssl_client_ca is defined
+  notify: dck-etcd-server restarted
+  tags:
+    - etcd-server
+
+
+- name: openssl client-trusted-ca-file
+  copy:
+    src: '{{ etcd_server_openssl_dir }}/{{ etcd_server_openssl_client_ca }}/ca.crt'
+    dest: '/etc/container/etcd-server/client-trusted-ca-file'
+    mode: 0644
+    owner: root
+    group: root
+  when: etcd_server_openssl_client_ca is defined
+  notify: dck-etcd-server restarted
   tags:
     - etcd-server
 
