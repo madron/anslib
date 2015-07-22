@@ -1,0 +1,59 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - distribution
+
+
+- name: set variables
+  set_fact:
+    distribution_container_backend: distribution-backend
+    distribution_service_backend: dck-distribution-backend
+  tags:
+    - distribution
+
+
+- name: docker image distribution
+  command: 'docker pull distribution/registry:{{ distribution_tag }}'
+  tags:
+    - distribution
+
+
+- name: data directory
+  file:
+    path: '/var/lib/container/{{ distribution_container_backend }}'
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  tags:
+    - distribution
+
+
+- name: upstart file
+  template:
+    src: upstart-backend.conf
+    dest: '/etc/init/{{ distribution_service_backend }}.conf'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: upstart_backend
+  tags:
+    - distribution
+
+
+- name: service distribution backend restarted
+  service:
+    name: '{{ distribution_service_backend }}'
+    state: restarted
+  when: upstart_backend.changed
+  tags:
+    - distribution
+
+
+- name: service distribution backend started
+  service:
+    name: '{{ distribution_service_backend }}'
+    state: started
+  tags:
+    - distribution
