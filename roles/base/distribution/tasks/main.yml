@@ -8,6 +8,8 @@
   set_fact:
     distribution_container_backend: distribution-backend
     distribution_service_backend: dck-distribution-backend
+    distribution_container_frontend: distribution-frontend
+    distribution_service_frontend: dck-distribution-frontend
   tags:
     - distribution
 
@@ -18,18 +20,21 @@
     - distribution
 
 
-- name: data directory
+- name: data and configurarion directories
   file:
-    path: '/var/lib/container/{{ distribution_container_backend }}'
+    path: '{{ item }}'
     state: directory
     owner: root
     group: root
     mode: 0755
+  with_items:
+    - '/var/lib/container/{{ distribution_container_backend }}'
+    - '/etc/container/{{ distribution_container_frontend }}'
   tags:
     - distribution
 
 
-- name: upstart file
+- name: upstart backend file
   template:
     src: upstart-backend.conf
     dest: '/etc/init/{{ distribution_service_backend }}.conf'
@@ -42,7 +47,7 @@
     - distribution
 
 
-- name: service distribution backend restarted
+- name: service backend restarted
   service:
     name: '{{ distribution_service_backend }}'
     state: restarted
@@ -51,9 +56,39 @@
     - distribution
 
 
-- name: service distribution backend started
+- name: service backend started
   service:
     name: '{{ distribution_service_backend }}'
+    state: started
+  tags:
+    - distribution
+
+
+- name: upstart frontend file
+  template:
+    src: upstart-frontend.conf
+    dest: '/etc/init/{{ distribution_service_frontend }}.conf'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: upstart_frontend
+  tags:
+    - distribution
+
+
+- name: service frontend restarted
+  service:
+    name: '{{ distribution_service_frontend }}'
+    state: restarted
+  when: upstart_frontend.changed
+  tags:
+    - distribution
+
+
+- name: service frontend started
+  service:
+    name: '{{ distribution_service_frontend }}'
     state: started
   tags:
     - distribution
