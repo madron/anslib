@@ -10,3 +10,10 @@ distribution_frontend_ssl_cert_dir: ''
 # distribution_frontend_ssl_cert_dir: 'files/nginx_certificate/example.com'
 distribution_frontend_server_name: ''
 # distribution_frontend_server_name: 'registry.example.com'
+
+distribution_write_subnets: []
+
+# distribution_users: {
+#     fred: secret,
+#     george: secret,
+# }

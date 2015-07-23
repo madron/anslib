@@ -4,6 +4,12 @@
     - distribution
 
 
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - distribution
+
+
 - name: set variables
   set_fact:
     distribution_container_backend: distribution-backend
@@ -85,11 +91,21 @@
     - distribution
 
 
+- name: users password
+  htpasswd:
+    name: '{{ item.key }}'
+    password: '{{ item.value }}'
+    path: '/etc/container/{{ distribution_container_frontend }}/distribution.password'
+  with_dict: distribution_users
+  tags:
+    - distribution
+
+
 - name: ssl certificates
   copy:
     src: '{{ item }}'
     dest: '/etc/container/{{ distribution_container_frontend }}/'
-    # mode: 0644
+    mode: 0644
     owner: root
     group: root
   register: certificates

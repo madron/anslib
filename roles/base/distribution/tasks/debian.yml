@@ -1,0 +1,7 @@
+- name: required packages
+  apt:
+    name: '{{ item }}'
+    state: present
+  with_items: distribution_packages
+  tags:
+    - distribution
