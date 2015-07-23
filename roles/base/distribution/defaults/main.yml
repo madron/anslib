@@ -1,3 +1,12 @@
 distribution_tag: 2.0.1
+distribution_nginx_tag: 1.9.3
 distribution_frontend_port: 80
 distribution_backend_port: 5000
+distribution_backend_host: backend
+
+distribution_download: false
+
+distribution_frontend_ssl_cert_dir: ''
+# distribution_frontend_ssl_cert_dir: 'files/nginx_certificate/example.com'
+distribution_frontend_server_name: ''
+# distribution_frontend_server_name: 'registry.example.com'

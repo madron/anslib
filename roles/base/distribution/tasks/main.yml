@@ -14,8 +14,16 @@
     - distribution
 
 
-- name: docker image distribution
+- name: pull docker image distribution
   command: 'docker pull distribution/registry:{{ distribution_tag }}'
+  when: distribution_download
+  tags:
+    - distribution
+
+
+- name: pull docker image nginx
+  command: 'docker pull nginx:{{ distribution_nginx_tag }}'
+  when: distribution_download
   tags:
     - distribution
 
@@ -64,6 +72,34 @@
     - distribution
 
 
+- name: nginx.conf
+  template:
+    src: nginx.conf
+    dest: '/etc/container/{{ distribution_container_frontend }}/distribution.conf'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: nginx_conf
+  tags:
+    - distribution
+
+
+- name: ssl certificates
+  copy:
+    src: '{{ item }}'
+    dest: '/etc/container/{{ distribution_container_frontend }}/'
+    # mode: 0644
+    owner: root
+    group: root
+  register: certificates
+  with_items:
+    - '{{ distribution_frontend_ssl_cert_dir }}/server.key'
+    - '{{ distribution_frontend_ssl_cert_dir }}/server.crt'
+  tags:
+    - distribution
+
+
 - name: upstart frontend file
   template:
     src: upstart-frontend.conf
@@ -90,5 +126,12 @@
   service:
     name: '{{ distribution_service_frontend }}'
     state: started
+  tags:
+    - distribution
+
+
+- name: service frontend reload
+  command: 'docker kill --signal=HUP {{ distribution_container_frontend }}'
+  when: nginx_conf.changed or certificates.changed
   tags:
     - distribution
