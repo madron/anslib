@@ -96,6 +96,7 @@
     name: '{{ item.key }}'
     password: '{{ item.value }}'
     path: '/etc/container/{{ distribution_container_frontend }}/distribution.password'
+  when: distribution_users
   with_dict: distribution_users
   tags:
     - distribution

@@ -13,6 +13,7 @@ distribution_frontend_server_name: ''
 
 distribution_write_subnets: []
 
+distribution_users: {}
 # distribution_users: {
 #     fred: secret,
 #     george: secret,
