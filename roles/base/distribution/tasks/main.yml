@@ -95,7 +95,7 @@
   register: certificates
   with_items:
     - '{{ distribution_frontend_ssl_cert_dir }}/server.key'
-    - '{{ distribution_frontend_ssl_cert_dir }}/server.crt'
+    - '{{ distribution_frontend_ssl_cert_dir }}/chain.crt'
   tags:
     - distribution
 
