@@ -22,7 +22,7 @@
 - name: docker-py
   pip:
     name: docker-py
-    state: latest
+    version: 1.1.0
   tags:
     - docker
 
