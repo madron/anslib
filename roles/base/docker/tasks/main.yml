@@ -25,3 +25,11 @@
     state: latest
   tags:
     - docker
+
+
+- name: accounts
+  command: docker login --username {{ item.value.username }} --password {{ item.value.password }} --email {{ item.value.email|default('no') }} {{ item.key }}
+  with_dict: docker_accounts
+  tags:
+    - docker
+    - docker-accounts

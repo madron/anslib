@@ -9,3 +9,9 @@ docker_tcp_bind_port: 2375
 
 docker_insecure_registries: []
 # docker_insecure_registries: [insecure.example.com:5000]
+
+docker_accounts: {}
+# docker_accounts: {
+#   registry.example.com: { username: bob, password: secret, email: 'bob@example.com' },
+#   hub.example.com: { username: fred, password: notsosecret },
+# }
