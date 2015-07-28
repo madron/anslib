@@ -4,19 +4,26 @@
     - ntpdate
 
 
-- include: packages_debian.yml
+- include: debian.yml
   when: ansible_os_family == 'Debian'
   tags:
     - ntpdate
 
 
 - name: /etc/cron.daily/ntpdate
-  template: >
-    src=ntpdate.j2
-    dest=/etc/cron.daily/ntpdate
-    mode=0755
-    owner=root
-    group=root
-  notify: run ntpdate
+  template:
+    src: ntpdate.j2
+    dest: /etc/cron.daily/ntpdate
+    mode: 0755
+    owner: root
+    group: root
+  register: cron
+  tags:
+    - ntpdate
+
+
+- name: run ntpdate
+  command: /etc/cron.daily/ntpdate
+  when: cron.changed
   tags:
     - ntpdate
