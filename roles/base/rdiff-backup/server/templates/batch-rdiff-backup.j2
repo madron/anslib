@@ -3,11 +3,9 @@
 # {{ ansible_managed }}
 
 import argparse
-import commands
 import logging
 import os
 import sys
-import subprocess
 import paramiko
 import rdiff_backup.Main
 from StringIO import StringIO
@@ -45,9 +43,7 @@ def get_logger(sysout, host, log_prefix):
 
 
 def get_ssh_client(host, port, user):
-    known_hosts_file = os.path.join(os.path.expanduser('~'), '.ssh', 'known_hosts')
     client = paramiko.SSHClient()
-    client.load_host_keys(known_hosts_file)
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     client.connect(host, port=port, username=user)
     return client
@@ -164,7 +160,7 @@ def backup(**kwargs):
         args.append('/')
     else:
         args.append('--remote-schema')
-        args.append('ssh -C -p %d ' % port + ' %s rdiff-backup --server')
+        args.append('ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -C -p %d ' % port + ' %s rdiff-backup --server')
         args.append('%s@%s::/' % (user, host))
     args.append(backup_dir)
     logger.info('File transfer started.')
@@ -173,7 +169,6 @@ def backup(**kwargs):
 
 def check_backup(**kwargs):
     logger = kwargs['logger']
-    host = kwargs['host']
     includes = kwargs['includes']
     backup_dir = kwargs['backup_dir']
     rc = 0
@@ -188,7 +183,6 @@ def check_backup(**kwargs):
 
 def clean_backup(**kwargs):
     logger = kwargs['logger']
-    host = kwargs['host']
     backup_dir = kwargs['backup_dir']
     days = kwargs['retain_days']
     if not days:
@@ -208,33 +202,33 @@ def clean_backup(**kwargs):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='rdiff-backup.')
     parser.add_argument('--name', metavar='NAME', type=str, default='',
-                       help='Name of host to backup')
+                        help='Name of host to backup')
     parser.add_argument('--host', metavar='HOSTNAME', type=str, required=True,
-                       help='Host to backup')
+                        help='Host to backup')
     parser.add_argument('--port', metavar='PORT', type=int, default=DEFAULT_PORT,
-                       help='Ssh port')
+                        help='Ssh port')
     parser.add_argument('--user', metavar='USER', type=str, default=DEFAULT_USER,
-                       help='Ssh user')
+                        help='Ssh user')
     parser.add_argument('--includes', metavar='PATH', type=str, nargs='+',
-                       required=True, help='Paths to backup')
+                        required=True, help='Paths to backup')
     parser.add_argument('--excludes', metavar='PATH', type=str, nargs='+',
-                       default=[], help='Paths to exclude from backup')
+                        default=[], help='Paths to exclude from backup')
     parser.add_argument('--backup-base', metavar='DIR', type=str,
-                       default=BACKUP_BASE, help='Backup base directory')
+                        default=BACKUP_BASE, help='Backup base directory')
     parser.add_argument('--backup-dir', metavar='DIR', type=str, default='',
                         help='Backup directory (If not provided will be calculated with backup-base and name or host')
     parser.add_argument('--log-prefix', metavar='PREFIX', type=str,
-                       default=LOG_PREFIX, help='Log file name prefix')
+                        default=LOG_PREFIX, help='Log file name prefix')
     parser.add_argument('--pre-execute-commands', metavar='COMMAND',
-                       type=str, nargs='+', default=[],
-                       help='Commands to execute on remote host')
+                        type=str, nargs='+', default=[],
+                        help='Commands to execute on remote host')
     parser.add_argument('--no-errors', metavar='TEXT',
-                       type=str, nargs='+', default=[],
-                       help='Commands to execute on remote host')
+                        type=str, nargs='+', default=[],
+                        help='Commands to execute on remote host')
     parser.add_argument('--retain-days', metavar='DAYS', type=int,
-                       help='Remove backups older than specified days')
+                        help='Remove backups older than specified days')
     parser.add_argument('--sysout', action='store_true', default=False,
-                       help='Log to sysout')
+                        help='Log to sysout')
 
     kwargs = vars(parser.parse_args())
     run(**kwargs)

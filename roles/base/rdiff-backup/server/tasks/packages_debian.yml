@@ -5,4 +5,3 @@
   with_items: rdiff_backup_server_packages
   tags:
     - rdiff-backup-server
-
