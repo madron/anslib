@@ -9,3 +9,16 @@ rdiff_backup_server_list: []
 # rdiff_backup_server_list:
 #   - { host: localhost, includes: ['/etc', '/root'], excludes: ['/etc/X11'], retain_days: 20 }
 #   - { host: localhost, includes: ['/etc'], user: manage, port: 30022 }
+
+
+rdiff_backup_server_packages:
+  - rdiff-backup
+  - rdiff-backup-fs
+  - python-pip
+  - python-dev
+  - parallel
+
+rdiff_backup_server_pip_packages:
+  - { name: ecdsa, version: 0.11 }
+  - { name: pycrypto, version: 2.6.1 }
+  - { name: paramiko, version: 1.15.2 }
