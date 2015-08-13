@@ -44,6 +44,10 @@ iptables --append INPUT {{ rule }}
 iptables --append INPUT {{ rule }}
 {% endfor %}
 
+# Log and drop everything else
+iptables --append INPUT -m limit --limit 2/min -j LOG --log-prefix "iptables-INPUT-dropped: " --log-level 4
+iptables --append INPUT -j DROP
+
 {% if iptables_docker_filter %}
 
 # create PRE_DOCKER chain
@@ -89,6 +93,7 @@ iptables --append PRE_DOCKER {{ rule }}
 iptables --append PRE_DOCKER {{ rule }}
 {% endfor %}
 
-# Drop everything else
+# Log and drop everything else
+iptables --append PRE_DOCKER -m limit --limit 2/min -j LOG --log-prefix "iptables-PRE_DOCKER-dropped: " --log-level 4
 iptables --append PRE_DOCKER -j DROP
 {% endif %}
