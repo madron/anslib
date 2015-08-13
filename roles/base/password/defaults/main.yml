@@ -1,3 +1,8 @@
+# From http://docs.ansible.com/ansible/faq.html#how-do-i-generate-crypted-passwords-for-the-user-module
+
+# apt-get install whois
+# mkpasswd --method=SHA-512
+
 password_user: root
 
 # password_crypted: xyz
