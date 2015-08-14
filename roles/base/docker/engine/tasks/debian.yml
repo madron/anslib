@@ -1,0 +1,88 @@
+- name: repository key
+  apt_key:
+    keyserver: hkp://p80.pool.sks-keyservers.net:80
+    id: 58118E89F3A912897C070ADBF76221572C52609D
+    state: present
+  tags:
+    - docker
+    - docker-engine
+
+
+- name: remove old repository
+  apt_repository:
+    repo: 'deb http://get.docker.io/ubuntu docker main'
+    state: absent
+  tags:
+    - docker
+    - docker-engine
+
+
+- name: repository
+  apt_repository:
+    repo: 'deb https://apt.dockerproject.org/repo {{ ansible_lsb.id|lower() }}-{{ ansible_lsb.codename }} main'
+    state: present
+  tags:
+    - docker
+    - docker-engine
+
+
+- name: required packages
+  apt:
+    name: '{{ item }}'
+    state: latest
+  with_items: docker_engine_packages
+  tags:
+    - docker
+    - docker-engine
+
+
+- name: remove old-style package
+  apt:
+    name: '{{ item }}'
+    state: absent
+    purge: yes
+  with_items: docker_engine_old_packages
+  tags:
+    - docker
+    - docker-engine
+
+
+- name: docker-engine package
+  apt:
+    name: 'docker-engine={{ docker_engine_version }}'
+    state: present
+  tags:
+    - docker
+    - docker-engine
+
+
+- name: default docker
+  template:
+    src: default_docker.j2
+    dest: /etc/default/docker
+    mode: 0644
+    owner: root
+    group: root
+  register: default
+  tags:
+    - docker
+    - docker-engine
+
+
+- name: service restarted
+  service:
+    name: docker
+    state: restarted
+  when: default.changed
+  tags:
+    - docker
+    - docker-engine
+
+
+- name: service started
+  service:
+    name: docker
+    state: started
+  tags:
+    - docker
+    - docker-engine
