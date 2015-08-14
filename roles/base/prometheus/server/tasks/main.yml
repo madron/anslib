@@ -1,0 +1,80 @@
+- name: set variables
+  set_fact:
+    prometheus_server_image: 'prom/prometheus'
+    prometheus_server_service: 'dck-prometheus-server'
+    prometheus_server_container: 'prometheus-server'
+  tags:
+    - prometheus-server
+    - prometheus-server-downlod
+
+
+- name: directories
+  file:
+    path: '{{ item }}'
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  with_items:
+    - '/etc/container/{{ prometheus_server_container }}'
+    - '/var/lib/container/{{ prometheus_server_container }}'
+  tags:
+    - prometheus-server
+
+
+- name: pull prometheus server image
+  command: 'docker pull {{ prometheus_server_image }}'
+  when: docker_image_download
+  tags:
+    - prometheus-server
+    - prometheus-server-downlod
+
+
+- name: prometheus.yml
+  template:
+    src: prometheus.yml
+    dest: '/etc/container/{{ prometheus_server_container }}'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: config
+  tags:
+    - prometheus-server
+
+
+- name: upstart file
+  template:
+    src: upstart.conf
+    dest: '/etc/init/{{ prometheus_server_service }}.conf'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: upstart
+  tags:
+    - prometheus-server
+
+
+- name: service restarted
+  service:
+    name: '{{ prometheus_server_service }}'
+    state: restarted
+  when: upstart.changed
+  tags:
+    - prometheus-server
+
+
+- name: service started
+  service:
+    name: '{{ prometheus_server_service }}'
+    state: started
+  tags:
+    - prometheus-server
+
+
+- name: service reloaded
+  command: 'docker kill --signal=HUP {{ prometheus_server_container }}'
+  when: config.changed
+  tags:
+    - prometheus-server
