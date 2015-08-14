@@ -1,0 +1,6 @@
+lxc_docker_packages:
+  - 'lxc-docker-{{ lxc_docker_version }}'
+  - python-pip
+  - linux-image-generic-lts-trusty
+  - linux-headers-generic-lts-trusty
+  - apparmor

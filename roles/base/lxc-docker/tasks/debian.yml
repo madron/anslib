@@ -1,0 +1,52 @@
+- name: repository key
+  apt_key:
+    url: http://keyserver.ubuntu.com/pks/lookup?op=get&fingerprint=on&search=0x36A1D7869245C8950F966E92D8576A8BA88D21E9
+    state: present
+  tags:
+    - lxc-docker
+
+
+- name: repository
+  apt_repository:
+    repo: 'deb http://get.docker.io/ubuntu docker main'
+    state: present
+  tags:
+    - lxc-docker
+
+
+- name: required packages
+  apt:
+    name: '{{ item }}'
+    state: latest
+  with_items: lxc_docker_packages
+  tags:
+    - lxc-docker
+
+
+- name: default docker
+  template:
+    src: default_docker.j2
+    dest: /etc/default/docker
+    mode: 0644
+    owner: root
+    group: root
+  register: default
+  tags:
+    - lxc-docker
+
+
+- name: service restarted
+  service:
+    name: docker
+    state: restarted
+  when: default.changed
+  tags:
+    - lxc-docker
+
+
+- name: service started
+  service:
+    name: docker
+    state: started
+  tags:
+    - lxc-docker

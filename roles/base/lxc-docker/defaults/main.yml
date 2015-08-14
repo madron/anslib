@@ -1,0 +1,17 @@
+lxc_docker_version: 1.5.0
+
+lxc_docker_tcp_bind_host: ''
+lxc_docker_tcp_bind_port: 2375
+
+# lxc_docker_registry_mirror: http://mirror.example.com:5000
+
+# lxc_docker_http_proxy: 'http://proxy.example.com:3128/'
+
+lxc_docker_insecure_registries: []
+# lxc_docker_insecure_registries: [insecure.example.com:5000]
+
+lxc_docker_accounts: {}
+# lxc_docker_accounts: {
+#   registry.example.com: { username: bob, password: secret, email: 'bob@example.com' },
+#   hub.example.com: { username: fred, password: notsosecret },
+# }

@@ -1,0 +1,35 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - lxc-docker
+
+
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - lxc-docker
+
+
+- name: fix ubuntu trusty pip installation
+  command: easy_install -U pip
+  args:
+    creates: /usr/local/bin/pip
+  when: ansible_lsb.id == 'Ubuntu' and ansible_lsb.codename == 'trusty'
+  tags:
+    - lxc-docker
+
+
+- name: docker-py
+  pip:
+    name: docker-py
+    version: 1.1.0
+  tags:
+    - lxc-docker
+
+
+- name: accounts
+  command: docker login --username {{ item.value.username }} --password {{ item.value.password }} --email {{ item.value.email|default('no') }} {{ item.key }}
+  with_dict: lxc_docker_accounts
+  tags:
+    - lxc-docker
+    - lxc-docker-accounts

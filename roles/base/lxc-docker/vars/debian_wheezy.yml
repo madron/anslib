@@ -1,0 +1,4 @@
+lxc_docker_packages:
+  - 'lxc-docker-{{ lxc_docker_version }}'
+  - python-pip
+  - apparmor
