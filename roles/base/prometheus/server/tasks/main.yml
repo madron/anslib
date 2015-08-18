@@ -17,6 +17,7 @@
     group: root
   with_items:
     - '/etc/container/{{ prometheus_server_container }}'
+    - '/etc/container/{{ prometheus_server_container }}/file_sd_configs'
     - '/var/lib/container/{{ prometheus_server_container }}'
   tags:
     - prometheus-server
@@ -71,10 +72,3 @@
     state: started
   tags:
     - prometheus-server
-
-
-# - name: service reloaded
-#   command: 'docker kill --signal=HUP {{ prometheus_server_container }}'
-#   when: config.changed
-#   tags:
-#     - prometheus-server
