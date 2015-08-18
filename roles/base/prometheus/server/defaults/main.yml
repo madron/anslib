@@ -1,3 +1,15 @@
 docker_image_download: false
 
 prometheus_server_port: 9090
+
+# How frequently to scrape targets by default.
+prometheus_server_global_scrape_interval: 1m
+# How long until a scrape request times out.
+prometheus_server_global_scrape_timeout: 10s
+# How frequently to evaluate rules by default.
+prometheus_server_global_evaluation_interval: 1m
+
+prometheus_server_scrape_configs: |
+    - job_name: 'prometheus'
+      target_groups:
+        - targets: ['localhost:9090']

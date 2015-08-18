@@ -60,7 +60,7 @@
   service:
     name: '{{ prometheus_server_service }}'
     state: restarted
-  when: upstart.changed
+  when: upstart.changed or config.changed
   tags:
     - prometheus-server
 
@@ -73,8 +73,8 @@
     - prometheus-server
 
 
-- name: service reloaded
-  command: 'docker kill --signal=HUP {{ prometheus_server_container }}'
-  when: config.changed
-  tags:
-    - prometheus-server
+# - name: service reloaded
+#   command: 'docker kill --signal=HUP {{ prometheus_server_container }}'
+#   when: config.changed
+#   tags:
+#     - prometheus-server
