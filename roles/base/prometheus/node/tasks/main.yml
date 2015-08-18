@@ -11,6 +11,7 @@
     prometheus_node_tar_path: '/var/lib/ansible/prometheus/node/node_exporter-{{ prometheus_node_version }}.linux-amd64.tar.gz'
   tags:
     - prometheus-node
+    - prometheus-node-config
 
 
 - name: ansible directory
@@ -76,6 +77,7 @@
   register: upstart
   tags:
     - prometheus-node
+    - prometheus-node-config
 
 
 - name: service restarted
@@ -85,6 +87,7 @@
   when: upstart.changed
   tags:
     - prometheus-node
+    - prometheus-node-config
 
 
 - name: service started
@@ -93,3 +96,4 @@
     state: started
   tags:
     - prometheus-node
+    - prometheus-node-config
