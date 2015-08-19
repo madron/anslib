@@ -18,6 +18,7 @@
   with_items:
     - '/etc/container/{{ prometheus_server_container }}'
     - '/etc/container/{{ prometheus_server_container }}/file_sd_configs'
+    - '/etc/container/{{ prometheus_server_container }}/rule_files'
     - '/var/lib/container/{{ prometheus_server_container }}'
   tags:
     - prometheus-server

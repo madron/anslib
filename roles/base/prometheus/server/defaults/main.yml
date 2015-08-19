@@ -9,6 +9,8 @@ prometheus_server_global_scrape_timeout: 10s
 # How frequently to evaluate rules by default.
 prometheus_server_global_evaluation_interval: 1m
 
+prometheus_server_rule_files: []
+
 prometheus_server_scrape_configs: |
     - job_name: 'prometheus'
       target_groups:

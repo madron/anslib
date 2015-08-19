@@ -10,8 +10,9 @@ global:
 
 # Load and evaluate rules in this file every 'evaluation_interval' seconds.
 rule_files:
-  # - "first.rules"
-  # - "second.rules"
+{% for rule_file in prometheus_server_rule_files %}
+    - "/etc/prometheus/rule_files/{{ rule_file }}"
+{% endfor %}
 
 scrape_configs:
 {{ prometheus_server_scrape_configs }}
