@@ -1,11 +1,14 @@
 - name: os specific variables
   include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
-  tags: nginx
+  tags:
+    - nginx
+    - nginx-config
 
 
 - include: debian.yml
   when: ansible_os_family == 'Debian'
-  tags: nginx
+  tags:
+    - nginx
 
 
 - name: nginx.conf
@@ -16,7 +19,9 @@
     owner: root
     group: root
   notify: reload nginx
-  tags: nginx
+  tags:
+    - nginx
+    - nginx-config
 
 
 - name: disable default site config
@@ -24,7 +29,9 @@
     path: /etc/nginx/sites-enabled/default
     state: absent
   notify: reload nginx
-  tags: nginx
+  tags:
+    - nginx
+    - nginx-config
 
 
 - name: disable fallback site on listed ports
@@ -36,7 +43,9 @@
     group: root
   with_items: nginx_ports
   notify: reload nginx
-  tags: nginx
+  tags:
+    - nginx
+    - nginx-config
 
 
 - name: disable fallback site on listed ports - symlink
@@ -49,7 +58,9 @@
     group: root
   with_items: nginx_ports
   notify: reload nginx
-  tags: nginx
+  tags:
+    - nginx
+    - nginx-config
 
 
 - name: certificate directory
@@ -59,7 +70,9 @@
     mode: 0755
     owner: root
     group: root
-  tags: nginx
+  tags:
+    - nginx
+    - nginx-config
 
 
 - name: certificate chain
@@ -71,7 +84,9 @@
     group: root
   with_items: nginx_certificates
   notify: reload nginx
-  tags: nginx
+  tags:
+    - nginx
+    - nginx-config
 
 
 - name: certificate key
@@ -83,7 +98,9 @@
     group: root
   with_items: nginx_certificates
   notify: reload nginx
-  tags: nginx
+  tags:
+    - nginx
+    - nginx-config
 
 
 - name: proxy pass - sites-available
@@ -94,7 +111,9 @@
     owner: root
     group: root
   notify: reload nginx
-  tags: nginx
+  tags:
+    - nginx
+    - nginx-config
 
 
 - name: proxy pass - sites-enabled
@@ -106,11 +125,15 @@
     owner: root
     group: root
   notify: reload nginx
-  tags: nginx
+  tags:
+    - nginx
+    - nginx-config
 
 
 - name: start server
   service:
     name: nginx
     state: started
-  tags: nginx
+  tags:
+    - nginx
+    - nginx-config
