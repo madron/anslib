@@ -1,0 +1,59 @@
+- name: set variables
+  set_fact:
+    prometheus_grafana_image: 'madron/grafana'
+    prometheus_grafana_service: 'dck-prometheus-grafana'
+    prometheus_grafana_container: 'prometheus-grafana'
+  tags:
+    - prometheus-grafana
+    - prometheus-grafana-downlod
+
+
+- name: directories
+  file:
+    path: '{{ item }}'
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  with_items:
+    - '/var/lib/container/{{ prometheus_grafana_container }}'
+  tags:
+    - prometheus-grafana
+
+
+- name: pull madron/grafana image
+  command: 'docker pull {{ prometheus_grafana_image }}'
+  when: docker_image_download
+  tags:
+    - prometheus-grafana
+    - prometheus-grafana-downlod
+
+
+- name: upstart file
+  template:
+    src: upstart.conf
+    dest: '/etc/init/{{ prometheus_grafana_service }}.conf'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: upstart
+  tags:
+    - prometheus-grafana
+
+
+- name: service restarted
+  service:
+    name: '{{ prometheus_grafana_service }}'
+    state: restarted
+  when: upstart.changed or config.changed
+  tags:
+    - prometheus-grafana
+
+
+- name: service started
+  service:
+    name: '{{ prometheus_grafana_service }}'
+    state: started
+  tags:
+    - prometheus-grafana
