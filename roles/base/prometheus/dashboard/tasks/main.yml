@@ -1,0 +1,60 @@
+- name: set variables
+  set_fact:
+    prometheus_dashboard_image: 'prom/promdash'
+    prometheus_dashboard_service: 'dck-prometheus-dashboard'
+    prometheus_dashboard_container: 'prometheus-dashboard'
+    prometheus_dashboard_migration_container: 'prometheus-dashboard-migration'
+  tags:
+    - prometheus-dashboard
+    - prometheus-dashboard-downlod
+
+
+- name: directories
+  file:
+    path: '{{ item }}'
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  with_items:
+    - '/var/lib/container/{{ prometheus_dashboard_container }}'
+  tags:
+    - prometheus-dashboard
+
+
+- name: pull prometheus promdash image
+  command: 'docker pull {{ prometheus_dashboard_image }}'
+  when: docker_image_download
+  tags:
+    - prometheus-dashboard
+    - prometheus-dashboard-downlod
+
+
+- name: upstart file
+  template:
+    src: upstart.conf
+    dest: '/etc/init/{{ prometheus_dashboard_service }}.conf'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: upstart
+  tags:
+    - prometheus-dashboard
+
+
+- name: service restarted
+  service:
+    name: '{{ prometheus_dashboard_service }}'
+    state: restarted
+  when: upstart.changed or config.changed
+  tags:
+    - prometheus-dashboard
+
+
+- name: service started
+  service:
+    name: '{{ prometheus_dashboard_service }}'
+    state: started
+  tags:
+    - prometheus-dashboard
