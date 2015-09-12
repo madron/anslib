@@ -17,6 +17,7 @@
     group: root
   with_items:
     - '/var/lib/container/{{ prometheus_grafana_container }}'
+    - '/etc/container/{{ prometheus_grafana_container }}/dashboards'
   tags:
     - prometheus-grafana
 
@@ -27,6 +28,22 @@
   tags:
     - prometheus-grafana
     - prometheus-grafana-downlod
+
+
+- name: dashboards
+  template:
+    src: 'dashboards/{{ item }}'
+    dest: '/etc/container/{{ prometheus_grafana_container }}/dashboards/'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  with_items:
+    - default.json
+    - home.json
+    - template_vars.json
+  tags:
+    - prometheus-grafana
 
 
 - name: upstart file
@@ -46,7 +63,7 @@
   service:
     name: '{{ prometheus_grafana_service }}'
     state: restarted
-  when: upstart.changed or config.changed
+  when: upstart.changed
   tags:
     - prometheus-grafana
 
