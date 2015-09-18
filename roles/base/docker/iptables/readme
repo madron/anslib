@@ -1,0 +1,7 @@
+TAG=debian-wheezy \
+    && docker build -t iptables-$TAG -f dockerfiles/$TAG . \
+    && docker run --rm iptables-$TAG cat /iptables.tgz > files/iptables-$TAG.tgz
+
+TAG=debian-jessie \
+    && docker build -t iptables-$TAG -f dockerfiles/$TAG . \
+    && docker run --rm iptables-$TAG cat /iptables.tgz > files/iptables-$TAG.tgz

@@ -1,0 +1,32 @@
+FROM debian:wheezy
+
+# Required packages
+RUN apt-get update
+RUN apt-get install -y curl bzip2 build-essential
+
+ENV name=iptables
+ENV version=1.4.21
+ENV source="ftp://ftp.netfilter.org/pub/iptables/$name-$version.tar.bz2"
+ENV PKG="/iptables"
+
+# Download
+RUN mkdir -p $PKG
+RUN curl -q -L -O $source
+RUN tar xvfj $name-$version.tar.bz2
+
+
+# Compile
+ENV CFLAGS='-static -static-libgcc'
+ENV LDFLAGS='-static -dl'
+WORKDIR $name-$version
+RUN ./configure \
+    --prefix=/ \
+    --disable-shared \
+    --enable-static
+RUN make
+RUN make DESTDIR=$PKG install
+RUN ldd $PKG/sbin/xtables-multi
+RUN rm -rf /iptables/include
+
+# Compress
+RUN cd /iptables && tar cfz /iptables.tgz *

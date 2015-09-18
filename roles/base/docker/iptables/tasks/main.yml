@@ -1,13 +1,22 @@
-- name: create directories
+- name: create etc directory
   file:
-    path: '{{ item }}'
+    path: /etc/iptables-docker
     state: directory
     mode: 0755
     owner: root
     group: root
-  with_items:
-    - /etc/iptables-docker
-    - /var/lib/iptables/glibc-amd64
+  tags:
+    - docker-iptables
+
+
+- name: create directories
+  file:
+    path: '/var/lib/iptables/{{ item }}'
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  with_items: docker_iptables_versions
   tags:
     - docker-iptables
 
@@ -16,7 +25,6 @@
   unarchive:
     src: 'iptables-{{ item }}.tgz'
     dest: '/var/lib/iptables/{{ item }}'
-  with_items:
-    - glibc-amd64
+  with_items: docker_iptables_versions
   tags:
     - docker-iptables
