@@ -114,6 +114,7 @@
   tags:
     - nginx
     - nginx-config
+    - nginx-proxy-pass
 
 
 - name: proxy pass - sites-enabled
@@ -128,6 +129,7 @@
   tags:
     - nginx
     - nginx-config
+    - nginx-proxy-pass
 
 
 - name: start server
