@@ -13,8 +13,6 @@
     path: '{{ item }}'
     state: directory
     mode: 0755
-    owner: root
-    group: root
   with_items:
     - '/var/lib/container/{{ prometheus_grafana_container }}'
     - '/etc/container/{{ prometheus_grafana_container }}/dashboards'
@@ -46,6 +44,19 @@
     - prometheus-grafana
 
 
+- name: configuration
+  template:
+    src: defaults.ini
+    dest: '/etc/container/{{ prometheus_grafana_container }}/defaults.ini'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: config
+  tags:
+    - prometheus-grafana
+
+
 - name: upstart file
   template:
     src: upstart.conf
@@ -63,7 +74,7 @@
   service:
     name: '{{ prometheus_grafana_service }}'
     state: restarted
-  when: upstart.changed
+  when: upstart.changed or config.changed
   tags:
     - prometheus-grafana
 
