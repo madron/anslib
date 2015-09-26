@@ -242,7 +242,7 @@ class TestGetCommandArgs(unittest.TestCase):
 
 if __name__ == '__main__':
     from optparse import OptionParser
-    default_config = os.path.join('~', '.handler-ssh')
+    default_config = os.path.expanduser(os.path.join('~', '.handler-ssh'))
     usage = "usage: %prog [options] url"
     parser = OptionParser(usage)
     parser.add_option('-c', '--config', dest='config',
