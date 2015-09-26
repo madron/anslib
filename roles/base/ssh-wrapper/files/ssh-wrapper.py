@@ -62,7 +62,7 @@ def get_ssh_command(parameters):
 def get_command_args(config, parameters):
     args = [config['path']]
     if config['options']:
-        args.append(config['options'])
+        args += config['options'].split()
     args += ['--title', '"%s"' % parameters['host']]
     if config['terminal'] in ('gnome-terminal', 'terminator'):
         args += [
@@ -145,7 +145,7 @@ class TestGetCommandArgs(unittest.TestCase):
                      options='--tab --active'),
                 dict(user=None, host='www.example.com', port=None),
             ),
-            ['gnome-terminal', '--tab --active',
+            ['gnome-terminal', '--tab', '--active',
              '--title', '"www.example.com"',
              '--command', '"ssh www.example.com"']
         )
@@ -180,7 +180,7 @@ class TestGetCommandArgs(unittest.TestCase):
                      options='--new-tab --maximise'),
                 dict(user=None, host='www.example.com', port=None),
             ),
-            ['terminator', '--new-tab --maximise',
+            ['terminator', '--new-tab', '--maximise',
              '--title', '"www.example.com"',
              '--command', '"ssh www.example.com"']
         )
@@ -214,7 +214,7 @@ class TestGetCommandArgs(unittest.TestCase):
                      options='-i ~/.ssh/putty_rsa'),
                 dict(user=None, host='www.example.com', port=None),
             ),
-            ['putty', '-i ~/.ssh/putty_rsa',
+            ['putty', '-i', '~/.ssh/putty_rsa',
              '--title', '"www.example.com"', 'www.example.com']
         )
 
@@ -250,6 +250,9 @@ if __name__ == '__main__':
     parser.add_option('--run-tests',
                       action='store_true', dest='tests', default=False,
                       help='Run unit tests and exit')
+    parser.add_option('-v', '--verbose',
+                      action='store_true', dest='verbose', default=False,
+                      help='Verbose output')
 
     (options, args) = parser.parse_args()
 
@@ -264,4 +267,6 @@ if __name__ == '__main__':
     parameters = parse_url(args[0])
     config = get_config(options.config)
     command_args = get_command_args(config, parameters)
-    exit(subprocess.call(command_args))
+    if options.verbose:
+        print ' '.join(command_args)
+    exit(subprocess.call(' '.join(command_args), shell=True))
