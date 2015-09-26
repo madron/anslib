@@ -64,8 +64,8 @@ def get_command_args(config, parameters):
     args = [config['path']]
     if config['options']:
         args += config['options'].split()
-    args += ['--title', '"%s"' % parameters['host']]
     if config['terminal'] in ('gnome-terminal', 'terminator'):
+        args += ['--title', '"%s"' % parameters['host']]
         args += [
             '--command', '"%s"' % get_ssh_command(parameters),
         ]
@@ -215,8 +215,7 @@ class TestGetCommandArgs(unittest.TestCase):
                      options='-i ~/.ssh/putty_rsa'),
                 dict(user=None, host='www.example.com', port=None),
             ),
-            ['putty', '-i', '~/.ssh/putty_rsa',
-             '--title', '"www.example.com"', 'www.example.com']
+            ['putty', '-i', '~/.ssh/putty_rsa', 'www.example.com']
         )
 
     def test_putty_user_domain(self):
@@ -225,8 +224,7 @@ class TestGetCommandArgs(unittest.TestCase):
                 dict(terminal='putty', path='putty', options=''),
                 dict(user='root', host='www.example.com', port=None)
             ),
-            ['putty', '--title', '"www.example.com"',
-             '-l', 'root', 'www.example.com']
+            ['putty', '-l', 'root', 'www.example.com']
         )
 
     def test_putty_user_domain_port(self):
@@ -235,8 +233,7 @@ class TestGetCommandArgs(unittest.TestCase):
                 dict(terminal='putty', path='putty', options=''),
                 dict(user='root', host='www.example.com', port=3022)
             ),
-            ['putty', '--title', '"www.example.com"',
-             '-l', 'root', '-P', '3022', 'www.example.com']
+            ['putty', '-l', 'root', '-P', '3022', 'www.example.com']
         )
 
 
