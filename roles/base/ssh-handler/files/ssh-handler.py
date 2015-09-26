@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+# http://kb.mozillazine.org/Register_protocol
+# https://support.google.com/chrome/answer/1382847?hl=en
+
 import os
 import re
 import subprocess
@@ -239,7 +242,7 @@ class TestGetCommandArgs(unittest.TestCase):
 
 if __name__ == '__main__':
     from optparse import OptionParser
-    default_config = os.path.join('~', '.wrapper-ssh')
+    default_config = os.path.join('~', '.handler-ssh')
     usage = "usage: %prog [options] url"
     parser = OptionParser(usage)
     parser.add_option('-c', '--config', dest='config',

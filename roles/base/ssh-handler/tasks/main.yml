@@ -1,0 +1,9 @@
+- name: ssh-handler
+  copy:
+    src: ssh-handler.py
+    dest: /usr/local/bin/ssh-handler
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - ssh-handler
