@@ -30,12 +30,13 @@ def parse_url(url):
     return params
 
 
-def get_config(config_file):
+def get_config(config_file, terminal=None):
     config = SafeConfigParser(
         defaults=dict(terminal='gnome-terminal', path=None, options='')
     )
     config.read(config_file)
-    terminal = config.get('DEFAULT', 'terminal')
+    if not terminal:
+        terminal = config.get('DEFAULT', 'terminal')
     path = config.get('DEFAULT', 'path')
     if not path:
         path = PATH[terminal]
@@ -247,12 +248,15 @@ if __name__ == '__main__':
     parser.add_option('-c', '--config', dest='config',
                       help='Configuration file. Default: %s' % default_config,
                       metavar='FILE', default=default_config)
-    parser.add_option('--run-tests',
-                      action='store_true', dest='tests', default=False,
-                      help='Run unit tests and exit')
+    parser.add_option('-t', '--terminal', dest='terminal',
+                      help='Terminal client. choices: gnome-terminal, terminator, putty',
+                      metavar='TERM')
     parser.add_option('-v', '--verbose',
                       action='store_true', dest='verbose', default=False,
                       help='Verbose output')
+    parser.add_option('--run-tests',
+                      action='store_true', dest='tests', default=False,
+                      help='Run unit tests and exit')
 
     (options, args) = parser.parse_args()
 
@@ -265,7 +269,7 @@ if __name__ == '__main__':
         exit(1)
 
     parameters = parse_url(args[0])
-    config = get_config(options.config)
+    config = get_config(options.config, terminal=options.terminal)
     command_args = get_command_args(config, parameters)
     if options.verbose:
         print ' '.join(command_args)
