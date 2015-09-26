@@ -20,6 +20,8 @@ OPTIONS = {
     'terminator': '--new-tab',
     'putty': '',
 }
+TERMINAL_CHOICES = PATH.keys()
+DEFAULT_TERMINAL = 'gnome-terminal'
 
 
 def parse_url(url):
@@ -35,11 +37,12 @@ def parse_url(url):
 
 def get_config(config_file, terminal=None):
     config = SafeConfigParser(
-        defaults=dict(terminal='gnome-terminal', path=None, options='')
+        defaults=dict(terminal=DEFAULT_TERMINAL, path=None, options='')
     )
     config.read(config_file)
     if not terminal:
         terminal = config.get('DEFAULT', 'terminal')
+    assert(terminal in TERMINAL_CHOICES)
     path = config.get('DEFAULT', 'path')
     if not path:
         path = PATH[terminal]
@@ -79,6 +82,16 @@ def get_command_args(config, parameters):
             args += ['-P', str(parameters['port'])]
         args.append(parameters['host'])
     return args
+
+
+def get_default_config(terminal):
+    lines = [
+        '[DEFAULT]',
+        'terminal = %s' % terminal,
+        '# path = %s' % PATH[terminal],
+        '# options = %s' % OPTIONS[terminal],
+    ]
+    return '\n'.join(lines)
 
 
 class TestParseUrl(unittest.TestCase):
@@ -243,26 +256,32 @@ class TestGetCommandArgs(unittest.TestCase):
 if __name__ == '__main__':
     from optparse import OptionParser
     default_config = os.path.expanduser(os.path.join('~', '.handler-ssh'))
-    usage = "usage: %prog [options] url"
+    usage = 'usage: %prog [options] url'
     parser = OptionParser(usage)
     parser.add_option('-c', '--config', dest='config',
                       help='Configuration file. Default: %s' % default_config,
                       metavar='FILE', default=default_config)
-    parser.add_option('-t', '--terminal', dest='terminal',
-                      help='Terminal client. choices: gnome-terminal, terminator, putty',
-                      metavar='TERM')
+    parser.add_option('-t', '--terminal', dest='terminal', metavar='TERM',
+                      choices=TERMINAL_CHOICES,
+                      help='Terminal client. Choices: %s' % ', '.join(TERMINAL_CHOICES))
     parser.add_option('-v', '--verbose',
                       action='store_true', dest='verbose', default=False,
                       help='Verbose output')
     parser.add_option('--run-tests',
                       action='store_true', dest='tests', default=False,
                       help='Run unit tests and exit')
+    parser.add_option('--print-config', dest='print_config', metavar='TERM',
+                      help='Print default configuration. Choices: %s' % ', '.join(TERMINAL_CHOICES))
 
     (options, args) = parser.parse_args()
 
     if options.tests:
         sys.argv = sys.argv[0:1]
         exit(unittest.main(argv=None))
+
+    if options.print_config:
+        print get_default_config(options.print_config)
+        exit(0)
 
     if len(args) == 0:
         parser.print_usage()
@@ -272,5 +291,7 @@ if __name__ == '__main__':
     config = get_config(options.config, terminal=options.terminal)
     command_args = get_command_args(config, parameters)
     if options.verbose:
-        print ' '.join(command_args)
+        print 'Configuration:', config
+        print 'Parameters:', parameters
+        print 'Command line:', ' '.join(command_args)
     exit(subprocess.call(' '.join(command_args), shell=True))
