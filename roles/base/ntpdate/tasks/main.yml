@@ -37,7 +37,7 @@
 
 
 - name: remove /etc/cron.daily/ntpdate
-  template:
+  file:
     path: /etc/cron.daily/ntpdate
     state: absent
   when: ntpdate_frequency != 'daily'
@@ -55,7 +55,7 @@
 
 
 - name: run ntpdate
-  command: /etc/cron.daily/ntpdate
+  command: '/etc/cron.{{ ntpdate_frequency }}/ntpdate'
   when: daily.changed or hourly.changed
   tags:
     - ntpdate
