@@ -25,3 +25,6 @@ prometheus_grafana_auth_google_allow_sign_up: false
 prometheus_grafana_auth_google_client_id: some_client_id
 prometheus_grafana_auth_google_client_secret: some_client_secret
 prometheus_grafana_auth_google_allowed_domains: []
+
+# [dashboards.json]
+prometheus_grafana_dashboards_json_enabled: false

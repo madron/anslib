@@ -15,7 +15,8 @@
     mode: 0755
   with_items:
     - '/var/lib/container/{{ prometheus_grafana_container }}'
-    - '/etc/container/{{ prometheus_grafana_container }}/dashboards'
+    - '/etc/container/{{ prometheus_grafana_container }}/json'
+    - '/etc/container/{{ prometheus_grafana_container }}/js'
   tags:
     - prometheus-grafana
 
@@ -31,7 +32,7 @@
 - name: dashboards
   template:
     src: 'dashboards/{{ item }}'
-    dest: '/etc/container/{{ prometheus_grafana_container }}/dashboards/'
+    dest: '/etc/container/{{ prometheus_grafana_container }}/js/'
     mode: 0644
     owner: root
     group: root
