@@ -2,6 +2,8 @@ docker_image_download: false
 
 prometheus_server_port: 9090
 
+prometheus_server_alertmanager_url: ''
+
 # How frequently to scrape targets by default.
 prometheus_server_global_scrape_interval: 1m
 # How long until a scrape request times out.
