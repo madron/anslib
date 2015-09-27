@@ -1,0 +1,102 @@
+- name: set variables
+  set_fact:
+    prometheus_alertmanager_service: 'dck-prometheus-alertmanager'
+    prometheus_alertmanager_container: 'prometheus-alertmanager'
+  tags:
+    - prometheus-alertmanager
+    - prometheus-alertmanager-downlod
+
+
+- name: directories
+  file:
+    path: '{{ item }}'
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  with_items:
+    - '/etc/container/{{ prometheus_alertmanager_container }}'
+  tags:
+    - prometheus-alertmanager
+
+
+- name: create iptables directory
+  file:
+    path: '/etc/iptables-docker/{{ prometheus_alertmanager_container }}'
+    state: directory
+    mode: 0700
+    owner: root
+    group: root
+  tags:
+    - prometheus-alertmanager
+
+
+- name: pull prometheus server image
+  command: 'docker pull {{ prometheus_alertmanager_image }}'
+  when: docker_image_download
+  tags:
+    - prometheus-alertmanager
+    - prometheus-alertmanager-downlod
+
+
+- name: alertmanager.conf
+  template:
+    src: alertmanager.conf
+    dest: '/etc/container/{{ prometheus_alertmanager_container }}'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: config
+  tags:
+    - prometheus-alertmanager
+
+
+- name: iptables rules file
+  template:
+    src: templates/docker-iptables-rules
+    dest: '/etc/iptables-docker/{{ prometheus_alertmanager_container }}/rules'
+    mode: 0700
+    owner: root
+    group: root
+    backup: yes
+  register: iptables
+  tags:
+    - prometheus-alertmanager
+
+
+- name: upstart file
+  template:
+    src: upstart.conf
+    dest: '/etc/init/{{ prometheus_alertmanager_service }}.conf'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: upstart
+  tags:
+    - prometheus-alertmanager
+
+
+- name: service restarted
+  service:
+    name: '{{ prometheus_alertmanager_service }}'
+    state: restarted
+  when: upstart.changed or config.changed
+  tags:
+    - prometheus-alertmanager
+
+
+- name: service started
+  service:
+    name: '{{ prometheus_alertmanager_service }}'
+    state: started
+  tags:
+    - prometheus-alertmanager
+
+
+- name: reload iptables rules file
+  command: 'docker exec --user root {{ prometheus_alertmanager_container }} /etc/docker-iptables/rules'
+  when: iptables.changed
+  tags:
+    - prometheus-alertmanager

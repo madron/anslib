@@ -1,0 +1,9 @@
+docker_image_download: false
+
+prometheus_alertmanager_port: 9093
+prometheus_alertmanager_image: prom/alertmanager
+
+prometheus_alertmanager_config: |
+    notification_config {
+        name: "alertmanager_test"
+    }
