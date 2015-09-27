@@ -17,13 +17,45 @@
     mode: 0755
     owner: root
     group: root
-  register: cron
+  register: daily
+  when: ntpdate_frequency == 'daily'
+  tags:
+    - ntpdate
+
+
+- name: /etc/cron.hourly/ntpdate
+  template:
+    src: ntpdate.j2
+    dest: /etc/cron.hourly/ntpdate
+    mode: 0755
+    owner: root
+    group: root
+  register: hourly
+  when: ntpdate_frequency == 'hourly'
+  tags:
+    - ntpdate
+
+
+- name: remove /etc/cron.daily/ntpdate
+  template:
+    path: /etc/cron.daily/ntpdate
+    state: absent
+  when: ntpdate_frequency != 'daily'
+  tags:
+    - ntpdate
+
+
+- name: remove /etc/cron.hourly/ntpdate
+  file:
+    path: /etc/cron.hourly/ntpdate
+    state: absent
+  when: ntpdate_frequency != 'hourly'
   tags:
     - ntpdate
 
 
 - name: run ntpdate
   command: /etc/cron.daily/ntpdate
-  when: cron.changed
+  when: daily.changed or hourly.changed
   tags:
     - ntpdate
