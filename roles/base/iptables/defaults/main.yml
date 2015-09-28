@@ -36,3 +36,6 @@ iptables_input_rules: []
 # iptables_input_rules: [
 #   '-p tcp --dport http -j ACCEPT',
 # ]
+
+iptables_packages:
+  - iptables
