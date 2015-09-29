@@ -2,12 +2,11 @@
 
 # {{ ansible_managed }}
 
-# Drop everything on start
-iptables --policy INPUT DROP
-iptables --flush INPUT
+set -e
 
-# Policy
-iptables --policy INPUT {{ iptables_input_policy }}
+# Drop everything on start
+iptables --policy INPUT ACCEPT
+iptables --flush INPUT
 
 # Rules
 {% for rule in iptables_input_rules_0 %}
@@ -47,6 +46,9 @@ iptables --append INPUT {{ rule }}
 # Log and drop everything else
 iptables --append INPUT -m limit --limit 2/min -j LOG --log-prefix "iptables-INPUT-dropped: " --log-level 4
 iptables --append INPUT -j DROP
+
+# Policy
+iptables --policy INPUT {{ iptables_input_policy }}
 
 {% if iptables_docker_filter %}
 
