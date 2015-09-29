@@ -39,3 +39,6 @@ iptables_input_rules: []
 
 iptables_packages:
   - iptables
+
+iptables_remove_packages:
+  - shorewall
