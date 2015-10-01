@@ -247,13 +247,12 @@ def run(**kwargs):
             ssh_client.close()
         # Backup
         transfer_start_time = float(time.time())
-        prom.add('transfer_start_time', value=transfer_start_time)
-        prom.write()
         rc, stdout_lines, stderr_lines = backup(**kwargs)
         value = 1
         if rc:
             failure = True
             value = 0
+            prom.add('transfer_start_time', value=transfer_start_time)
             transfer_end_time = float(time.time())
             prom.add('transfer_end_time', value=transfer_end_time)
             transfer_elapsed_seconds = transfer_end_time - transfer_start_time
