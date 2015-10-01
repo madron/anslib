@@ -83,12 +83,17 @@ METRIC = dict(
 
 
 class PrometheusTextfile(object):
-    def __init__(self, name, directory=None, prefix='rdiff_backup'):
+    def __init__(self, name, directory=None, prefix='rdiff_backup', group=None):
         self.name = name
         self.outfile = None
         if directory:
             self.outfile = os.path.join(directory, 'rdiff-backup-%s.prom' % name)
+            if group:
+                self.outfile = os.path.join(directory, 'rdiff-backup-%s-%s.prom' % (group, name))
         self.prefix = prefix
+        self.labels = [('name', self.name)]
+        if group:
+            self.labels.append(('prom_group', group))
         self.rows = []
 
     def add(self, metric, labels=[], value=0):
@@ -98,7 +103,7 @@ class PrometheusTextfile(object):
         # TYPE node_boot_time gauge
         self.rows.append('# TYPE %s %s' % (metric_name, METRIC[metric]['type']))
         # value
-        labels = [('name', self.name)] + labels
+        labels = self.labels + labels
         string_labels = ['%s="%s"' % (x[0], x[1]) for x in labels]
         metric_name = '%s{%s}' % (metric_name, ','.join(string_labels))
         self.rows.append('%s %s' % (metric_name, value))
@@ -207,7 +212,7 @@ def run(**kwargs):
     logger.info('Backup started.')
     logger.debug(kwargs)
     kwargs['logger'] = logger
-    prom = PrometheusTextfile(kwargs['name'], directory=kwargs['prometheus_dir'])
+    prom = PrometheusTextfile(kwargs['name'], directory=kwargs['prometheus_dir'], group=kwargs['prometheus_group'])
     kwargs['prom'] = prom
     host = kwargs['host']
     port = kwargs['port']
@@ -391,6 +396,8 @@ if __name__ == '__main__':
                         help='Commands to execute on remote host')
     parser.add_argument('--prometheus-dir', metavar='DIR', type=str, default='',
                         help='Prometheus textfile collector directory')
+    parser.add_argument('--prometheus-group', metavar='GROUP', type=str, default='',
+                        help='Prometheus prom_group label')
     parser.add_argument('--retain-days', metavar='DAYS', type=int,
                         help='Remove backups older than specified days')
     parser.add_argument('--sysout', action='store_true', default=False,
