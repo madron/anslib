@@ -297,9 +297,9 @@ def parse_statistics(lines):
         if line.startswith('ElapsedTime'):
             stats['transfer_elapsed_seconds'] = float(line.split(' ')[1])
         if line.startswith('SourceFileSize'):
-            stats['source_size_bytes'] = int(line.split('(')[1].split(' ')[0])
+            stats['source_size_bytes'] = int(line.split(' ')[1])
         if line.startswith('TotalDestinationSizeChange'):
-            stats['destination_size_change_bytes'] = int(line.split('(')[1].split(' ')[0])
+            stats['destination_size_change_bytes'] = int(line.split(' ')[1])
     stats['transfer_rate_bps'] = stats['destination_size_change_bytes'] / stats['transfer_elapsed_seconds'] * 8
     return stats
 
