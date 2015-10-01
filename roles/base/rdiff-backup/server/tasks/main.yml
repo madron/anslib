@@ -1,4 +1,3 @@
-
 - name: os specific variables
   include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
   tags:
@@ -21,8 +20,8 @@
 
 
 - name: /usr/local/sbin/batch-rdiff-backup
-  template:
-    src: batch-rdiff-backup.j2
+  copy:
+    src: batch-rdiff-backup.py
     dest: /usr/local/sbin/batch-rdiff-backup
     mode: 0755
     owner: root

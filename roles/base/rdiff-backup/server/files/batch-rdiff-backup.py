@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-# {{ ansible_managed }}
-
 import argparse
 import logging
 import os
