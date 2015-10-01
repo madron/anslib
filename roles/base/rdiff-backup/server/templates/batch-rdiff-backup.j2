@@ -8,6 +8,8 @@ import os
 import sys
 import paramiko
 import rdiff_backup.Main
+import tempfile
+import time
 from StringIO import StringIO
 
 BACKUP_BASE = '/var/backups'
@@ -15,6 +17,100 @@ LOG_DIR = '/var/log'
 LOG_PREFIX = 'rdiff-backup'
 DEFAULT_USER = 'root'
 DEFAULT_PORT = 22
+
+METRIC = dict(
+    start_time=dict(
+        type='gauge',
+        help='Backup start time, in unixtime.',
+    ),
+    end_time=dict(
+        type='gauge',
+        help='Backup end time, in unixtime.',
+    ),
+    elapsed_seconds=dict(
+        type='gauge',
+        help='Total backup time, in seconds.',
+    ),
+    success=dict(
+        type='gauge',
+        help='Backup succedeed: 1 -> success - 0 -> failure.',
+    ),
+    command_start_time=dict(
+        type='gauge',
+        help='Pre execute command start time, in unixtime.',
+    ),
+    command_end_time=dict(
+        type='gauge',
+        help='Pre execute command end time, in unixtime.',
+    ),
+    command_elapsed_seconds=dict(
+        type='gauge',
+        help='Pre execute command time, in seconds.',
+    ),
+    command_success=dict(
+        type='gauge',
+        help='Pre execute command succedeed: 1 -> success - 0 -> failure.',
+    ),
+    transfer_start_time=dict(
+        type='gauge',
+        help='Transfer start time, in unixtime.',
+    ),
+    transfer_end_time=dict(
+        type='gauge',
+        help='Transfer end time, in unixtime.',
+    ),
+    transfer_elapsed_seconds=dict(
+        type='gauge',
+        help='Transfer time, in seconds.',
+    ),
+    transfer_success=dict(
+        type='gauge',
+        help='Transfer succedeed: 1 -> success - 0 -> failure.',
+    ),
+    source_size_bytes=dict(
+        type='gauge',
+        help='Source size, in bytes.',
+    ),
+    destination_size_change_bytes=dict(
+        type='gauge',
+        help='data transfered, in bytes',
+    ),
+    transfer_rate_bps=dict(
+        type='gauge',
+        help='Transfer rate, in bit per second.',
+    ),
+)
+
+
+class PrometheusTextfile(object):
+    def __init__(self, name, directory=None, prefix='rdiff_backup'):
+        self.name = name
+        self.outfile = None
+        if directory:
+            self.outfile = os.path.join(directory, 'rdiff-backup-%s.prom' % name)
+        self.prefix = prefix
+        self.rows = []
+
+    def add(self, metric, labels=[], value=0):
+        metric_name = '%s_%s' % (self.prefix, metric)
+        # HELP node_boot_time Node boot time, in unixtime.
+        self.rows.append('# HELP %s %s' % (metric_name, METRIC[metric]['help']))
+        # TYPE node_boot_time gauge
+        self.rows.append('# TYPE %s %s' % (metric_name, METRIC[metric]['type']))
+        # value
+        labels = [('name', self.name)] + labels
+        string_labels = ['%s="%s"' % (x[0], x[1]) for x in labels]
+        metric_name = '%s{%s}' % (metric_name, ','.join(string_labels))
+        self.rows.append('%s %s' % (metric_name, value))
+
+    def write(self):
+        if self.outfile:
+            path = os.path.dirname(self.outfile)
+            f = tempfile.NamedTemporaryFile(dir=path, delete=False)
+            f.write('\n'.join(self.rows))
+            f.write('\n')
+            f.close()
+            os.rename(f.name, self.outfile)
 
 
 def get_logger(sysout, host, log_prefix):
@@ -100,7 +196,7 @@ def rdiff_backup_command(logger, args):
     for line in stderr_lines:
         logger.error(line)
     rc = 1 if stderr_lines else 0
-    return rc
+    return rc, stdout_lines, stderr_lines
 
 
 def run(**kwargs):
@@ -111,11 +207,17 @@ def run(**kwargs):
     logger.info('Backup started.')
     logger.debug(kwargs)
     kwargs['logger'] = logger
+    prom = PrometheusTextfile(kwargs['name'], directory=kwargs['prometheus_dir'])
+    kwargs['prom'] = prom
     host = kwargs['host']
     port = kwargs['port']
     user = kwargs['user']
+    start_time = float(time.time())
+    prom.add('start_time', value=start_time)
+    prom.write()
     pre_execute_commands = kwargs['pre_execute_commands']
     no_errors = kwargs['no_errors']
+    failure = False
     if host == 'localhost' and pre_execute_commands:
         logger.error('pre_execute_commands not supported on localhost')
         return
@@ -124,17 +226,79 @@ def run(**kwargs):
         if not host == 'localhost':
             ssh_client = get_ssh_client(host, port, user)
             for command in pre_execute_commands:
+                labels = [('command', command.replace('"', "'"))]
+                command_start_time = float(time.time())
+                prom.add('command_start_time', labels=labels, value=command_start_time)
+                prom.write()
                 rc, out, err = remote_command(logger, ssh_client, command, no_errors=no_errors)
+                value = 1
+                if rc:
+                    failure = True
+                    value = 0
+                command_end_time = float(time.time())
+                prom.add('command_end_time', labels=labels, value=command_end_time)
+                command_elapsed_seconds = command_end_time - command_start_time
+                prom.add('command_elapsed_seconds', labels=labels, value=command_elapsed_seconds)
+                prom.add('command_success', labels=labels, value=value)
+                prom.write()
             ssh_client.close()
         # Backup
-        backup(**kwargs)
+        transfer_start_time = float(time.time())
+        prom.add('transfer_start_time', value=transfer_start_time)
+        prom.write()
+        rc, stdout_lines, stderr_lines = backup(**kwargs)
+        value = 1
+        if rc:
+            failure = True
+            value = 0
+            transfer_end_time = float(time.time())
+            prom.add('transfer_end_time', value=transfer_end_time)
+            transfer_elapsed_seconds = transfer_end_time - transfer_start_time
+            prom.add('transfer_elapsed_seconds', labels=labels, value=transfer_elapsed_seconds)
+        else:
+            stats = parse_statistics(stdout_lines)
+            for k, v in stats.iteritems():
+                prom.add(k, value=v)
+        prom.add('transfer_success', value=value)
+        prom.write()
         # Check
-        check_backup(**kwargs)
+        rc = check_backup(**kwargs)
+        if rc:
+            failure = True
         # Clean
-        clean_backup(**kwargs)
+        rc, stdout_lines, stderr_lines = clean_backup(**kwargs)
+        if rc:
+            failure = True
     except:
         logger.exception('Unexpected error')
+        failure = True
+    end_time = float(time.time())
+    prom.add('end_time', value=end_time)
+    elapsed_seconds = end_time - start_time
+    prom.add('elapsed_seconds', value=elapsed_seconds)
+    value = 1
+    if failure:
+        value = 0
+    prom.add('success', value=value)
+    prom.write()
     logger.info('Backup finished.')
+
+
+def parse_statistics(lines):
+    stats = dict()
+    for line in lines:
+        if line.startswith('StartTime'):
+            stats['transfer_start_time'] = float(line.split(' ')[1])
+        if line.startswith('EndTime'):
+            stats['transfer_end_time'] = float(line.split(' ')[1])
+        if line.startswith('ElapsedTime'):
+            stats['transfer_elapsed_seconds'] = float(line.split(' ')[1])
+        if line.startswith('SourceFileSize'):
+            stats['source_size_bytes'] = int(line.split('(')[1].split(' ')[0])
+        if line.startswith('TotalDestinationSizeChange'):
+            stats['destination_size_change_bytes'] = int(line.split('(')[1].split(' ')[0])
+    stats['transfer_rate_bps'] = stats['destination_size_change_bytes'] / stats['transfer_elapsed_seconds'] * 8
+    return stats
 
 
 def backup(**kwargs):
@@ -187,7 +351,7 @@ def clean_backup(**kwargs):
     days = kwargs['retain_days']
     if not days:
         logger.info('retain-days parameter not supplied: not removing old backups.')
-        return
+        return 0, [], []
     logger.info('Removing backups older than %d days.' % days)
     args = []
     args.append('--force')
@@ -225,6 +389,8 @@ if __name__ == '__main__':
     parser.add_argument('--no-errors', metavar='TEXT',
                         type=str, nargs='+', default=[],
                         help='Commands to execute on remote host')
+    parser.add_argument('--prometheus-dir', metavar='DIR', type=str, default='',
+                        help='Prometheus textfile collector directory')
     parser.add_argument('--retain-days', metavar='DAYS', type=int,
                         help='Remove backups older than specified days')
     parser.add_argument('--sysout', action='store_true', default=False,
