@@ -9,6 +9,5 @@ prometheus_node_filesystem_ignored_mount_points: "^/(sys|proc|dev)($|/)"  # Rege
 prometheus_node_megacli_command: "megacli"  # Command to run megacli.
 prometheus_node_netdev_ignored_devices: "^veth"  # Regexp of net devices to ignore for netdev collector.
 prometheus_node_ntp_server: ""  # NTP server to use for ntp collector.
-prometheus_node_textfile_directory: ""  # Directory to read text files with metrics from.
 prometheus_node_collectors_enabled: "diskstats,filesystem,loadavg,meminfo,stat,textfile,time,netdev,netstat"  # Comma-separated list of collectors to use.
 prometheus_node_log_level: info  # Only log messages with the given severity or above. Valid levels: [debug, info, warn, error, fatal, panic].

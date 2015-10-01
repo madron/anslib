@@ -14,13 +14,16 @@
     - prometheus-node-config
 
 
-- name: ansible directory
+- name: create directories
   file:
-    path: /var/lib/ansible/prometheus/node
+    path: '{{ item }}'
     state: directory
     mode: 0755
     owner: root
     group: root
+  with_items:
+    - /var/lib/ansible/prometheus/node
+    - /var/lib/prometheus/textfiles
   tags:
     - prometheus-node
 
