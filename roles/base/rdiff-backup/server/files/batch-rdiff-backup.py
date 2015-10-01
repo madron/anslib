@@ -91,7 +91,7 @@ class PrometheusTextfile(object):
         self.prefix = prefix
         self.labels = [('name', self.name)]
         if group:
-            self.labels.append(('prom_group', group))
+            self.labels.append(('rdiff_group', group))
         self.rows = []
 
     def add(self, metric, labels=[], value=0):
@@ -395,7 +395,7 @@ if __name__ == '__main__':
     parser.add_argument('--prometheus-dir', metavar='DIR', type=str, default='',
                         help='Prometheus textfile collector directory')
     parser.add_argument('--prometheus-group', metavar='GROUP', type=str, default='',
-                        help='Prometheus prom_group label')
+                        help='Prometheus rdiff_group label')
     parser.add_argument('--retain-days', metavar='DAYS', type=int,
                         help='Remove backups older than specified days')
     parser.add_argument('--sysout', action='store_true', default=False,
