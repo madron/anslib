@@ -3,11 +3,13 @@
 import argparse
 import logging
 import os
+import signal
 import sys
 import paramiko
 import rdiff_backup.Main
 import tempfile
 import time
+from contextlib import contextmanager
 from StringIO import StringIO
 
 BACKUP_BASE = '/var/backups'
@@ -80,6 +82,22 @@ METRIC = dict(
 )
 
 
+class TimeoutException(Exception):
+    pass
+
+
+@contextmanager
+def time_limit(seconds):
+    def signal_handler(signum, frame):
+        raise TimeoutException('Timeout excedeed (%d seconds).' % seconds)
+    signal.signal(signal.SIGALRM, signal_handler)
+    signal.alarm(seconds)
+    try:
+        yield
+    finally:
+        signal.alarm(0)
+
+
 class PrometheusTextfile(object):
     def __init__(self, name, directory=None, prefix='rdiff_backup', group=None):
         self.name = name
@@ -148,10 +166,25 @@ def get_ssh_client(host, port, user):
     return client
 
 
-def remote_command(logger, ssh_client, command, no_errors=[]):
+def remote_command(logger, ssh_client, command, no_errors=[], timeout=None):
     logger.info("Executing remote command: '%s'" % command)
-    stdin, stdout, stderr = ssh_client.exec_command(command)
-    rc = stdout.channel.recv_exit_status()
+    if timeout:
+        try:
+            with time_limit(timeout):
+                stdin, stdout, stderr = ssh_client.exec_command(command)
+                finished = stdout.channel.exit_status_ready()
+                while not finished:
+                    finished = stdout.channel.exit_status_ready()
+                rc = stdout.channel.recv_exit_status()
+        except TimeoutException:
+            logger.error('Command timeout excedeed (%d seconds).' % timeout)
+            return 1, '', ''
+    else:
+        stdin, stdout, stderr = ssh_client.exec_command(command)
+        finished = stdout.channel.exit_status_ready()
+        while not finished:
+            finished = stdout.channel.exit_status_ready()
+        rc = stdout.channel.recv_exit_status()
     stdout_lines = [l.rstrip() for l in stdout.readlines()]
     stderr_lines = []
     for line in [l.rstrip() for l in stderr.readlines()]:
@@ -175,7 +208,7 @@ def remote_command(logger, ssh_client, command, no_errors=[]):
     return rc, stdout.read(), stderr.read()
 
 
-def rdiff_backup_command(logger, args):
+def rdiff_backup_command(logger, args, timeout=None):
     logger.debug('rdiff_backup_command arguments: %s' % args)
     original_stdout = sys.stdout
     original_stderr = sys.stderr
@@ -183,8 +216,15 @@ def rdiff_backup_command(logger, args):
     stderr = StringIO()
     sys.stdout = stdout
     sys.stderr = stderr
+    timed_out = False
     try:
-        rdiff_backup.Main.error_check_Main(args)
+        if timeout:
+            with time_limit(timeout):
+                rdiff_backup.Main.error_check_Main(args)
+        else:
+            rdiff_backup.Main.error_check_Main(args)
+    except TimeoutException:
+        timed_out = True
     except:
         pass
     finally:
@@ -194,6 +234,8 @@ def rdiff_backup_command(logger, args):
         stderr.seek(0)
         stdout_lines = [l.rstrip() for l in stdout.readlines()]
         stderr_lines = [l.rstrip() for l in stderr.readlines()]
+        if timed_out:
+            stderr_lines.append('Transfer timeout excedeed (%d seconds).' % timeout)
     for line in stdout_lines:
         logger.info(line)
     for line in stderr_lines:
@@ -215,6 +257,7 @@ def run(**kwargs):
     host = kwargs['host']
     port = kwargs['port']
     user = kwargs['user']
+    command_timeout = kwargs['command_timeout']
     start_time = float(time.time())
     prom.add('start_time', value=start_time)
     prom.write()
@@ -233,7 +276,7 @@ def run(**kwargs):
                 command_start_time = float(time.time())
                 prom.add('command_start_time', labels=labels, value=command_start_time)
                 prom.write()
-                rc, out, err = remote_command(logger, ssh_client, command, no_errors=no_errors)
+                rc, out, err = remote_command(logger, ssh_client, command, no_errors=no_errors, timeout=command_timeout)
                 value = 1
                 if rc:
                     failure = True
@@ -311,6 +354,7 @@ def backup(**kwargs):
     includes = kwargs['includes']
     excludes = kwargs['excludes']
     backup_dir = kwargs['backup_dir']
+    timeout = kwargs['transfer_timeout']
     args = [
         '--create-full-path',
         '--print-statistics',
@@ -330,7 +374,7 @@ def backup(**kwargs):
         args.append('%s@%s::/' % (user, host))
     args.append(backup_dir)
     logger.info('File transfer started.')
-    return rdiff_backup_command(logger, args)
+    return rdiff_backup_command(logger, args, timeout=timeout)
 
 
 def check_backup(**kwargs):
@@ -388,6 +432,12 @@ if __name__ == '__main__':
     parser.add_argument('--pre-execute-commands', metavar='COMMAND',
                         type=str, nargs='+', default=[],
                         help='Commands to execute on remote host')
+    parser.add_argument('--command-timeout', metavar='SECONDS',
+                        type=int, default=None,
+                        help='Timeout for pre execute command')
+    parser.add_argument('--transfer-timeout', metavar='SECONDS',
+                        type=int, default=None,
+                        help='Timeout for transfer')
     parser.add_argument('--no-errors', metavar='TEXT',
                         type=str, nargs='+', default=[],
                         help='Commands to execute on remote host')
