@@ -4,6 +4,12 @@
 
 export SHELL=/bin/sh
 
+{% if rdiff_backup_server_prometheus_dir %}
+export PROMETHEUS_FILE={{ rdiff_backup_server_prometheus_dir }}/rdiff-backup{% if rdiff_backup_server_prometheus_group %}-{{ rdiff_backup_server_prometheus_group }}{% endif %}.prom
+export PROMETHEUS_RUNNING_METRIC='rdiff_backup_running{% if rdiff_backup_server_prometheus_group %}{rdiff_group="{{ rdiff_backup_server_prometheus_group }}"}{% endif %}'
+echo ${PROMETHEUS_RUNNING_METRIC} 1 > $PROMETHEUS_FILE
+{% endif %}
+
 declare -a TASKS=(
 {% for backup in rdiff_backup_server_list %}
 "/usr/local/sbin/batch-rdiff-backup --host {{ backup.host }} --port {{ backup.port|default(rdiff_backup_server_port) }} --user {{ backup.user|default(rdiff_backup_server_user) }} --includes {% for path in backup.includes %}{{ path }} {% endfor %}{% if backup.excludes is defined %}--excludes {% for path in backup.excludes %} {{ path }}{% endfor %}{% endif %} {% if backup.pre_execute_commands is defined %}--pre-execute-commands {% for command in backup.pre_execute_commands %} '{{ command }}'{% endfor %}{% endif %} --retain-days {{ backup.retain_days|default(rdiff_backup_server_default_retain_days) }} --backup-base {{ rdiff_backup_server_dest }}{% if rdiff_backup_server_prometheus_dir %} --prometheus-dir {{ rdiff_backup_server_prometheus_dir }}{% endif %}{% if rdiff_backup_server_prometheus_group %} --prometheus-group {{ rdiff_backup_server_prometheus_group }}{% endif %}"
@@ -11,3 +17,7 @@ declare -a TASKS=(
 )
 
 parallel --gnu --jobs {{ rdiff_backup_server_concurrent_jobs }} ::: "${TASKS[@]}"
+
+{% if rdiff_backup_server_prometheus_dir %}
+echo ${PROMETHEUS_RUNNING_METRIC} 0 > $PROMETHEUS_FILE
+{% endif %}
