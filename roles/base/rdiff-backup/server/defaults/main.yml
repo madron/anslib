@@ -2,6 +2,7 @@ rdiff_backup_server_dest: /var/backups
 rdiff_backup_server_default_retain_days: 20
 rdiff_backup_server_user: root
 rdiff_backup_server_port: 22
+rdiff_backup_server_cron_order: z50
 # percentage over available cores (100% -> 1 job per core)
 rdiff_backup_server_concurrent_jobs: 400%
 rdiff_backup_server_list: []

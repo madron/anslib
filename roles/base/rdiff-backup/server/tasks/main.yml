@@ -44,7 +44,7 @@
 - name: /etc/cron.daily/rdiff-backup
   template:
     src: cron.daily
-    dest: /etc/cron.daily/rdiff-backup
+    dest: '/etc/cron.daily/{{ rdiff_backup_server_cron_order }}-rdiff-backup'
     mode: 0755
     owner: root
     group: root
