@@ -1,0 +1,6 @@
+- name: required packages
+  apt:
+    pkg: ca-certificates
+    state: latest
+  tags:
+    - prometheus-node

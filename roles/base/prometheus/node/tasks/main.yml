@@ -4,6 +4,12 @@
     - prometheus-node
 
 
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - prometheus-node
+
+
 - name: set variables
   set_fact:
     prometheus_node_service: 'prometheus-node'
