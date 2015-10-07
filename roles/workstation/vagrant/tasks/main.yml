@@ -1,0 +1,11 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - vagrant
+    - vagrant-config
+
+
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - vagrant

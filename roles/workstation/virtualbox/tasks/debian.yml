@@ -1,0 +1,19 @@
+- name: apt repository key
+  apt_key:
+    url: https://www.virtualbox.org/download/oracle_vbox.asc
+    state: present
+  tags: virtualbox
+
+
+- name: ppa repository
+  apt_repository:
+    repo: 'deb http://download.virtualbox.org/virtualbox/debian {{ ansible_lsb.codename }} contrib'
+    state: present
+  tags: virtualbox
+
+
+- name: required packages
+  apt:
+    pkg: 'virtualbox-{{ virtualbox_version }}'
+    state: latest
+  tags: virtualbox

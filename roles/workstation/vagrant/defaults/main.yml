@@ -1,0 +1,6 @@
+vagrant_version: 1.7.4
+
+vagrant_architecture: x86_64
+# vagrant_architecture: i686
+
+vagrant_base_url: 'https://dl.bintray.com/mitchellh/vagrant'

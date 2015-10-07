@@ -1,0 +1,30 @@
+- name: set variables
+  set_fact:
+    vagrant_file: 'vagrant_{{ vagrant_version }}_{{ vagrant_architecture }}.deb'
+    vagrant_url: '{{ vagrant_base_url }}/vagrant_{{ vagrant_version }}_{{ vagrant_architecture }}.deb'
+  tags: vagrant
+
+
+- name: download directory
+  file:
+    path: /var/lib/ansible/vagrant
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  tags: vagrant
+
+
+- name: download package
+  get_url:
+    url: '{{ vagrant_url }}'
+    dest: '/var/lib/ansible/vagrant/{{ vagrant_file }}'
+    mode: 0644
+    owner: root
+    group: root
+  tags: vagrant
+
+
+- name: install package
+  command: 'dpkg -i /var/lib/ansible/vagrant/{{ vagrant_file }}'
+  tags: vagrant
