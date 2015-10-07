@@ -186,23 +186,29 @@ def remote_command(logger, ssh_client, command, no_errors=[], timeout=DEFAULT_TI
         with time_limit(timeout):
             while not channel.exit_status_ready():
                 if channel.recv_ready():
-                    logger.info(channel.recv(BUFF_SIZE).strip())
+                    lines = channel.recv(BUFF_SIZE).strip()
+                    for line in lines.splitlines():
+                        logger.info(line)
                 if channel.recv_stderr_ready():
-                    line = channel.recv_stderr(BUFF_SIZE).strip()
+                    lines = channel.recv_stderr(BUFF_SIZE).strip()
+                    for line in lines.splitlines():
+                        if is_error(line, no_errors):
+                            logger.error(line)
+                        else:
+                            logger.info(line)
+            rc = channel.recv_exit_status()
+            # Need to gobble up any remaining output after program terminates...
+            while channel.recv_ready():
+                lines = channel.recv(BUFF_SIZE).strip()
+                for line in lines.splitlines():
+                    logger.info(line)
+            while channel.recv_stderr_ready():
+                lines = channel.recv_stderr(BUFF_SIZE).strip()
+                for line in lines.splitlines():
                     if is_error(line, no_errors):
                         logger.error(line)
                     else:
                         logger.info(line)
-            rc = channel.recv_exit_status()
-            # Need to gobble up any remaining output after program terminates...
-            while channel.recv_ready():
-                logger.info(channel.recv(BUFF_SIZE).strip())
-            while channel.recv_stderr_ready():
-                line = channel.recv_stderr(BUFF_SIZE).strip()
-                if is_error(line, no_errors):
-                    logger.error(line)
-                else:
-                    logger.info(line)
     except TimeoutException:
         logger.error('Command timeout excedeed (%d seconds).' % timeout)
         return 1
