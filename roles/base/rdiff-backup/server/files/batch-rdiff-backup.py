@@ -17,6 +17,8 @@ LOG_DIR = '/var/log'
 LOG_PREFIX = 'rdiff-backup'
 DEFAULT_USER = 'root'
 DEFAULT_PORT = 22
+DEFAULT_TIMEOUT = 86400
+BUFF_SIZE = 1024
 
 METRIC = dict(
     start_time=dict(
@@ -166,46 +168,53 @@ def get_ssh_client(host, port, user):
     return client
 
 
-def remote_command(logger, ssh_client, command, no_errors=[], timeout=None):
+def is_error(line, no_errors):
+    is_error = True
+    for text in no_errors:
+        if line.startswith(text):
+            is_error = False
+    return is_error
+
+
+def remote_command(logger, ssh_client, command, no_errors=[], timeout=DEFAULT_TIMEOUT):
     logger.info("Executing remote command: '%s'" % command)
-    if timeout:
-        try:
-            with time_limit(timeout):
-                stdin, stdout, stderr = ssh_client.exec_command(command)
-                finished = stdout.channel.exit_status_ready()
-                while not finished:
-                    finished = stdout.channel.exit_status_ready()
-                rc = stdout.channel.recv_exit_status()
-        except TimeoutException:
-            logger.error('Command timeout excedeed (%d seconds).' % timeout)
-            return 1, '', ''
-    else:
-        stdin, stdout, stderr = ssh_client.exec_command(command)
-        finished = stdout.channel.exit_status_ready()
-        while not finished:
-            finished = stdout.channel.exit_status_ready()
-        rc = stdout.channel.recv_exit_status()
-    stdout_lines = [l.rstrip() for l in stdout.readlines()]
-    stderr_lines = []
-    for line in [l.rstrip() for l in stderr.readlines()]:
-        is_error = True
-        for text in no_errors:
-            if line.startswith(text):
-                is_error = False
-        if is_error:
-            stderr_lines.append(line)
-        else:
-            stdout_lines.append(line)
-    for line in stdout_lines:
-        logger.info(line)
-    for line in stderr_lines:
-        logger.error(line)
+    timeout = timeout or DEFAULT_TIMEOUT
+    channel = ssh_client.get_transport().open_session()
+    channel.exec_command(command)
+
+    try:
+        with time_limit(timeout):
+            while not channel.exit_status_ready():
+                if channel.recv_ready():
+                    logger.info(channel.recv(BUFF_SIZE).strip())
+                if channel.recv_stderr_ready():
+                    line = channel.recv_stderr(BUFF_SIZE).strip()
+                    if is_error(line, no_errors):
+                        logger.error(line)
+                    else:
+                        logger.info(line)
+            rc = channel.recv_exit_status()
+            # Need to gobble up any remaining output after program terminates...
+            while channel.recv_ready():
+                logger.info(channel.recv(BUFF_SIZE).strip())
+            while channel.recv_stderr_ready():
+                line = channel.recv_stderr(BUFF_SIZE).strip()
+                if is_error(line, no_errors):
+                    logger.error(line)
+                else:
+                    logger.info(line)
+    except TimeoutException:
+        logger.error('Command timeout excedeed (%d seconds).' % timeout)
+        return 1
+    finally:
+        channel.close()
+
     rc_message = 'Return code: %d' % rc
     if rc == 0:
         logger.info(rc_message)
     else:
         logger.error(rc_message)
-    return rc, stdout.read(), stderr.read()
+    return rc
 
 
 def rdiff_backup_command(logger, args, timeout=None):
@@ -276,7 +285,7 @@ def run(**kwargs):
                 command_start_time = float(time.time())
                 prom.add('command_start_time', labels=labels, value=command_start_time)
                 prom.write()
-                rc, out, err = remote_command(logger, ssh_client, command, no_errors=no_errors, timeout=command_timeout)
+                rc = remote_command(logger, ssh_client, command, no_errors=no_errors, timeout=command_timeout)
                 value = 1
                 if rc:
                     failure = True
