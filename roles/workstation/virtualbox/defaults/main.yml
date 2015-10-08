@@ -1,1 +1,15 @@
 virtualbox_version: 5.0
+
+virtualbox_autostart_users: []
+
+# From http://askubuntu.com/questions/404665/how-to-start-virtual-box-machines-automatically-when-booting
+
+# Every user who wants to enable autostart for individual machines has to set the path to the autostart database directory with
+#
+# VBoxManage setproperty autostartdbpath /etc/vbox
+#
+# and enable autostart for an individual VM with
+#
+# VBoxManage modifyvm <uuid|vmname> --autostart-enabled on
+#
+# This will create a myuserid.start file in /etc/vbox directory

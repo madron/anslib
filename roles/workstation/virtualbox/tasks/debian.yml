@@ -17,3 +17,51 @@
     pkg: 'virtualbox-{{ virtualbox_version }}'
     state: latest
   tags: virtualbox
+
+
+- name: /etc/vbox directory
+  file:
+    path: /etc/vbox
+    mode: 0775
+    owner: root
+    group: vboxusers
+  tags: virtualbox
+
+
+- name: /etc/default/virtualbox
+  template:
+    src: default
+    dest: /etc/default/virtualbox
+    mode: 0644
+    owner: root
+    group: root
+  register: default
+  tags: virtualbox
+
+
+- name: /etc/vbox/autostart.cfg
+  template:
+    src: autostart.cfg
+    dest: /etc/vbox/autostart.cfg
+    mode: 0644
+    owner: root
+    group: root
+  register: config
+  tags: virtualbox
+
+
+- name: vboxautostart-service restarted
+  service:
+    name: vboxautostart-service
+    state: restarted
+  when: default.changed or config.changed
+  tags: virtualbox
+
+
+- name: add virtualbox_autostart_users to vboxusers group
+  user:
+    name: '{{ item }}'
+    groups: vboxusers
+    append: yes
+  with_items: virtualbox_autostart_users
+  tags: virtualbox
