@@ -1,6 +1,5 @@
 - name: set variables
   set_fact:
-    prometheus_server_image: 'prom/prometheus'
     prometheus_server_service: 'dck-prometheus-server'
     prometheus_server_container: 'prometheus-server'
   tags:

@@ -1,5 +1,7 @@
 docker_image_download: false
 
+prometheus_server_image: 'prom/prometheus:0.15.1'
+
 prometheus_server_port: 9090
 
 prometheus_server_alertmanager_url: ''
