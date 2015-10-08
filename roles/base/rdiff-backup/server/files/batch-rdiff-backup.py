@@ -37,6 +37,10 @@ METRIC = dict(
         type='gauge',
         help='Backup succedeed: 1 -> success - 0 -> failure.',
     ),
+    success_time=dict(
+        type='gauge',
+        help='Backup success time, in unixtime.',
+    ),
     command_start_time=dict(
         type='gauge',
         help='Pre execute command start time, in unixtime.',
@@ -284,25 +288,24 @@ def run(**kwargs):
         return
     try:
         #Connection check and pre-exececute-commands
+        command_start_time = float(time.time())
+        prom.add('command_start_time', value=command_start_time)
+        prom.write()
         if not host == 'localhost':
             ssh_client = get_ssh_client(host, port, user)
             for command in pre_execute_commands:
-                labels = [('command', command.replace('"', "'"))]
-                command_start_time = float(time.time())
-                prom.add('command_start_time', labels=labels, value=command_start_time)
-                prom.write()
                 rc = remote_command(logger, ssh_client, command, no_errors=no_errors, timeout=command_timeout)
                 value = 1
                 if rc:
                     failure = True
                     value = 0
-                command_end_time = float(time.time())
-                prom.add('command_end_time', labels=labels, value=command_end_time)
-                command_elapsed_seconds = command_end_time - command_start_time
-                prom.add('command_elapsed_seconds', labels=labels, value=command_elapsed_seconds)
-                prom.add('command_success', labels=labels, value=value)
-                prom.write()
             ssh_client.close()
+        command_end_time = float(time.time())
+        prom.add('command_end_time', value=command_end_time)
+        command_elapsed_seconds = command_end_time - command_start_time
+        prom.add('command_elapsed_seconds', value=command_elapsed_seconds)
+        prom.add('command_success', value=value)
+        prom.write()
         # Backup
         transfer_start_time = float(time.time())
         rc, stdout_lines, stderr_lines = backup(**kwargs)
@@ -314,7 +317,7 @@ def run(**kwargs):
             transfer_end_time = float(time.time())
             prom.add('transfer_end_time', value=transfer_end_time)
             transfer_elapsed_seconds = transfer_end_time - transfer_start_time
-            prom.add('transfer_elapsed_seconds', labels=labels, value=transfer_elapsed_seconds)
+            prom.add('transfer_elapsed_seconds', value=transfer_elapsed_seconds)
         else:
             stats = parse_statistics(stdout_lines)
             for k, v in stats.iteritems():
@@ -339,6 +342,8 @@ def run(**kwargs):
     value = 1
     if failure:
         value = 0
+    else:
+        prom.add('success_time', value=start_time)
     prom.add('success', value=value)
     prom.write()
     logger.info('Backup finished.')
