@@ -291,11 +291,11 @@ def run(**kwargs):
         command_start_time = float(time.time())
         prom.add('command_start_time', value=command_start_time)
         prom.write()
+        value = 1
         if not host == 'localhost':
             ssh_client = get_ssh_client(host, port, user)
             for command in pre_execute_commands:
                 rc = remote_command(logger, ssh_client, command, no_errors=no_errors, timeout=command_timeout)
-                value = 1
                 if rc:
                     failure = True
                     value = 0
