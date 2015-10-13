@@ -21,6 +21,7 @@ rdiff_backup_server_packages:
   - python-pip
   - python-dev
   - parallel
+  - coreutils
 
 rdiff_backup_server_pip_packages:
   - { name: ecdsa, version: 0.11 }
