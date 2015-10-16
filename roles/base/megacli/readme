@@ -1,0 +1,15 @@
+# http://hwraid.le-vert.net/wiki/LSIMegaRAIDSAS
+
+# Get info
+megacli -AdpAllInfo -aAll
+
+# Enable cache
+megacli -LDSetProp -Cached -LAll -aAll
+megacli -LDSetProp EnDskCache -LAll -aAll
+megacli -LDSetProp WB -LALL -aALL
+
+# Keep write cache enabled even if BBU fails
+megacli -LDSetProp CachedBadBBU -LALL -aALL
+
+# Cache status
+megacli -LDInfo -LAll -aAll
