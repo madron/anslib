@@ -37,8 +37,19 @@ iptables_input_rules: []
 #   '-p tcp --dport http -j ACCEPT',
 # ]
 
+iptables_ipset: {}
+
+# iptables_ipset:
+#   private-subnets:
+#     type: 'hash:net'
+#     members:
+#       - 10.0.0.0/8
+#       - 172.16.0.0/12
+#       - 192.168.0.0/16
+
 iptables_packages:
   - iptables
+  - ipset
 
 iptables_remove_packages:
   - shorewall

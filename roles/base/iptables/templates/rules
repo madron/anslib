@@ -8,6 +8,17 @@ set -e
 iptables --policy INPUT ACCEPT
 iptables --flush INPUT
 
+# Drop ipsets
+ipset destroy
+
+# Create ipsets
+{% for name, value in iptables_ipset.iteritems() %}
+ipset create {{ name }} {{ value.type }}
+{% for member in value.members %}
+ipset add {{ name }} {{ member }}
+{% endfor %}
+{% endfor %}
+
 # Rules
 {% for rule in iptables_input_rules_0 %}
 iptables --append INPUT {{ rule }}
