@@ -20,38 +20,10 @@ ipset add {{ name }} {{ member }}
 {% endfor %}
 
 # Rules
-{% for rule in iptables_input_rules_0 %}
+{% for rules in iptables_input_rules_list %}
+{% for rule in rules %}
 iptables --append INPUT {{ rule }}
 {% endfor %}
-{% for rule in iptables_input_rules_1 %}
-iptables --append INPUT {{ rule }}
-{% endfor %}
-{% for rule in iptables_input_rules_2 %}
-iptables --append INPUT {{ rule }}
-{% endfor %}
-{% for rule in iptables_input_rules_3 %}
-iptables --append INPUT {{ rule }}
-{% endfor %}
-{% for rule in iptables_input_rules_4 %}
-iptables --append INPUT {{ rule }}
-{% endfor %}
-{% for rule in iptables_input_rules_5 %}
-iptables --append INPUT {{ rule }}
-{% endfor %}
-{% for rule in iptables_input_rules_6 %}
-iptables --append INPUT {{ rule }}
-{% endfor %}
-{% for rule in iptables_input_rules_7 %}
-iptables --append INPUT {{ rule }}
-{% endfor %}
-{% for rule in iptables_input_rules_8 %}
-iptables --append INPUT {{ rule }}
-{% endfor %}
-{% for rule in iptables_input_rules_9 %}
-iptables --append INPUT {{ rule }}
-{% endfor %}
-{% for rule in iptables_input_rules %}
-iptables --append INPUT {{ rule }}
 {% endfor %}
 
 # Log and drop everything else
@@ -72,38 +44,10 @@ fi
 iptables --flush PRE_DOCKER
 
 # Rules
-{% for rule in iptables_input_rules_0 %}
+{% for rules in iptables_input_rules_list %}
+{% for rule in rules %}
 iptables --append PRE_DOCKER {{ rule }}
 {% endfor %}
-{% for rule in iptables_input_rules_1 %}
-iptables --append PRE_DOCKER {{ rule }}
-{% endfor %}
-{% for rule in iptables_input_rules_2 %}
-iptables --append PRE_DOCKER {{ rule }}
-{% endfor %}
-{% for rule in iptables_input_rules_3 %}
-iptables --append PRE_DOCKER {{ rule }}
-{% endfor %}
-{% for rule in iptables_input_rules_4 %}
-iptables --append PRE_DOCKER {{ rule }}
-{% endfor %}
-{% for rule in iptables_input_rules_5 %}
-iptables --append PRE_DOCKER {{ rule }}
-{% endfor %}
-{% for rule in iptables_input_rules_6 %}
-iptables --append PRE_DOCKER {{ rule }}
-{% endfor %}
-{% for rule in iptables_input_rules_7 %}
-iptables --append PRE_DOCKER {{ rule }}
-{% endfor %}
-{% for rule in iptables_input_rules_8 %}
-iptables --append PRE_DOCKER {{ rule }}
-{% endfor %}
-{% for rule in iptables_input_rules_9 %}
-iptables --append PRE_DOCKER {{ rule }}
-{% endfor %}
-{% for rule in iptables_input_rules %}
-iptables --append PRE_DOCKER {{ rule }}
 {% endfor %}
 
 # Log and drop everything else

@@ -24,6 +24,26 @@
     - iptables
 
 
+- name: set variables
+  set_fact:
+    iptables_input_rules_list:
+      - '{{ iptables_input_rules_0 }}'
+      - '{{ iptables_input_rules_1 }}'
+      - '{{ iptables_input_rules_2 }}'
+      - '{{ iptables_input_rules_3 }}'
+      - '{{ iptables_input_rules_4 }}'
+      - '{{ iptables_input_rules_5 }}'
+      - '{{ iptables_input_rules_6 }}'
+      - '{{ iptables_input_rules_7 }}'
+      - '{{ iptables_input_rules_8 }}'
+      - '{{ iptables_input_rules_9 }}'
+      - '{{ iptables_input_rules }}'
+  tags:
+    - iptables
+    - iptables-rules
+    - iptables-rules-nosave
+
+
 - name: /var/lib/ansible/iptables/rules
   template:
     src: rules
