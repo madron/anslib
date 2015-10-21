@@ -38,6 +38,18 @@
       - '{{ iptables_input_rules_8 }}'
       - '{{ iptables_input_rules_9 }}'
       - '{{ iptables_input_rules }}'
+    iptables_output_rules_list:
+      - '{{ iptables_output_rules_0 }}'
+      - '{{ iptables_output_rules_1 }}'
+      - '{{ iptables_output_rules_2 }}'
+      - '{{ iptables_output_rules_3 }}'
+      - '{{ iptables_output_rules_4 }}'
+      - '{{ iptables_output_rules_5 }}'
+      - '{{ iptables_output_rules_6 }}'
+      - '{{ iptables_output_rules_7 }}'
+      - '{{ iptables_output_rules_8 }}'
+      - '{{ iptables_output_rules_9 }}'
+      - '{{ iptables_output_rules }}'
   tags:
     - iptables
     - iptables-rules

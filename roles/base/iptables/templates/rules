@@ -4,9 +4,11 @@
 
 set -e
 
-# Drop everything on start
+# Flush INPUT and OUTPUT rules on start
 iptables --policy INPUT ACCEPT
+iptables --policy OUTPUT ACCEPT
 iptables --flush INPUT
+iptables --flush OUTPUT
 
 # Drop ipsets
 ipset destroy
@@ -19,6 +21,8 @@ ipset add {{ name }} {{ member }}
 {% endfor %}
 {% endfor %}
 
+
+### INPUT
 # Rules
 {% for rules in iptables_input_rules_list %}
 {% for rule in rules %}
@@ -33,8 +37,21 @@ iptables --append INPUT -j DROP
 # Policy
 iptables --policy INPUT {{ iptables_input_policy }}
 
-{% if iptables_docker_filter %}
 
+### OUTPUT
+# Rules
+{% for rules in iptables_output_rules_list %}
+{% for rule in rules %}
+iptables --append OUTPUT {{ rule }}
+{% endfor %}
+{% endfor %}
+
+# Policy
+iptables --policy OUTPUT {{ iptables_output_policy }}
+
+
+{% if iptables_docker_filter %}
+### Docker
 # create PRE_DOCKER chain
 if ! iptables --numeric --list PRE_DOCKER 2>&1 >/dev/null; then
     iptables --new PRE_DOCKER
