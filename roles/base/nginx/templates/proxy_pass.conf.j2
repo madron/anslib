@@ -23,7 +23,7 @@ server {
     error_log       /var/log/nginx/{{ item.server_name }}-error.log;
 
     location / {
-        # client_max_body_size    1M;
+        client_max_body_size    {{ item.client_max_body_size|default('1M') }};
         proxy_pass              http://{{ item.dest_host }}:{{ item.dest_http_port|default(80) }}{{ item.dest_path|default('') }};
         proxy_redirect          off;
         proxy_set_header        Host              $host;
@@ -48,7 +48,7 @@ server {
     ssl on;
 
     location / {
-        # client_max_body_size    1M;
+        client_max_body_size    {{ item.client_max_body_size|default('1M') }};
 {% if item.https_redirect|default(False) %}
         proxy_pass              http://{{ item.dest_host }}:{{ item.dest_http_port|default(80) }}{{ item.dest_path|default('') }};
 {% else %}
