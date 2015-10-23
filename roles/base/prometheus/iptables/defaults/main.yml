@@ -1,0 +1,3 @@
+prometheus_iptables_port: 9119
+
+prometheus_iptables_version: 0.1.3

@@ -1,0 +1,6 @@
+- name: required packages
+  apt:
+    pkg: python-pip
+    state: present
+  tags:
+    - prometheus-iptables

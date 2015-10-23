@@ -1,0 +1,60 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - prometheus-iptables
+
+
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - prometheus-iptables
+
+
+- name: set variables
+  set_fact:
+    prometheus_iptables_service: 'prometheus-iptables'
+  tags:
+    - prometheus-iptables
+    - prometheus-iptables-config
+
+
+- name: pip install iptables-exporter
+  pip:
+    name: iptables-exporter
+    version: '{{ prometheus_iptables_version }}'
+    state: present
+  tags:
+    - prometheus-iptables
+
+
+- name: upstart file
+  template:
+    src: upstart.conf
+    dest: '/etc/init/{{ prometheus_iptables_service }}.conf'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: upstart
+  tags:
+    - prometheus-iptables
+    - prometheus-iptables-config
+
+
+- name: service restarted
+  service:
+    name: '{{ prometheus_iptables_service }}'
+    state: restarted
+  when: upstart.changed
+  tags:
+    - prometheus-iptables
+    - prometheus-iptables-config
+
+
+- name: service started
+  service:
+    name: '{{ prometheus_iptables_service }}'
+    state: started
+  tags:
+    - prometheus-iptables
+    - prometheus-iptables-config
