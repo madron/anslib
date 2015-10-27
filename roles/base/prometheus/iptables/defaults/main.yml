@@ -1,3 +1,7 @@
 prometheus_iptables_port: 9119
 
-prometheus_iptables_version: 0.1.3
+prometheus_iptables_version: 0.1.4
+
+prometheus_iptables_packages:
+  - python-pip
+  - gcc
