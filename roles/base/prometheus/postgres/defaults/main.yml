@@ -1,0 +1,4 @@
+prometheus_postgres_port: 9113
+prometheus_postgres_data_source: 'postgres://postgres:password@localhost:5432/?sslmode=disable'
+
+prometheus_postgres_download_url: 'https://sites.google.com/a/mastertek.it/dowload/postgres_exporter'

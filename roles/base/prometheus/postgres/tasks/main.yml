@@ -1,0 +1,64 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - prometheus-postgres
+
+
+- name: set variables
+  set_fact:
+    prometheus_postgres_service: 'prometheus-postgres'
+  tags:
+    - prometheus-postgres
+    - prometheus-postgres-config
+
+
+- name: download postgres-exporter
+  command: 'wget -O /usr/local/sbin/postgres_exporter {{ prometheus_postgres_download_url }}'
+  args:
+    creates: /usr/local/sbin/postgres_exporter
+  tags:
+    - prometheus-postgres
+
+
+- name: postgres-exporter permission
+  file:
+    dest: /usr/local/sbin/postgres_exporter
+    state: file
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - prometheus-postgres
+
+
+- name: upstart file
+  template:
+    src: upstart.conf
+    dest: '/etc/init/{{ prometheus_postgres_service }}.conf'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: upstart
+  tags:
+    - prometheus-postgres
+    - prometheus-postgres-config
+
+
+- name: service restarted
+  service:
+    name: '{{ prometheus_postgres_service }}'
+    state: restarted
+  when: upstart.changed
+  tags:
+    - prometheus-postgres
+    - prometheus-postgres-config
+
+
+- name: service started
+  service:
+    name: '{{ prometheus_postgres_service }}'
+    state: started
+  tags:
+    - prometheus-postgres
+    - prometheus-postgres-config
