@@ -10,6 +10,7 @@ iptables --policy OUTPUT ACCEPT
 iptables --flush INPUT
 iptables --flush OUTPUT
 
+{% if iptables_ipset %}
 # Drop ipsets
 ipset destroy
 
@@ -21,6 +22,7 @@ ipset add {{ name }} {{ member }}
 {% endfor %}
 {% endfor %}
 
+{% endif %}
 
 ### INPUT
 # Rules
