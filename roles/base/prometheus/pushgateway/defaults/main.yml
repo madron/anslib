@@ -1,0 +1,5 @@
+docker_image_download: false
+
+prometheus_pushgateway_image: 'prom/pushgateway:latest'
+
+prometheus_pushgateway_port: 9091

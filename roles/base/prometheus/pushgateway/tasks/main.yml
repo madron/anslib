@@ -1,0 +1,56 @@
+- name: set variables
+  set_fact:
+    prometheus_pushgateway_service: 'dck-prometheus-pushgateway'
+    prometheus_pushgateway_container: 'prometheus-pushgateway'
+  tags:
+    - prometheus-pushgateway
+    - prometheus-pushgateway-downlod
+
+
+- name: data directory for persistence file
+  file:
+    path: '/var/lib/container/{{ prometheus_pushgateway_container }}'
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - prometheus-pushgateway
+
+
+- name: pull prometheus pushgateway image
+  command: 'docker pull {{ prometheus_pushgateway_image }}'
+  when: docker_image_download
+  tags:
+    - prometheus-pushgateway
+    - prometheus-pushgateway-downlod
+
+
+- name: upstart file
+  template:
+    src: upstart.conf
+    dest: '/etc/init/{{ prometheus_pushgateway_service }}.conf'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: upstart
+  tags:
+    - prometheus-pushgateway
+
+
+- name: service restarted
+  service:
+    name: '{{ prometheus_pushgateway_service }}'
+    state: restarted
+  when: upstart.changed
+  tags:
+    - prometheus-pushgateway
+
+
+- name: service started
+  service:
+    name: '{{ prometheus_pushgateway_service }}'
+    state: started
+  tags:
+    - prometheus-pushgateway
