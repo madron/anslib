@@ -1,4 +1,5 @@
 # docker_engine_version: 1.8.1-0~trusty
+# docker_engine_version: 1.9.1-0~trusty
 
 docker_engine_tcp_bind_host: ''
 docker_engine_tcp_bind_port: 2375
@@ -15,24 +16,3 @@ docker_engine_accounts: {}
 #   registry.example.com: { username: bob, password: secret, email: 'bob@example.com' },
 #   hub.example.com: { username: fred, password: notsosecret },
 # }
-
-
-docker_engine_old_packages:
-  - lxc-docker-1.0.0
-  - lxc-docker-1.0.1
-  - lxc-docker-1.1.0
-  - lxc-docker-1.1.1
-  - lxc-docker-1.1.2
-  - lxc-docker-1.2.0
-  - lxc-docker-1.3.0
-  - lxc-docker-1.3.1
-  - lxc-docker-1.3.2
-  - lxc-docker-1.3.3
-  - lxc-docker-1.4.0
-  - lxc-docker-1.4.1
-  - lxc-docker-1.5.0
-  - lxc-docker-1.6.0
-  - lxc-docker-1.6.1
-  - lxc-docker-1.6.2
-  - lxc-docker-1.7.0
-  - lxc-docker-1.7.1

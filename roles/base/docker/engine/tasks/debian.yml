@@ -8,15 +8,6 @@
     - docker-engine
 
 
-- name: remove old repository
-  apt_repository:
-    repo: 'deb http://get.docker.io/ubuntu docker main'
-    state: absent
-  tags:
-    - docker
-    - docker-engine
-
-
 - name: repository
   apt_repository:
     repo: 'deb https://apt.dockerproject.org/repo {{ ansible_lsb.id|lower() }}-{{ ansible_lsb.codename }} main'
@@ -31,17 +22,6 @@
     name: '{{ item }}'
     state: latest
   with_items: docker_engine_packages
-  tags:
-    - docker
-    - docker-engine
-
-
-- name: remove old-style package
-  apt:
-    name: '{{ item }}'
-    state: absent
-    purge: yes
-  with_items: docker_engine_old_packages
   tags:
     - docker
     - docker-engine
