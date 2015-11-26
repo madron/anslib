@@ -93,7 +93,7 @@
   service:
     name: '{{ prometheus_node_service }}'
     state: restarted
-  when: upstart.changed
+  when: upstart.changed or download.changed
   tags:
     - prometheus-node
     - prometheus-node-config
