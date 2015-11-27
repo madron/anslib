@@ -13,7 +13,7 @@
 
 - name: apt sources.list
   template:
-    src: '{{ ansible_distribution|lower() }}_sources.list'
+    src: '{{ ansible_lsb.id|lower() }}_sources.list'
     dest: /etc/apt/sources.list
     mode: 0644
     owner: root
