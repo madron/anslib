@@ -1,0 +1,6 @@
+- name: required packages
+  apt:
+    pkg: unzip
+    state: present
+  tags:
+    - consul-agent

@@ -1,0 +1,14 @@
+consul_agent_version: 0.5.2
+consul_agent_sha256sum: 171cf4074bfca3b1e46112105738985783f19c47f4408377241b868affa9d445
+
+consul_agent_server: true
+consul_agent_node_name: ''
+consul_agent_bind_address: ''
+consul_agent_dc: dc1
+consul_agent_bootstrap_expect: 0
+
+# consul keygen
+consul_agent_encrypt: ''
+
+# Cluster
+consul_agent_start_join: []

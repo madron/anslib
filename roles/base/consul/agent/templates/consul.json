@@ -1,0 +1,12 @@
+{
+  "server": {{ consul_agent_server|lower() }},
+  "datacenter": "{{ consul_agent_dc }}",
+  "log_level": "INFO",
+  "node_name": "{{ consul_agent_node_name }}",
+  "bind_addr": "{{ consul_agent_bind_addr }}",
+  "bootstrap_expect": {{ consul_agent_bootstrap_expect }},
+  "encrypt": "{{ consul_agent_encrypt }}",
+  "start_join": {{ consul_agent_start_join|replace("'", '"') }},
+  "leave_on_terminate": true,
+  "data_dir": "/var/lib/consul"
+}

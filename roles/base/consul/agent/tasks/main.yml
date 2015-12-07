@@ -1,0 +1,136 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - consul-agent
+
+
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - consul-agent
+
+
+- name: set variables
+  set_fact:
+    consul_agent_service: 'consul-agent'
+    consul_agent_zip_file: 'consul_{{ consul_agent_version }}_linux_amd64.zip'
+    consul_agent_zip_path: '/var/lib/ansible/consul/agent/agent_exporter-{{ consul_agent_version }}.linux-amd64.tar.gz'
+  tags:
+    - consul-agent
+    - consul-agent-config
+
+
+- name: create directories
+  file:
+    path: '{{ item }}'
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  with_items:
+    - /etc/consul
+    - /var/lib/ansible/consul/agent
+  tags:
+    - consul-agent
+
+
+- name: download
+  get_url:
+    url: 'https://releases.hashicorp.com/consul/{{ consul_agent_version }}/{{ consul_agent_zip_file }}'
+    dest: '{{ consul_agent_zip_path }}'
+    sha256sum: '{{ consul_agent_sha256sum }}'
+    mode: 0644
+    owner: root
+    group: root
+  register: download
+  tags:
+    - consul-agent
+    - consul-agent-config
+
+
+- name: unzip if changed
+  unarchive:
+    src: '{{ consul_agent_zip_path }}'
+    dest: /usr/local/sbin
+    copy: no
+  when: download.changed
+  tags:
+    - consul-agent
+
+
+- name: unzip if missing
+  unarchive:
+    src: '{{ consul_agent_zip_path }}'
+    dest: /usr/local/sbin
+    copy: no
+    creates: /usr/local/sbin/consul
+  tags:
+    - consul-agent
+
+
+- name: file permissions
+  file:
+    path: /usr/local/sbin/consul
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - consul-agent
+
+
+- name: create data directory
+  file:
+    path: /var/lib/consul
+    state: directory
+    mode: 0755
+    owner: nobody
+    group: nogroup
+  tags:
+    - consul-agent
+
+
+- name: config
+  template:
+    src: consul.json
+    dest: /etc/consul/
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: config
+  tags:
+    - consul-agent
+    - consul-agent-config
+
+
+- name: upstart file
+  template:
+    src: upstart.conf
+    dest: '/etc/init/{{ consul_agent_service }}.conf'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: upstart
+  tags:
+    - consul-agent
+    - consul-agent-config
+
+
+- name: service restarted
+  service:
+    name: '{{ consul_agent_service }}'
+    state: restarted
+  when: config.changed or upstart.changed or download.changed
+  tags:
+    - consul-agent
+    - consul-agent-config
+
+
+- name: service started
+  service:
+    name: '{{ consul_agent_service }}'
+    state: started
+  tags:
+    - consul-agent
+    - consul-agent-config
