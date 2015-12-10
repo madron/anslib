@@ -8,6 +8,7 @@ auto lo
 iface lo inet loopback
 
 {% if network_interfaces_directory %}
+source /etc/network/interfaces.d/*.cfg
 source /etc/network/interfaces.d/*.conf
 {% else %}
 {% for item in network_interfaces %}
