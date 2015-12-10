@@ -1,0 +1,12 @@
+- name: required packages
+  apt:
+    pkg: '{{ item }}'
+    state: present
+  with_items:
+    - lxc
+    - bridge-utils
+    - lxc-dev
+    - python-dev
+    - python-pip
+  tags:
+    - lxc

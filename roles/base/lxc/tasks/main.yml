@@ -1,0 +1,30 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - lxc
+
+
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - lxc
+
+
+- name: install lxc-python2
+  pip:
+    name: lxc-python2
+    state: present
+  tags:
+    - lxc
+
+
+- name: config
+  template:
+    src: default.conf
+    dest: '/etc/lxc/default.conf'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  tags:
+    - lxc

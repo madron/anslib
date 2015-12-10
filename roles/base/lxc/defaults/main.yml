@@ -1,0 +1,10 @@
+# {{ ansible_managed }}
+
+lxc_network_type: veth
+lxc_network_macvlan_mode: bridge
+lxc_network_link: lxcbr0
+lxc_network_flags: up
+lxc_network_hwaddr: 00:16:3e:xx:xx:xx
+
+lxc_start_auto: 0
+lxc_start_delay: 0
