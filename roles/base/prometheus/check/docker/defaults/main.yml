@@ -1,0 +1,3 @@
+prometheus_check_docker_packages:
+  - python-pip
+  - gcc

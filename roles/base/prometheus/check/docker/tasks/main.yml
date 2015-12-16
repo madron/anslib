@@ -1,0 +1,38 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - prometheus-check-docker
+
+
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - prometheus-check-docker
+
+
+- name: set variables
+  set_fact:
+    prometheus_check_docker_service: 'prometheus-check-docker'
+  tags:
+    - prometheus-check-docker
+
+
+- name: pip install iptables-exporter
+  pip:
+    name: iptables-exporter
+    version: '{{ prometheus_check_docker_version }}'
+    state: present
+  tags:
+    - prometheus-check-docker
+
+
+- name: upstart file
+  file:
+    src: check-docker.py
+    dest: /usr/local/bin/check-docker
+    mode: 0755
+    owner: root
+    group: root
+  register: upstart
+  tags:
+    - prometheus-check-docker
