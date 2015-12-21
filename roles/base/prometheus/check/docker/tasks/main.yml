@@ -4,12 +4,6 @@
     - prometheus-check-docker
 
 
-- include: debian.yml
-  when: ansible_os_family == 'Debian'
-  tags:
-    - prometheus-check-docker
-
-
 - name: set variables
   set_fact:
     prometheus_check_docker_service: 'prometheus-check-docker'
@@ -17,22 +11,51 @@
     - prometheus-check-docker
 
 
-- name: pip install iptables-exporter
+- name: pip install prometheus-client
   pip:
-    name: iptables-exporter
-    version: '{{ prometheus_check_docker_version }}'
+    name: prometheus-client
     state: present
   tags:
     - prometheus-check-docker
 
 
-- name: upstart file
-  file:
+- name: check-docker executable
+  copy:
     src: check-docker.py
     dest: /usr/local/bin/check-docker
     mode: 0755
     owner: root
     group: root
+  register: executable
+  tags:
+    - prometheus-check-docker
+
+
+- name: upstart file
+  template:
+    src: upstart.conf
+    dest: '/etc/init/{{ prometheus_check_docker_service }}.conf'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
   register: upstart
+  tags:
+    - prometheus-check-docker
+
+
+- name: service restarted
+  service:
+    name: '{{ prometheus_check_docker_service }}'
+    state: restarted
+  when: upstart.changed or executable.changed
+  tags:
+    - prometheus-check-docker
+
+
+- name: service started
+  service:
+    name: '{{ prometheus_check_docker_service }}'
+    state: started
   tags:
     - prometheus-check-docker

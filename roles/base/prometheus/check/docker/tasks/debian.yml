@@ -1,6 +1,0 @@
-- name: required packages
-  apt:
-    pkg: '{{ prometheus_check_docker_packages }}'
-    state: present
-  tags:
-    - prometheus-check-docker

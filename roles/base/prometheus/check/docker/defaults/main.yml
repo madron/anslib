@@ -1,3 +1,5 @@
 prometheus_check_docker_packages:
   - python-pip
   - gcc
+
+prometheus_check_docker_port: 9120
