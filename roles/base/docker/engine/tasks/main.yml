@@ -26,6 +26,7 @@
   pip:
     name: docker-py
     state: latest
+  when: docker_engine_install_docker_py
   tags:
     - docker
     - docker-engine

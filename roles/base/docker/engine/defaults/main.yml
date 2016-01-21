@@ -4,6 +4,8 @@
 docker_engine_tcp_bind_host: ''
 docker_engine_tcp_bind_port: 2375
 
+docker_engine_install_docker_py: true
+
 # docker_engine_registry_mirror: http://mirror.example.com:5000
 
 # docker_engine_http_proxy: 'http://proxy.example.com:3128/'
