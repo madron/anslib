@@ -1,0 +1,8 @@
+- name: required packages
+  apt:
+    name: '{{ item }}'
+    state: latest
+  with_items: docker_compose_packages
+  tags:
+    - docker
+    - docker-compose

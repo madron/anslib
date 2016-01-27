@@ -1,0 +1,32 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - docker
+    - docker-compose
+
+
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - docker
+    - docker-compose
+
+
+- name: fix ubuntu trusty pip installation
+  command: easy_install -U pip
+  args:
+    creates: /usr/local/bin/pip
+  when: ansible_lsb.id == 'Ubuntu' and ansible_lsb.codename == 'trusty'
+  tags:
+    - docker
+    - docker-compose
+
+
+- name: docker-compose
+  pip:
+    name: docker-compose
+    version: '{{ docker_compose_version }}'
+    state: present
+  tags:
+    - docker
+    - docker-compose

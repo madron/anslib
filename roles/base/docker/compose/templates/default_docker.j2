@@ -1,0 +1,26 @@
+# {{ ansible_managed }}
+
+# Docker Upstart and SysVinit configuration file
+
+# Customize location of Docker binary (especially for development testing).
+#DOCKER="/usr/local/bin/docker"
+
+# Use DOCKER_OPTS to modify the daemon startup options.
+#DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4"
+{% set DOCKER_OPTS = '' %}
+{% if docker_compose_tcp_bind_host %}
+{% set DOCKER_OPTS = DOCKER_OPTS ~ ' --host=unix:///run/docker.sock --host=tcp://' ~ docker_compose_tcp_bind_host ~ ':' ~ docker_compose_tcp_bind_port %}
+{% endif %}
+{% if docker_compose_registry_mirror is defined %}
+{% set DOCKER_OPTS = DOCKER_OPTS ~ ' --registry-mirror=' ~ docker_compose_registry_mirror %}
+{% endif %}
+DOCKER_OPTS="{{ DOCKER_OPTS }}{% for r in docker_compose_insecure_registries %} --insecure-registry {{ r }}{% endfor %}"
+
+# If you need Docker to use an HTTP proxy, it can also be specified here.
+#export http_proxy="http://127.0.0.1:3128/"
+{% if docker_compose_http_proxy is defined %}
+export http_proxy="{{ docker_compose_http_proxy }}"
+{% endif %}
+
+# This is also a handy place to tweak where Docker's temporary files go.
+#export TMPDIR="/mnt/bigdrive/docker-tmp"
