@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# Remove prometheus textfiles older than 2 days
+/usr/bin/find  /var/lib/prometheus/textfiles/ -name *.prom -type f -mtime +2 -exec rm {} \;

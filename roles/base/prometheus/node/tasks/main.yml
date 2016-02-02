@@ -45,6 +45,7 @@
   register: download
   tags:
     - prometheus-node
+    - prometheus-node-config
 
 
 - name: untar if changed
@@ -103,6 +104,18 @@
   service:
     name: '{{ prometheus_node_service }}'
     state: started
+  tags:
+    - prometheus-node
+    - prometheus-node-config
+
+
+- name: /etc/cron.daily/prometheus-node
+  template:
+    src: crontab
+    dest: /etc/cron.daily/prometheus-node
+    mode: 0755
+    owner: root
+    group: root
   tags:
     - prometheus-node
     - prometheus-node-config
