@@ -108,6 +108,16 @@
     - iptables-rules
 
 
+- name: remove /etc/init/iptables-docker.conf
+  file:
+    path: /etc/init/iptables-docker.conf
+    state: absent
+  when: not iptables_docker_filter
+  tags:
+    - iptables
+    - iptables-rules
+
+
 - name: service iptables-docker restarted
   service:
     name: iptables-docker
