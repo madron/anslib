@@ -1,0 +1,6 @@
+- name: required packages
+  apt:
+    pkg: python-apt
+    state: present
+  tags:
+    - prometheus-check-apt

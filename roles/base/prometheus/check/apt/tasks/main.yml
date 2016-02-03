@@ -1,0 +1,50 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - prometheus-check-apt
+
+
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - prometheus-check-apt
+
+
+- name: prometheus_client library
+  pip:
+    name: prometheus_client
+    state: present
+  tags:
+    - prometheus-check-apt
+
+
+- name: prometheus-check-apt script
+  copy:
+    src: prometheus-check-apt.py
+    dest: /usr/local/bin/prometheus-check-apt
+    mode: 0755
+    owner: root
+    group: root
+    - /var/lib/prometheus/textfiles
+  register: script
+  tags:
+    - prometheus-check-apt
+
+
+- name: /etc/cron.hourly/prometheus-check-apt
+  template:
+    src: crontab
+    dest: /etc/cron.hourly/prometheus-check-apt
+    mode: 0755
+    owner: root
+    group: root
+  register: crontab
+  tags:
+    - prometheus-check-apt
+
+
+- name: run check
+  command: /etc/cron.hourly/prometheus-check-apt
+  when: script.changed or crontab.changed
+  tags:
+    - prometheus-check-apt
