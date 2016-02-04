@@ -1,3 +1,3 @@
 #!/bin/sh
 
-/usr/local/bin/prometheus-check-apt --promfile {{ prometheus_check_apt_textfile }} --regex '{{ prometheus_check_apt_regex }}'
+/usr/local/bin/prometheus-check-apt --promfile {{ prometheus_check_apt_textfile }} --regex '{{ prometheus_check_apt_regex }}'   2>&1 | /usr/bin/logger -t prometheus-check-apt
