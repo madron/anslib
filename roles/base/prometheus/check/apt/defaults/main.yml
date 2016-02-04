@@ -1,1 +1,2 @@
 prometheus_check_apt_textfile: /var/lib/prometheus/textfiles/apt.prom
+prometheus_check_apt_regex: ''

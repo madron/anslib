@@ -2,7 +2,6 @@
 
 import argparse
 import re
-import sys
 import apt_pkg
 from prometheus_client import core, Gauge
 from prometheus_client import write_to_textfile, generate_latest
@@ -32,5 +31,5 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Prometheus check apt packages.')
     parser.add_argument('--promfile')
-    parser.add_argument('--regex', default='.*')
+    parser.add_argument('--regex', default='')
     main(parser.parse_args())

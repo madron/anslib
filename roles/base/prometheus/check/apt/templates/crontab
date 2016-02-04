@@ -1,1 +1,3 @@
 #!/bin/sh
+
+/usr/local/bin/prometheus-check-apt --promfile {{ prometheus_check_apt_textfile }} --regex '{{ prometheus_check_apt_regex }}'

@@ -25,7 +25,6 @@
     mode: 0755
     owner: root
     group: root
-    - /var/lib/prometheus/textfiles
   register: script
   tags:
     - prometheus-check-apt
