@@ -7,6 +7,7 @@ rdiff_backup_server_cron_order: z50
 rdiff_backup_server_concurrent_jobs: 400%
 rdiff_backup_server_list: []
 
+rdiff_backup_server_prometheus_dir: ''
 rdiff_backup_server_prometheus_url: ''
 rdiff_backup_server_prometheus_group: ''
 rdiff_backup_server_prometheus_instance: ''
