@@ -1,5 +1,5 @@
 - name: required package
-  apt: >
+  apt:
     name={{ item }}
     state=latest
   with_items: rdiff_backup_server_packages

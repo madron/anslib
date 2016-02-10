@@ -4,7 +4,7 @@
     - rdiff-backup-server
 
 
-- include: packages_debian.yml
+- include: debian.yml
   when: ansible_os_family == 'Debian'
   tags:
     - rdiff-backup-server

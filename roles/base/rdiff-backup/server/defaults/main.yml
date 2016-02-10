@@ -7,8 +7,9 @@ rdiff_backup_server_cron_order: z50
 rdiff_backup_server_concurrent_jobs: 400%
 rdiff_backup_server_list: []
 
-rdiff_backup_server_prometheus_dir: ''
+rdiff_backup_server_prometheus_url: ''
 rdiff_backup_server_prometheus_group: ''
+rdiff_backup_server_prometheus_instance: ''
 
 # rdiff_backup_server_list:
 #   - { host: localhost, includes: ['/etc', '/root'], excludes: ['/etc/X11'], retain_days: 20 }
@@ -27,3 +28,4 @@ rdiff_backup_server_pip_packages:
   - { name: ecdsa, version: 0.11 }
   - { name: pycrypto, version: 2.6.1 }
   - { name: paramiko, version: 1.15.2 }
+  - { name: prometheus_client, version: 0.0.13 }
