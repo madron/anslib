@@ -4,49 +4,15 @@
     - sentry
 
 
-- name: dockerfile
-  copy:
-    src: worker
-    dest: /var/lib/ansible/sentry
-  register: dockerfile
+- name: set variables
+  set_fact:
+    project: sentry
+    service: dck-sentry
   tags:
     - sentry
 
 
-- name: docker image
-  docker_image:
-    path: /var/lib/ansible/sentry/worker
-    name: mtek/sentry-worker
-    state: build
-  when: dockerfile.changed
-  notify: 'restart sentry-container'
-  tags:
-    - sentry
-
-
-- name: docker image
-  docker_image:
-    path: /var/lib/ansible/sentry/worker
-    name: mtek/sentry-worker
-    state: present
-  notify: 'restart sentry-container'
-  tags:
-    - sentry
-
-
-- name: upstart file
-  template:
-    src: container.conf
-    dest: /etc/init/sentry-container.conf
-    mode: 0644
-    owner: root
-    group: root
-  notify: 'restart sentry-container'
-  tags:
-    - sentry
-
-
-- name: cron.daily sentry-cleanup
+- name: /etc/cron.daily/sentry-cleanup
   template:
     src: sentry-cleanup
     dest: /etc/cron.daily/sentry-cleanup
@@ -57,9 +23,49 @@
     - sentry
 
 
-- name: sentry service
+- name: docker-compose file
+  template:
+    src: docker-compose.yml
+    dest: /etc/init/{{ service }}.yml
+    mode: 0644
+    owner: root
+    group: root
+  register: compose
+  tags:
+    - sentry
+
+
+- name: upstart file
+  template:
+    src: upstart.conf
+    dest: /etc/init/{{ service }}.conf
+    mode: 0644
+    owner: root
+    group: root
+  register: upstart
+  tags:
+    - sentry
+
+
+- name: pull docker images
+  command: 'docker-compose -p {{ project }} -f /etc/init/{{ service }}.yml pull'
+  when: docker_image_download
+  tags:
+    - sentry
+
+
+- name: restart service
   service:
-    name: 'sentry-container'
+    name: '{{ service }}'
+    state: restarted
+  when: compose.changed or upstart.changed
+  tags:
+    - sentry
+
+
+- name: start service
+  service:
+    name: '{{ service }}'
     state: started
   tags:
     - sentry

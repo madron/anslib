@@ -1,4 +1,0 @@
-- name: 'restart sentry-container'
-  service: >
-    name='sentry-container'
-    state=restarted

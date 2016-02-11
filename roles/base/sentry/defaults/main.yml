@@ -1,5 +1,11 @@
-sentry_port: 80
+version: 8.1
 
+# docker run --rm sentry:8.1 generate-secret-key
+secret_key: ''
+
+port: 80
+
+docker_image_download: false
 
 # sentry.conf
 sentry_allowed_hosts: '*'
