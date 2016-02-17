@@ -1,7 +1,7 @@
 - name: set variables
   set_fact:
     vagrant_file: 'vagrant_{{ vagrant_version }}_{{ vagrant_architecture }}.deb'
-    vagrant_url: '{{ vagrant_base_url }}/vagrant_{{ vagrant_version }}_{{ vagrant_architecture }}.deb'
+    vagrant_url: '{{ vagrant_base_url }}/{{ vagrant_version }}/vagrant_{{ vagrant_version }}_{{ vagrant_architecture }}.deb'
   tags: vagrant
 
 
@@ -19,6 +19,7 @@
   get_url:
     url: '{{ vagrant_url }}'
     dest: '/var/lib/ansible/vagrant/{{ vagrant_file }}'
+
     mode: 0644
     owner: root
     group: root

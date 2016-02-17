@@ -9,3 +9,11 @@
   when: ansible_os_family == 'Debian'
   tags:
     - vagrant
+
+
+- name: plugins
+  command: 'vagrant plugin install {{ item }}'
+  with_items: vagrant_plugins
+  tags:
+    - vagrant
+    - vagrant-config
