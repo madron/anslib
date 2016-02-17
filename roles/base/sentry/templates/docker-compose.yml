@@ -1,0 +1,85 @@
+version: '2'
+
+services:
+  memcached:
+    container_name: {{ project }}_memcached
+    image: memcached
+    restart: always
+    networks:
+      - private
+
+  redis:
+    container_name: {{ project }}_redis
+    image: redis:3.0.7-alpine
+    restart: always
+    networks:
+      - private
+
+  postgres:
+    container_name: {{ project }}_postgres
+    image: postgres:9.5
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - private
+
+  celery_beat:
+    container_name: {{ project }}_celery_beat
+    image: sentry:{{ version }}
+    restart: always
+    environment:
+      - SENTRY_REDIS_HOST=redis
+      - SENTRY_POSTGRES_HOST=postgres
+      - SENTRY_SECRET_KEY={{ secret_key }}
+    command: celery beat
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - private
+
+  celery_worker:
+    image: sentry:{{ version }}
+    restart: always
+    environment:
+      - SENTRY_REDIS_HOST=redis
+      - SENTRY_POSTGRES_HOST=postgres
+      - SENTRY_SECRET_KEY={{ secret_key }}
+    command: celery worker
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - private
+
+  server:
+    container_name: {{ project }}_server
+    image: sentry:{{ version }}
+    restart: always
+    volumes:
+      - server_data:/var/lib/sentry/files
+    environment:
+      - SENTRY_MEMCACHED_HOST=memcached
+      - SENTRY_REDIS_HOST=redis
+      - SENTRY_POSTGRES_HOST=postgres
+      - SENTRY_SECRET_KEY={{ secret_key }}
+    depends_on:
+      - memcached
+      - redis
+      - postgres
+    ports:
+      - "{{ port }}:9000"
+    networks:
+      - private
+
+volumes:
+  postgres_data:
+    driver: local
+  server_data:
+    driver: local
+
+
+networks:
+  private:
+    driver: bridge
