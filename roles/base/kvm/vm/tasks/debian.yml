@@ -1,0 +1,19 @@
+- name: debconf libguestfs/update-appliance
+  debconf:
+    name: libguestfs
+    question: 'libguestfs/update-appliance'
+    value: true
+    vtype: 'boolean'
+  tags:
+    - kvm-vm
+
+
+- name: required packages
+  apt:
+    pkg: '{{ item }}'
+    state: latest
+  with_items:
+    # - libguestfs-tools
+    - cloud-utils
+  tags:
+    - kvm-vm

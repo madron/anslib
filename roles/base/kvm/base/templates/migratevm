@@ -1,0 +1,59 @@
+#!/bin/bash
+
+export IMAGE_DIR="/var/lib/libvirt/images"
+export LIBVIRT_CONF_DIR="/etc/libvirt/qemu"
+export TEMP_XML="/tmp/migratevm.xml"
+
+if [ -z "$1" ]; then
+    echo "migratevm <vm> <disk image file> <destination host>"
+    virsh list --all
+    exit 1
+fi
+export VM="$1"
+
+if [ -z "$2" ]; then
+    echo "disk image file needed"
+    virsh dumpxml $VM | grep "source file"
+    exit 1
+fi
+export DISK_IMAGE="$2"
+export DIR="$( /usr/bin/dirname ${DISK_IMAGE} )"
+export FILE="$( /usr/bin/basename ${DISK_IMAGE} )"
+
+if [ -z "$3" ]; then
+    echo "Missing destination host"
+    exit 1
+fi
+export DESTINATION_HOST="$3"
+
+
+echo "Migrating ${VM} (disk image: ${DISK_IMAGE}) to ${DESTINATION_HOST}"
+
+if [[ $(/usr/bin/virsh list | /bin/grep ${VM} ) != "" ]]; then
+    echo "${VM} is running: shutdown it before retrying !"
+    exit 1
+fi
+
+# Check for standard image dir
+if [[ ! "${DISK_IMAGE}" =~ "${IMAGE_DIR}/" ]]; then
+    echo "Disk image must be in standard directory: ${IMAGE_DIR}" 
+    exit 1
+fi
+
+
+# Transfer disk image
+if [[ "${DIR}" == "${IMAGE_DIR}" ]]; then
+    /usr/bin/rsync -v -e ssh --progress --ignore-existing ${DISK_IMAGE} root@${DESTINATION_HOST}:${IMAGE_DIR}/
+else
+    /usr/bin/rsync -v -a -e ssh --progress --ignore-existing ${DIR} root@${DESTINATION_HOST}:${IMAGE_DIR}/
+fi
+
+
+# Dump configuration
+virsh dumpxml ${VM} > ${TEMP_XML}
+/usr/bin/rsync -v -e ssh --progress --ignore-existing ${TEMP_XML} root@${DESTINATION_HOST}:${LIBVIRT_CONF_DIR}/${VM}.xml
+
+
+echo "Done"
+echo "Connect to ${DESTINATION_HOST} and define vm: virsh define ${LIBVIRT_CONF_DIR}/${VM}.xml"
+echo "Start vm if needed: virsh start ${VM}"

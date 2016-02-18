@@ -1,0 +1,66 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - kvm-vm
+
+
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - kvm-vm
+
+
+- name: required directories
+  file:
+    path: '{{ item }}'
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  with_items:
+    - /var/lib/libvirt/config
+    - /var/lib/libvirt/download
+    - /var/lib/libvirt/images
+  tags:
+    - kvm-vm
+
+
+- name: download images
+  get_url:
+    url: '{{ item.url }}'
+    dest: '/var/lib/libvirt/download/{{ item.name }}.img'
+  with_items: images
+  tags:
+    - kvm-vm
+
+
+- name: convert images to qcow2
+  command: 'qemu-img convert -O qcow2 {{ item.name }}.img {{ item.name }}.qcow2'
+  args:
+    chdir: /var/lib/libvirt/download
+    creates: '/var/lib/libvirt/download/{{ item.name }}.qcow2'
+  with_items: images
+  tags:
+    - kvm-vm
+
+
+- name: root disk image
+  shell: 'cp ../download/{{ item.image }}.qcow2 {{ item.name }}.qcow2 && qemu-img resize {{ item.name }}.qcow2 {{ item.disk_size|default(default_disk_size) }}'
+  args:
+    chdir: /var/lib/libvirt/images
+    creates: '/var/lib/libvirt/images/{{ item.name }}.qcow2'
+  with_items: hosts
+  tags:
+    - kvm-vm
+
+
+- name: upstart file
+  template:
+    src: upstart.conf
+    dest: /etc/init/{{ item.name }}.conf
+    mode: 0755
+    owner: root
+    group: root
+  with_items: hosts
+  tags:
+    - kvm-vm

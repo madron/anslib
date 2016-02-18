@@ -1,0 +1,120 @@
+#!/bin/bash
+
+export LIBVIRT_IMAGE_DIR="/var/lib/libvirt/images"
+export LIBVIRT_CONF_DIR="/etc/libvirt/qemu"
+export TEMP_XML="/tmp/renamevm.xml"
+
+if [ -z "$1" ]; then
+    echo "migratevm <source vm> <source disk image file> <destination vm> <destination disk image file>"
+    virsh list --all
+    exit 1
+fi
+export SOURCE_VM="$1"
+
+if [ -z "$2" ]; then
+    echo "disk image file needed"
+    virsh dumpxml $SOURCE_VM | grep "source file"
+    exit 1
+fi
+export SOURCE_DISK_IMAGE="$2"
+
+
+if [ -z "$3" ]; then
+    echo "Missing destination vm"
+    exit 1
+fi
+export DESTINATION_VM="$3"
+
+
+if [ -z "$4" ]; then
+    echo "Missing destination disk image"
+    exit 1
+fi
+export DESTINATION_DISK_IMAGE="$4"
+
+
+echo "Renaming ${SOURCE_VM} (${SOURCE_DISK_IMAGE}) to ${DESTINATION_VM} (${DESTINATION_DISK_IMAGE})"
+
+
+if [[ $(/usr/bin/virsh list | /bin/grep ${SOURCE_VM} ) != "" ]]; then
+    echo "${SOURCE_VM} is running: shutdown it before retrying !"
+    exit 1
+fi
+
+# Dump configuration
+virsh dumpxml ${SOURCE_VM} > ${TEMP_XML}
+
+# Replace domain name
+SED_COMMAND="sed -i.bak 's|${SOURCE_VM}|${DESTINATION_VM}|g' ${TEMP_XML}"
+eval $SED_COMMAND
+
+# Replace disk image name
+if [[ "${SOURCE_DISK_IMAGE}" =~ "${LIBVIRT_IMAGE_DIR}/" ]]
+then
+    # Source and destination disk image are given with full path
+    if [ ! -f ${SOURCE_DISK_IMAGE} ]; then
+        echo "Source disk image file '${SOURCE_DISK_IMAGE}' does not exist."
+        exit 1
+    fi
+    if [[ ! "${DESTINATION_DISK_IMAGE}" =~ "${LIBVIRT_IMAGE_DIR}/" ]]; then
+        echo "Destination path (${DESTINATION_DISK_IMAGE}) must be in ${LIBVIRT_IMAGE_DIR}/"
+        exit 1
+    fi
+    SED_COMMAND="sed -i.bak 's|${SOURCE_DISK_IMAGE}|${DESTINATION_DISK_IMAGE}|g' ${TEMP_XML}"
+    eval $SED_COMMAND
+else
+    export SRC_PATH_1=/vserver/HardDisks/${SOURCE_DISK_IMAGE}
+    export SRC_PATH_2=${LIBVIRT_IMAGE_DIR}/${SOURCE_DISK_IMAGE}
+    export DST_PATH=${LIBVIRT_IMAGE_DIR}/${DESTINATION_DISK_IMAGE}
+    SED_COMMAND="sed -i.bak 's|${SRC_PATH_1}|${DST_PATH}|g' ${TEMP_XML}"
+    eval $SED_COMMAND
+    SED_COMMAND="sed -i.bak 's|${SRC_PATH_2}|${DST_PATH}|g' ${TEMP_XML}"
+    eval $SED_COMMAND
+fi
+
+# Copy destination configuration to libvirt config directory
+cp -i ${TEMP_XML} ${LIBVIRT_CONF_DIR}/${DESTINATION_VM}.xml
+
+# Move disk image file
+if [[ "${SOURCE_DISK_IMAGE}" =~ "${LIBVIRT_IMAGE_DIR}/" ]]
+then
+    # Source and destination disk image are given with full path
+    export SOURCE_PATH=$(dirname ${SOURCE_DISK_IMAGE})
+    export DESTINATION_PATH=$(dirname ${DESTINATION_DISK_IMAGE})
+    if [ ! -d "${DESTINATION_PATH}" ]; then
+        # Destination directory doesn't exist
+        mkdir -p ${DESTINATION_PATH}
+    fi
+    mv -i ${SOURCE_DISK_IMAGE} ${DESTINATION_DISK_IMAGE}
+    # Remove source dir if it is a subdiretory of LIBVIRT_IMAGE_DIR
+    if [[ ! "${SOURCE_PATH}" == "${LIBVIRT_IMAGE_DIR}/" ]]; then
+        rmdir ${SOURCE_PATH}
+    fi
+else
+    if [ -f $SRC_PATH_1 ]
+    then
+        mv -i ${SRC_PATH_1} ${DST_PATH}
+    else
+        if [ -f $SRC_PATH_2 ]
+        then
+            mv -i ${SRC_PATH_2} ${DST_PATH}
+        else
+            echo "Source disk image file '${SOURCE_DISK_IMAGE}' does not exist."
+            exit 1
+        fi
+    fi
+fi
+
+
+# Undefine old vm
+echo virsh undefine  ${SOURCE_VM}
+virsh undefine  ${SOURCE_VM}
+
+# Define new vm
+echo virsh define  ${LIBVIRT_CONF_DIR}/${DESTINATION_VM}.xml
+virsh define  ${LIBVIRT_CONF_DIR}/${DESTINATION_VM}.xml
+
+echo "Done"
+echo "Start vm if needed: virsh start ${DESTINATION_VM}"
+
+exit 0

@@ -1,0 +1,22 @@
+<domain type='kvm'>
+  <name>{{ item.name }}</name>
+  <memory unit='KiB'>2097152</memory>
+  <os>
+    <type arch='x86_64'>hvm</type>
+  </os>
+  <devices>
+    <disk type='file' device='disk'>
+      <driver name="qemu" type="qcow2"/>
+      <source file='/var/lib/libvirt/images/{{ item.name }}.qcow2'/>
+      <target bus="virtio" dev="vda"/>
+    </disk>
+    <disk type='file' device='disk'>
+      <driver name="qemu" type="raw"/>
+      <source file='/var/lib/libvirt/config/{{ item.name }}.img'/>
+      <target bus="virtio" dev="vdb"/>
+    </disk>
+    <interface type='network'>
+      <source network='default'/>
+    </interface>
+  </devices>
+</domain>

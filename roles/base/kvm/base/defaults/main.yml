@@ -1,0 +1,5 @@
+kvm_host_packages:
+  - ubuntu-virt
+  - libguestfs-tools
+  - cloud-utils
+  - python-vm-builder
