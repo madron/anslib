@@ -4,7 +4,7 @@
     - kvm-host
 
 
-- include: packages_debian.yml
+- include: debian.yml
   when: ansible_os_family == 'Debian'
   tags:
     - kvm-host
@@ -12,7 +12,7 @@
 
 - name: /etc/vmbuilder/libvirt/libvirtxml.tmpl
   template:
-    src: libvirtxml.tmpl.j2
+    src: libvirtxml.tmpl
     dest: /etc/vmbuilder/libvirt/libvirtxml.tmpl
     mode: 0644
     owner: root
@@ -23,7 +23,7 @@
 
 - name: /etc/vmbuilder/default.cfg
   template:
-    src: default.cfg.j2
+    src: default.cfg
     dest: /etc/vmbuilder/default.cfg
     mode: 0644
     owner: root
@@ -34,7 +34,7 @@
 
 - name: /usr/local/bin/migratevm
   template:
-    src: migratevm.j2
+    src: migratevm
     dest: /usr/local/bin/migratevm
     mode: 0755
     owner: root
@@ -45,7 +45,7 @@
 
 - name: /usr/local/bin/renamevm
   template:
-    src: renamevm.j2
+    src: renamevm
     dest: /usr/local/bin/renamevm
     mode: 0755
     owner: root

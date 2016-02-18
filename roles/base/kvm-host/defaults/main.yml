@@ -59,3 +59,11 @@ kvm_host_ubuntu_additional_packages: ['linux-image-generic', 'acpid', 'openssh-s
 ### Openvswitch
 
 kvm_host_openvswitch: no
+
+
+### Packages
+
+kvm_host_packages:
+  - ubuntu-virt
+  - python-vm-builder
+  - libguestfs-tools
