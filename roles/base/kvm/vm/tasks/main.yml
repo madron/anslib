@@ -4,12 +4,6 @@
     - kvm-vm
 
 
-- include: debian.yml
-  when: ansible_os_family == 'Debian'
-  tags:
-    - kvm-vm
-
-
 - name: required directories
   file:
     path: '{{ item }}'
@@ -20,7 +14,6 @@
   with_items:
     - /var/lib/libvirt/config
     - /var/lib/libvirt/download
-    - /var/lib/libvirt/images
   tags:
     - kvm-vm
 
@@ -45,7 +38,7 @@
 
 
 - name: root disk image
-  shell: 'cp ../download/{{ item.image }}.qcow2 {{ item.name }}.qcow2 && qemu-img resize {{ item.name }}.qcow2 {{ item.disk_size|default(default_disk_size) }}'
+  shell: 'cp ../download/{{ item.image }}.qcow2 {{ item.name }}.qcow2 && qemu-img resize {{ item.name }}.qcow2 {{ item.disk_gb|default(default_disk_gb) }}G'
   args:
     chdir: /var/lib/libvirt/images
     creates: '/var/lib/libvirt/images/{{ item.name }}.qcow2'
@@ -54,13 +47,43 @@
     - kvm-vm
 
 
-- name: upstart file
+- name: cloud-config
   template:
-    src: upstart.conf
-    dest: /etc/init/{{ item.name }}.conf
-    mode: 0755
+    src: cloud-config
+    dest: '/var/lib/libvirt/config/{{ item.name }}.cloud-config'
+    mode: 0644
     owner: root
     group: root
+  with_items: hosts
+  tags:
+    - kvm-vm
+
+
+- name: config disk image
+  command: 'cloud-localds images/{{ item.name }}.img config/{{ item.name }}.cloud-config'
+  args:
+    chdir: /var/lib/libvirt
+    creates: '/var/lib/libvirt/images/{{ item.name }}.img'
+  with_items: hosts
+  tags:
+    - kvm-vm
+
+
+- name: define vm
+  virt:
+    name: '{{ item.name }}'
+    command: define
+    xml: "{{ lookup('template', '../templates/host.xml') }}"
+  with_items: hosts
+  tags:
+    - kvm-vm
+
+
+- name: autostart vm
+  virt:
+    name: '{{ item.name }}'
+    command: autostart
+    state: running
   with_items: hosts
   tags:
     - kvm-vm

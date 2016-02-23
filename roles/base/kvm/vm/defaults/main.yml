@@ -1,4 +1,5 @@
 images: []
 hosts: []
 
-default_disk_size: 4G
+default_ram_mb: 512
+default_disk_gb: 4
