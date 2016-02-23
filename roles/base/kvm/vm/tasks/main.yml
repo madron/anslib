@@ -49,8 +49,8 @@
 
 - name: cloud-config
   template:
-    src: cloud-config
-    dest: '/var/lib/libvirt/config/{{ item.name }}.cloud-config'
+    src: cloud-config.yml
+    dest: '/var/lib/libvirt/config/{{ item.name }}.yml'
     mode: 0644
     owner: root
     group: root
@@ -60,7 +60,7 @@
 
 
 - name: config disk image
-  command: 'cloud-localds images/{{ item.name }}.img config/{{ item.name }}.cloud-config'
+  command: 'cloud-localds images/{{ item.name }}.img config/{{ item.name }}.yml'
   args:
     chdir: /var/lib/libvirt
     creates: '/var/lib/libvirt/images/{{ item.name }}.img'

@@ -3,3 +3,5 @@ hosts: []
 
 default_ram_mb: 512
 default_disk_gb: 4
+
+ssh_authorized_keys: []

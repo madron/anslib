@@ -1,0 +1,17 @@
+#cloud-config
+
+hostname: {{ item.name }}
+
+system_info:
+  default_user:
+    name: root
+{% for key in item.ssh_authorized_keys|default(ssh_authorized_keys) %}
+{% if loop.first %}
+    ssh_authorized_keys:
+{% endif %}
+      - {{ key }}
+{% endfor %}
+
+password: root
+chpasswd: { expire: False }
+ssh_pwauth: True
