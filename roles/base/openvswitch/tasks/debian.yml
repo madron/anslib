@@ -1,0 +1,11 @@
+- name: required packages
+  apt:
+    pkg: '{{ item }}'
+    state: latest
+  with_items:
+    - openvswitch-datapath-dkms
+    - openvswitch-switch
+    - python-openvswitch
+    - openvswitch-test
+  tags:
+    - openvswitch

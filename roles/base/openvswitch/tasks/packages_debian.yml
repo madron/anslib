@@ -1,7 +1,0 @@
-- name: required packages
-  apt: >
-    pkg={{ item }}
-    state=latest
-  with_items: openvswitch_packages
-  tags:
-    - openvswitch

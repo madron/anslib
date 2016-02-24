@@ -4,7 +4,26 @@
     - openvswitch
 
 
-- include: packages_debian.yml
+- include: debian.yml
   when: ansible_os_family == 'Debian'
+  tags:
+    - openvswitch
+
+
+- name: bridges
+  openvswitch_bridge:
+    bridge: '{{ item }}'
+    state: present
+  with_items: bridges
+  tags:
+    - openvswitch
+
+
+- name: ports
+  openvswitch_port:
+    bridge: '{{ item.bridge }}'
+    port: '{{ item.port }}'
+    state: present
+  with_items: ports
   tags:
     - openvswitch
