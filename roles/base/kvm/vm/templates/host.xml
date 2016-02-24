@@ -16,12 +16,12 @@
   <devices>
     <disk type='file' device='disk'>
       <driver name="qemu" type="qcow2"/>
-      <source file='/var/lib/libvirt/images/{{ item.name }}.qcow2'/>
+      <source file='{{ dir.get(item.dir|default(1)) }}/{{ item.name }}.qcow2'/>
       <target bus="virtio" dev="vda"/>
     </disk>
     <disk type='file' device='disk'>
       <driver name="qemu" type="raw"/>
-      <source file='/var/lib/libvirt/images/{{ item.name }}.img'/>
+      <source file='{{ dir.get(item.dir|default(1)) }}/{{ item.name }}.img'/>
       <target bus="virtio" dev="vdb"/>
     </disk>
 
