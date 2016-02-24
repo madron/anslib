@@ -1,0 +1,8 @@
+bridges: []
+
+# bridges: [br0]
+
+ports: []
+
+# ports:
+#   - { bridge: br0, port: eth1 }
