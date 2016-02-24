@@ -15,3 +15,27 @@ system_info:
 password: root
 chpasswd: { expire: False }
 ssh_pwauth: True
+
+write_files:
+  - path: /etc/network/interfaces.d/eth0.cfg
+    content: |
+      auto eth0
+{% if item.subnet is defined %}{% set net = subnet.get(item.subnet)  %}
+      iface eth0 inet static
+          address {{ item.address }}
+{% if net.network is defined %}          network {{ net.network }}
+{% endif %}
+{% if net.netmask is defined %}          netmask {{ net.netmask }}
+{% endif %}
+{% if net.broadcast is defined %}          broadcast {{ net.broadcast }}
+{% endif %}
+{% if net.gateway is defined %}          gateway {{ net.gateway }}
+{% endif %}
+{% if net.dns_nameservers is defined %}      # dns-* options are implemented by the resolvconf package, if installed
+      dns-nameservers {{ net.dns_nameservers|join(' ') }}
+{% endif %}
+{% if net.dns_search is defined %}      dns-search {{ net.dns_search }}
+{% endif %}
+{% else %}
+      iface eth0 inet dhcp
+{% endif %}
