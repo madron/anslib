@@ -1,6 +1,6 @@
 <domain type='kvm'>
   <name>{{ item.name }}</name>
-  <memory unit='KiB'>{{ item.ram_gb|default(default_ram_mb) * 1024 }}</memory>
+  <memory unit='KiB'>{{ '%d'|format(item.ram_gb|default(ram_gb)*1024*1024) }}</memory>
   <os>
     <type arch='x86_64'>hvm</type>
   </os>
@@ -25,9 +25,18 @@
       <target bus="virtio" dev="vdb"/>
     </disk>
 
-    <interface type='network'>
-      <source network='default'/>
+   <interface type='bridge'>
+      <source bridge='{{ item.bridge|default(bridge) }}'/>
+{% if item.vlan|default(vlan) %}
+      <vlan>
+        <tag id='{{ item.vlan|default(vlan) }}'/>
+      </vlan>
+{% endif %}
+      <virtualport type='openvswitch'>
+      </virtualport>
+      <model type='virtio'/>
     </interface>
+
 
     <input type='mouse' bus='ps2'/>
     <input type='keyboard' bus='ps2'/>

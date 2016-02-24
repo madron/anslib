@@ -1,7 +1,11 @@
 images: []
 hosts: []
 
-default_ram_mb: 512
-default_disk_gb: 4
+ram_gb: 0.5
+disk_gb: 4
 
 ssh_authorized_keys: []
+
+# Network
+bridge: br0
+vlan: ''

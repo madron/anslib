@@ -38,7 +38,7 @@
 
 
 - name: root disk image
-  shell: 'cp ../download/{{ item.image }}.qcow2 {{ item.name }}.qcow2 && qemu-img resize {{ item.name }}.qcow2 {{ item.disk_gb|default(default_disk_gb) }}G'
+  shell: 'cp ../download/{{ item.image }}.qcow2 {{ item.name }}.qcow2 && qemu-img resize {{ item.name }}.qcow2 {{ item.disk_gb|default(disk_gb) }}G'
   args:
     chdir: /var/lib/libvirt/images
     creates: '/var/lib/libvirt/images/{{ item.name }}.qcow2'
