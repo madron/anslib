@@ -1,13 +1,13 @@
 - name: os specific variables
   include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
   tags:
-    - kvm-base
+    - kvm
 
 
 - include: debian.yml
   when: ansible_os_family == 'Debian'
   tags:
-    - kvm-base
+    - kvm
 
 
 - name: /usr/local/bin/migratevm
@@ -18,7 +18,7 @@
     owner: root
     group: root
   tags:
-    - kvm-base
+    - kvm
 
 
 - name: /usr/local/bin/renamevm
@@ -29,4 +29,10 @@
     owner: root
     group: root
   tags:
-    - kvm-base
+    - kvm
+
+
+- include: vm.yml
+  tags:
+    - kvm
+    - kvm-vm

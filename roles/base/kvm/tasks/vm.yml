@@ -1,9 +1,3 @@
-- name: os specific variables
-  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
-  tags:
-    - kvm-vm
-
-
 - name: required directories
   file:
     path: '{{ item }}'
@@ -15,6 +9,7 @@
     - /var/lib/libvirt/config
     - /var/lib/libvirt/download
   tags:
+    - kvm
     - kvm-vm
 
 
@@ -27,6 +22,7 @@
     group: root
   with_dict: pool
   tags:
+    - kvm
     - kvm-vm
 
 
@@ -36,6 +32,7 @@
     dest: '/var/lib/libvirt/download/{{ item.name }}.img'
   with_items: images
   tags:
+    - kvm
     - kvm-vm
 
 
@@ -46,6 +43,7 @@
     creates: '/var/lib/libvirt/download/{{ item.name }}.qcow2'
   with_items: images
   tags:
+    - kvm
     - kvm-vm
 
 
@@ -56,6 +54,7 @@
     creates: '{{ pool.get(item.pool|default(1)) }}/{{ item.name }}.qcow2'
   with_items: hosts
   tags:
+    - kvm
     - kvm-vm
 
 
@@ -68,6 +67,7 @@
     group: root
   with_items: hosts
   tags:
+    - kvm
     - kvm-vm
 
 
@@ -78,6 +78,7 @@
     creates: '{{ pool.get(item.pool|default(1)) }}/{{ item.name }}.img'
   with_items: hosts
   tags:
+    - kvm
     - kvm-vm
 
 
@@ -88,6 +89,7 @@
     xml: "{{ lookup('template', '../templates/host.xml') }}"
   with_items: hosts
   tags:
+    - kvm
     - kvm-vm
 
 
@@ -98,4 +100,5 @@
     state: running
   with_items: hosts
   tags:
+    - kvm
     - kvm-vm

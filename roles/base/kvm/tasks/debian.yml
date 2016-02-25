@@ -5,13 +5,17 @@
     value: true
     vtype: 'boolean'
   tags:
-    - kvm-base
+    - kvm
 
 
 - name: required packages
   apt:
     pkg: '{{ item }}'
     state: latest
-  with_items: kvm_host_packages
+  with_items:
+    - ubuntu-virt
+    - libguestfs-tools
+    - cloud-utils
+    - python-vm-builder
   tags:
-    - kvm-base
+    - kvm
