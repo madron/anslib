@@ -1,0 +1,24 @@
+- name: create mountpoints
+  file:
+    path: '{{ item.name }}'
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  with_items: mounts
+  tags:
+    - mount
+
+
+- name: mounts
+  mount:
+    src: '{{ item.src }}'
+    name: '{{ item.name }}'
+    fstype: '{{ item.fstype }}'
+    state: '{{ item.state|default("mounted") }}'
+    dump: '{{ item.dump|default(0) }}'
+    passno: '{{ item.passno|default(2) }}'
+    opts: '{{ item.opts|default("defaults") }}'
+  with_items: mounts
+  tags:
+    - mount
