@@ -1,0 +1,9 @@
+filesystems: []
+
+# filesystems:
+#   - { dev: /dev/sdb1, fstype: ext4, opts: '-cc' }
+
+# Parted:
+# parted /dev/sdb
+# mkpart primary 1 -1
+# quit

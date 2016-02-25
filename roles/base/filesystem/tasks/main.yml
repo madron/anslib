@@ -1,0 +1,8 @@
+- name: create filesystems
+  filesystem:
+    dev: '{{ item.dev }}'
+    fstype: '{{ item.fstype }}'
+    opts: '{{ item.opts|default() }}'
+  with_items: filesystems
+  tags:
+    - filesystem
