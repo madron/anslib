@@ -71,18 +71,6 @@
     - kvm-vm
 
 
-- name: host
-  template:
-    src: host.xml
-    dest: '/var/lib/libvirt/config/{{ item.name }}.xml'
-    mode: 0644
-    owner: root
-    group: root
-  with_items: hosts
-  tags:
-    - kvm-vm
-
-
 - name: config disk image
   command: 'cloud-localds {{ dir.get(item.dir|default(1)) }}/{{ item.name }}.img {{ item.name }}.yml'
   args:
