@@ -25,7 +25,7 @@
     mode: 0755
     owner: root
     group: root
-  with_dict: dir
+  with_dict: pool
   tags:
     - kvm-vm
 
@@ -52,8 +52,8 @@
 - name: root disk image
   shell: 'cp ../download/{{ item.image }}.qcow2 {{ item.name }}.qcow2 && qemu-img resize {{ item.name }}.qcow2 {{ item.disk_gb|default(disk_gb) }}G'
   args:
-    chdir: '{{ dir.get(item.dir|default(1)) }}'
-    creates: '{{ dir.get(item.dir|default(1)) }}/{{ item.name }}.qcow2'
+    chdir: '{{ pool.get(item.pool|default(1)) }}'
+    creates: '{{ pool.get(item.pool|default(1)) }}/{{ item.name }}.qcow2'
   with_items: hosts
   tags:
     - kvm-vm
@@ -72,10 +72,10 @@
 
 
 - name: config disk image
-  command: 'cloud-localds {{ dir.get(item.dir|default(1)) }}/{{ item.name }}.img {{ item.name }}.yml'
+  command: 'cloud-localds {{ pool.get(item.pool|default(1)) }}/{{ item.name }}.img {{ item.name }}.yml'
   args:
     chdir: /var/lib/libvirt/config
-    creates: '{{ dir.get(item.dir|default(1)) }}/{{ item.name }}.img'
+    creates: '{{ pool.get(item.pool|default(1)) }}/{{ item.name }}.img'
   with_items: hosts
   tags:
     - kvm-vm

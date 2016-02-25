@@ -1,7 +1,7 @@
 images: []
 hosts: []
 subnet: {}
-dir: { 1: /var/lib/libvirt/images }
+pool: { 1: /var/lib/libvirt/images }
 
 ram_gb: 0.5
 disk_gb: 4
