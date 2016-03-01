@@ -1,0 +1,12 @@
+- name: repository
+  apt_repository:
+    repo: 'deb http://httpredir.debian.org/debian sid main'
+    state: present
+  tags: influxdb
+
+
+- name: required packages
+  apt:
+    pkg: influxdb
+    state: latest
+  tags: influxdb

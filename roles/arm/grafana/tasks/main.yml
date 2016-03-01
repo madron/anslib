@@ -1,0 +1,13 @@
+- name: repository
+  apt_repository:
+    repo: 'deb http://httpredir.debian.org/debian sid main'
+    state: present
+  tags: grafana
+
+
+- name: required packages
+  apt:
+    pkg: grafana
+    state: latest
+    force: yes
+  tags: grafana
