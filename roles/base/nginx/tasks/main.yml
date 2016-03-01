@@ -132,6 +132,20 @@
     - nginx-proxy-pass
 
 
+- name: redirects
+  template:
+    src: redirects.conf
+    dest: /etc/nginx/sites-enabled/redirects.conf
+    mode: 0644
+    owner: root
+    group: root
+  notify: reload nginx
+  tags:
+    - nginx
+    - nginx-config
+    - nginx-redirects
+
+
 - name: start server
   service:
     name: nginx
