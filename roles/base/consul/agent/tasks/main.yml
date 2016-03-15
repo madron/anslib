@@ -14,7 +14,9 @@
   set_fact:
     consul_agent_service: 'consul-agent'
     consul_agent_zip_file: 'consul_{{ consul_agent_version }}_linux_amd64.zip'
-    consul_agent_zip_path: '/var/lib/ansible/consul/agent/agent_exporter-{{ consul_agent_version }}.linux-amd64.tar.gz'
+    consul_agent_zip_ui_file: 'consul_{{ consul_agent_version }}_web_ui.zip'
+    consul_agent_zip_path: '/var/lib/ansible/consul/agent/consul_{{ consul_agent_version }}_linux_amd64.zip'
+    consul_agent_zip_ui_path: '/var/lib/ansible/consul/agent/consul_{{ consul_agent_version }}_web_ui.zip'
   tags:
     - consul-agent
     - consul-agent-config
@@ -29,6 +31,7 @@
     group: root
   with_items:
     - /etc/consul
+    - /usr/local/share/consul
     - /var/lib/ansible/consul/agent
   tags:
     - consul-agent
@@ -36,13 +39,16 @@
 
 - name: download
   get_url:
-    url: 'https://releases.hashicorp.com/consul/{{ consul_agent_version }}/{{ consul_agent_zip_file }}'
-    dest: '{{ consul_agent_zip_path }}'
-    sha256sum: '{{ consul_agent_sha256sum }}'
+    url: '{{ item.url }}'
+    dest: '{{ item.dest }}'
+    sha256sum: '{{ item.sha256sum }}'
     mode: 0644
     owner: root
     group: root
   register: download
+  with_items:
+    - { url: 'https://releases.hashicorp.com/consul/{{ consul_agent_version }}/{{ consul_agent_zip_file }}', dest: '{{ consul_agent_zip_path }}', sha256sum: '{{ consul_agent_sha256sum }}' }
+    - { url: 'https://releases.hashicorp.com/consul/{{ consul_agent_version }}/{{ consul_agent_zip_ui_file }}', dest: '{{ consul_agent_zip_ui_path }}', sha256sum: '{{ consul_agent_ui_sha256sum }}' }
   tags:
     - consul-agent
     - consul-agent-config
@@ -50,20 +56,26 @@
 
 - name: unzip if changed
   unarchive:
-    src: '{{ consul_agent_zip_path }}'
-    dest: /usr/local/sbin
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
     copy: no
   when: download.changed
+  with_items:
+    - { src: '{{ consul_agent_zip_path }}', dest: '/usr/local/sbin' }
+    - { src: '{{ consul_agent_zip_ui_path }}', dest: '/usr/local/share/consul' }
   tags:
     - consul-agent
 
 
 - name: unzip if missing
   unarchive:
-    src: '{{ consul_agent_zip_path }}'
-    dest: /usr/local/sbin
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
     copy: no
-    creates: /usr/local/sbin/consul
+    creates: '{{ item.creates }}'
+  with_items:
+    - { src: '{{ consul_agent_zip_path }}', dest: '/usr/local/sbin', creates: '/usr/local/sbin/consul' }
+    - { src: '{{ consul_agent_zip_ui_path }}', dest: '/usr/local/share/consul', creates: '/usr/local/share/consul/index.html' }
   tags:
     - consul-agent
 

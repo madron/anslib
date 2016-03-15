@@ -4,8 +4,12 @@
   "log_level": "INFO",
   "node_name": "{{ consul_agent_node_name }}",
   "bind_addr": "{{ consul_agent_bind_addr }}",
+  "client_addr": "{{ consul_agent_client_addr }}",
   "bootstrap_expect": {{ consul_agent_bootstrap_expect }},
   "encrypt": "{{ consul_agent_encrypt }}",
   "start_join": {{ consul_agent_start_join|replace("'", '"') }},
+{% if consul_agent_ui %}
+  "ui_dir": "/usr/local/share/consul",
+{% endif %}
   "data_dir": "/var/lib/consul"
 }
