@@ -28,6 +28,37 @@
     - bind-config
 
 
+- name: zone files
+  template:
+    src: db.zone
+    dest: /etc/bind/db.{{ item.key }}
+    mode: 0644
+    owner: root
+    group: root
+  with_dict: bind_override_zone
+  register: zone
+  tags:
+    - bind
+    - bind-config
+
+
+- name: check configuration
+  command: named-checkconf
+  when: config.changed or zone.changed
+  tags:
+    - bind
+    - bind-config
+
+
+- name: check zone files
+  command: 'named-checkzone {{ item.key }} /etc/bind/db.{{ item.key }}'
+  when: zone.changed
+  with_dict: bind_override_zone
+  tags:
+    - bind
+    - bind-config
+
+
 - name: service start
   service:
     name: bind9

@@ -8,3 +8,11 @@
 // organization
 //include "/etc/bind/zones.rfc1918";
 
+{% for domain in bind_override_zone.keys() %}
+zone "{{ domain }}" {
+    type master;
+    file "/etc/bind/db.{{ domain }}";
+    // allow-query { none; };
+};
+
+{% endfor %}
