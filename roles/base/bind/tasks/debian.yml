@@ -1,0 +1,6 @@
+- name: required packages
+  apt:
+    name: bind9
+    state: latest
+  tags:
+    - bind

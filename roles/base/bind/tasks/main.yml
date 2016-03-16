@@ -1,0 +1,46 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - bind
+
+
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - bind
+
+
+- name: configuration files
+  template:
+    src: '{{ item }}'
+    dest: /etc/bind/
+    mode: 0644
+    owner: root
+    group: root
+  with_items:
+    - 'named.conf'
+    - 'named.conf.default-zones'
+    - 'named.conf.local'
+    - 'named.conf.options'
+  register: config
+  tags:
+    - bind
+    - bind-config
+
+
+- name: service start
+  service:
+    name: bind9
+    state: started
+  tags:
+    - bind
+
+
+- name: service reload
+  service:
+    name: bind9
+    state: reloaded
+  when: config.changed
+  tags:
+    - bind
+    - bind-config
