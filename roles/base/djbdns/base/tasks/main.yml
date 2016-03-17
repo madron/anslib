@@ -1,0 +1,43 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - djbdns
+    - djbdns-base
+
+
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - djbdns
+    - djbdns-base
+
+
+- name: required users
+  user:
+    name: '{{ item }}'
+    system: no
+    shell: /bin/false
+    createhome: no
+    state: present
+  with_items:
+    - dnslog
+    - dnscache
+    - tinydns
+  tags:
+    - djbdns
+    - djbdns-base
+
+
+- name: log directories
+  file:
+    path: '/var/log/{{ item }}'
+    state: directory
+    mode: 0755
+    owner: dnslog
+    group: dnslog
+  with_items:
+    - dnscache
+    - tinydns
+  tags:
+    - djbdns
+    - djbdns-base

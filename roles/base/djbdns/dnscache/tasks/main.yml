@@ -1,0 +1,88 @@
+- name: config directory
+  command: dnscache-conf dnscache dnslog /etc/dnscache {{ djbdns_dnscache_bind_addr }}
+  args:
+    creates: /etc/dnscache/seed
+  tags:
+    - djbdns
+    - djbdns-dnscache
+
+
+- name: config directory
+  command: dnscache-conf dnscache dnslog /etc/dnscache {{ djbdns_dnscache_bind_addr }}
+  args:
+    creates: /etc/dnscache/seed
+  tags:
+    - djbdns
+    - djbdns-dnscache
+
+
+- name: service definition
+  file:
+    src: /etc/dnscache
+    path: /etc/service/dnscache
+    state: link
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - djbdns
+    - djbdns-dnscache
+
+
+# - name: log run file
+#   template:
+#     src: log_run
+#     dest: /etc/dnscache/log/run
+#     mode: 0755
+#     owner: root
+#     group: root
+#   tags:
+#     - djbdns
+#     - djbdns-dnscache
+
+
+- name: forwards
+  template:
+    src: forwards
+    dest: /etc/dnscache/root/servers/@
+    mode: 0644
+    owner: root
+    group: root
+  when: djbdns_dnscache_forwards
+  notify: dnscache reload
+  tags:
+    - djbdns
+    - djbdns-dnscache
+
+
+- name: forward only file
+  template:
+    src: forward_only
+    dest: /etc/dnscache/env/FORWARDONLY
+    mode: 0644
+    owner: root
+    group: root
+  notify: dnscache reload
+  tags:
+    - djbdns
+    - djbdns-dnscache
+
+
+- name: authorized classes
+  command: 'touch /etc/dnscache/root/ip/{{ item }}'
+  args:
+    creates: '/etc/dnscache/root/ip/{{ item }}'
+  with_items: djbdns_dnscache_authorized_classes
+  notify: dnscache reload
+  tags:
+    - djbdns
+    - djbdns-dnscache
+
+
+- name: start service
+  svc:
+    name: dnscache
+    state: started
+  tags:
+    - djbdns
+    - djbdns-dnscache

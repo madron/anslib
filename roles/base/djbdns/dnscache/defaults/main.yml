@@ -1,0 +1,4 @@
+djbdns_dnscache_bind_addr: 127.0.0.1
+djbdns_dnscache_forwards: []
+djbdns_dnscache_forward_only: false
+djbdns_dnscache_authorized_classes: false

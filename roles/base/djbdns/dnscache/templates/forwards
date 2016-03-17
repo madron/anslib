@@ -1,0 +1,3 @@
+{% for ip in djbdns_dnscache_forwards %}
+{{ ip }}
+{% endfor %}

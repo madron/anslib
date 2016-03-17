@@ -1,0 +1,4 @@
+- name: dnscache reload
+  svc:
+    name: dnscache
+    state: reloaded
