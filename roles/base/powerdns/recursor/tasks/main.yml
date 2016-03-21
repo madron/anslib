@@ -1,0 +1,49 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - powerdns
+    - powerdns-recursor
+
+
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - powerdns
+    - powerdns-recursor
+
+
+- name: configuration files
+  template:
+    src: '{{ item }}'
+    dest: /etc/powerdns/
+    mode: 0644
+    owner: root
+    group: root
+  with_items:
+    - 'recursor.conf'
+  register: config
+  tags:
+    - powerdns
+    - powerdns-recursor
+    - powerdns-recursor-config
+
+
+- name: service start
+  service:
+    name: pdns-recursor
+    state: started
+  tags:
+    - powerdns
+    - powerdns-recursor
+    - powerdns-recursor-config
+
+
+- name: service reload
+  service:
+    name: pdns-recursor
+    state: reloaded
+  when: config.changed
+  tags:
+    - powerdns
+    - powerdns-recursor
+    - powerdns-recursor-config

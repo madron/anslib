@@ -1,0 +1,6 @@
+- name: required packages
+  apt:
+    name: pdns-recursor
+    state: latest
+  tags:
+    - bind
