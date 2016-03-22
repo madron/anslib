@@ -1,6 +1,8 @@
 {% if powerdns_recursor_forwarders %}
 +.={{ powerdns_recursor_forwarders|join(', ') }}
 {% endif %}
-{% for host, ip in powerdns_recursor_override.iteritems() %}
-+{{ host }}=localhost:5300
+{% for domain, zone in powerdns_recursor_override.iteritems() %}
+{% for host, ip in zone.iteritems() %}
+{{ host }}.{{ domain }}=127.0.0.1:5300
+{% endfor %}
 {% endfor %}

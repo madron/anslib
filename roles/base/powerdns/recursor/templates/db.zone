@@ -1,0 +1,17 @@
+; {{ ansible_managed }}
+;
+; {{ item.key }}
+
+$TTL 1m
+@       IN      SOA     localhost. root.localhost. (
+                              2         ; Serial
+                             1h         ; Refresh
+                            15m         ; Retry
+                            30d         ; Expire
+                             2h )       ; Negative Cache TTL
+;
+@       IN      NS      localhost.
+
+{% for host, ip in item.value.iteritems() %}
+{{ host }}     A   {{ ip }}
+{% endfor %}

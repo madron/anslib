@@ -1,6 +1,10 @@
 - name: required packages
   apt:
-    name: pdns-recursor
+    name: '{{ item }}'
     state: latest
+  with_items:
+    - pdns-recursor
+    - pdns-server
   tags:
-    - bind
+    - powerdns
+    - powerdns-recursor

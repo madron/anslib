@@ -12,6 +12,82 @@
     - powerdns-recursor
 
 
+- name: pdns.conf
+  template:
+    src: pdns.conf
+    dest: /etc/powerdns/
+    mode: 0644
+    owner: root
+    group: root
+  register: pdns_config
+  tags:
+    - powerdns
+    - powerdns-recursor
+    - powerdns-recursor-config
+
+
+- name: pdns bindbackend config
+  template:
+    src: bindbackend.conf
+    dest: /etc/powerdns/
+    mode: 0644
+    owner: root
+    group: root
+  register: pdns_bindbackend_config
+  tags:
+    - powerdns
+    - powerdns-recursor
+    - powerdns-recursor-config
+
+
+- name: pdns zone files
+  template:
+    src: db.zone
+    dest: /etc/powerdns/db.{{ item.key }}
+    mode: 0644
+    owner: root
+    group: root
+  with_dict: powerdns_recursor_override
+  register: pdns_zone
+  tags:
+    - powerdns
+    - powerdns-recursor
+    - powerdns-recursor-config
+
+
+
+- name: pdns service restart
+  service:
+    name: pdns
+    state: restarted
+  when: pdns_config.changed or pdns_bindbackend_config.changed
+  tags:
+    - powerdns
+    - powerdns-recursor
+    - powerdns-recursor-config
+
+
+- name: pdns service start
+  service:
+    name: pdns
+    state: started
+  tags:
+    - powerdns
+    - powerdns-recursor
+    - powerdns-recursor-config
+
+
+- name: pdns zone reload
+  service:
+    name: pdns
+    state: reloaded
+  when: pdns_zone.changed
+  tags:
+    - powerdns
+    - powerdns-recursor
+    - powerdns-recursor-config
+
+
 - name: recursor.conf
   template:
     src: '{{ item }}'
@@ -42,33 +118,22 @@
     - powerdns-recursor-config
 
 
-- name: service restart
+- name: recursor service restart
   service:
     name: pdns-recursor
     state: restarted
-  when: config.changed
+  when: config.changed or forward_zones.changed
   tags:
     - powerdns
     - powerdns-recursor
     - powerdns-recursor-config
 
 
-- name: service start
-  service:
-    name: pdns-recursor
-    state: started
-  tags:
-    - powerdns
-    - powerdns-recursor
-    - powerdns-recursor-config
-
-
-- name: service reload
-  service:
-    name: pdns-recursor
-    state: reloaded
-  when: forward_zones.changed
-  tags:
-    - powerdns
-    - powerdns-recursor
-    - powerdns-recursor-config
+# - name: recursor service start
+#   service:
+#     name: pdns-recursor
+#     state: started
+#   tags:
+#     - powerdns
+#     - powerdns-recursor
+#     - powerdns-recursor-config
