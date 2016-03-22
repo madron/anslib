@@ -12,7 +12,7 @@
     - powerdns-recursor
 
 
-- name: configuration files
+- name: recursor.conf
   template:
     src: '{{ item }}'
     dest: /etc/powerdns/
@@ -22,6 +22,31 @@
   with_items:
     - 'recursor.conf'
   register: config
+  tags:
+    - powerdns
+    - powerdns-recursor
+    - powerdns-recursor-config
+
+
+- name: forward-zones
+  template:
+    src: forward-zones
+    dest: /etc/powerdns/
+    mode: 0644
+    owner: root
+    group: root
+  register: forward_zones
+  tags:
+    - powerdns
+    - powerdns-recursor
+    - powerdns-recursor-config
+
+
+- name: service restart
+  service:
+    name: pdns-recursor
+    state: restarted
+  when: config.changed
   tags:
     - powerdns
     - powerdns-recursor
@@ -42,7 +67,7 @@
   service:
     name: pdns-recursor
     state: reloaded
-  when: config.changed
+  when: forward_zones.changed
   tags:
     - powerdns
     - powerdns-recursor

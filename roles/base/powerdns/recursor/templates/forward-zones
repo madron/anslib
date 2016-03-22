@@ -1,0 +1,6 @@
+{% if powerdns_recursor_forwarders %}
++.={{ powerdns_recursor_forwarders|join(', ') }}
+{% endif %}
+{% for host, ip in powerdns_recursor_override.iteritems() %}
++{{ host }}=localhost:5300
+{% endfor %}
