@@ -1,10 +1,38 @@
-- name: required packages
-  apt:
-    name: '{{ item }}'
-    state: latest
+- name: download
+  get_url:
+    url: '{{ powerdns_recursor_base_url }}/{{ item.file }}'
+    dest: '/var/cache/apt/archives/{{ item.file }}'
+    sha256sum: '{{ item.sha256sum }}'
+    mode: 0644
+    owner: root
+    group: root
+  register: download
   with_items:
-    - pdns-recursor
-    - pdns-server
+    - { file: '{{ powerdns_recursor_recursor_deb }}', sha256sum: '{{ powerdns_recursor_recursor_deb_sha256sum }}' }
+    - { file: '{{ powerdns_recursor_static_deb }}', sha256sum: '{{ powerdns_recursor_static_deb_sha256sum }}' }
+  tags:
+    - powerdns
+    - powerdns-recursor
+
+
+- name: install if changed
+  command: 'dpkg -i /var/cache/apt/archives/{{ item.file }}'
+  when: download.changed
+  with_items:
+    - { file: '{{ powerdns_recursor_recursor_deb }}', creates: '/etc/init.d/pdns-recursor' }
+    - { file: '{{ powerdns_recursor_static_deb }}', creates: '/etc/init.d/pdns' }
+  tags:
+    - powerdns
+    - powerdns-recursor
+
+
+- name: install if missing
+  command: 'dpkg -i /var/cache/apt/archives/{{ item.file }}'
+  args:
+    creates: '{{ item.creates }}'
+  with_items:
+    - { file: '{{ powerdns_recursor_recursor_deb }}', creates: '/etc/init.d/pdns-recursor' }
+    - { file: '{{ powerdns_recursor_static_deb }}', creates: '/etc/init.d/pdns' }
   tags:
     - powerdns
     - powerdns-recursor

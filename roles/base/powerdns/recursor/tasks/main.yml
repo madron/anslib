@@ -5,6 +5,18 @@
     - powerdns-recursor
 
 
+- name: pdns user
+  user:
+    name: pdns
+    system: no
+    shell: /bin/false
+    createhome: no
+    state: present
+  tags:
+    - powerdns
+    - powerdns-recursor
+
+
 - include: debian.yml
   when: ansible_os_family == 'Debian'
   tags:
@@ -129,11 +141,11 @@
     - powerdns-recursor-config
 
 
-# - name: recursor service start
-#   service:
-#     name: pdns-recursor
-#     state: started
-#   tags:
-#     - powerdns
-#     - powerdns-recursor
-#     - powerdns-recursor-config
+- name: recursor service start
+  service:
+    name: pdns-recursor
+    state: started
+  tags:
+    - powerdns
+    - powerdns-recursor
+    - powerdns-recursor-config

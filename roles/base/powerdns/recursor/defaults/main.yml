@@ -24,3 +24,9 @@ powerdns_recursor_override: {}
 #         'www': '192.168.1.200',
 #     },
 # }
+
+powerdns_recursor_base_url: 'https://downloads.powerdns.com/releases/deb'
+powerdns_recursor_recursor_deb: pdns-recursor_3.7.3-1_amd64.deb
+powerdns_recursor_static_deb: pdns-static_3.4.8-1_amd64.deb
+powerdns_recursor_recursor_deb_sha256sum: 0652102a936d9a4e897bde22ec723ab09616587053b8a03d07a764aa35340135
+powerdns_recursor_static_deb_sha256sum: 9a575c6111d0c2537ce03cdfc9f077ab7cc647c21bf9cebb60c48adb3b23417e
