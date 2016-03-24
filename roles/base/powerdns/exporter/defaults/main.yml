@@ -1,0 +1,5 @@
+version: latest
+
+port: 9082
+
+docker_image_download: false
