@@ -140,9 +140,7 @@
 
 
 - name: pdns zone reload
-  service:
-    name: pdns
-    state: reloaded
+  command: pdns_control reload
   when: pdns_zone.changed
   tags:
     - powerdns

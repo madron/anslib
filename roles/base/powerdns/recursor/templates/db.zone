@@ -13,5 +13,5 @@ $TTL 1m
 @       IN      NS      localhost.
 
 {% for host, ip in item.value.iteritems() %}
-{{ host }}     A   {{ ip }}
+{{ host }}    1 A   {{ ip }}
 {% endfor %}
