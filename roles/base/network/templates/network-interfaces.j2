@@ -14,8 +14,6 @@ source /etc/network/interfaces.d/*.conf
 {% for item in network_interfaces %}
 {% if item.auto|default('yes') == 'yes' %}auto {{ item.name }}
 {% endif %}
-{% if item.auto|default('yes') == 'yes' %}auto {{ item.name }}
-{% endif %}
 iface {{ item.name }} inet {{ item.method|default('dhcp') }}
 {% if item.address is defined %}    address {{ item.address }}
 {% endif %}
