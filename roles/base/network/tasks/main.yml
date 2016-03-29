@@ -4,7 +4,7 @@
     - network
 
 
-- include: packages_debian.yml
+- include: debian.yml
   when: ansible_os_family == 'Debian'
   tags:
     - network
@@ -18,7 +18,7 @@
     mode: 0644
     owner: root
     group: root
-  notify: restart networking
+  register: interfaces
   tags:
     - network
 
@@ -45,7 +45,23 @@
     group: root
   with_items: network_interfaces
   when: network_interfaces_directory
-  notify: restart networking
+  register: interfaces_d
+  tags:
+    - network
+
+
+- name: network restart interfaces
+  shell: 'ifdown {{ item.name }} ; ifup {{ item.name }}'
+  with_items: network_interfaces
+  when: network_restart and interfaces.changed
+  tags:
+    - network
+
+
+- name: network restart interface
+  shell: 'ifdown {{ item.item.name }} ; ifup {{ item.item.name }}'
+  when: network_restart and network_interfaces_directory and item.changed and not interfaces.changed
+  with_items: interfaces_d.results
   tags:
     - network
 

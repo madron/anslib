@@ -29,3 +29,9 @@ iface {{ item.name }} inet {{ item.method|default('dhcp') }}
 {% endif %}
 {% if item.dns_search is defined %}    dns-search {{ item.dns_search }}
 {% endif %}
+
+{% for alias in item.aliases|default([]) %}
+iface {{ item.name }} inet static
+    address {{ alias }}
+
+{% endfor %}
