@@ -1,5 +1,9 @@
 version: latest
 
-port: 9082
+project: powerdns_exporter
+
+api_url: http://localhost:8081/
+api_key: key
+port: 9081
 
 docker_image_download: false

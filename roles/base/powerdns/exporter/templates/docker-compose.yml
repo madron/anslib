@@ -2,10 +2,8 @@ version: '2'
 
 services:
   server:
-    container_name: {{ project }}_server
+    container_name: {{ project }}
     image: janeczku/powerdns-exporter:{{ version }}
     restart: always
-    environment:
-      - API_URL={{ api_url }}
-    ports:
-      - "{{ port }}:80"
+    network_mode: host
+    command: -listen-address=":{{ port }}" -api-url="{{ api_url }}" -api-key="{{ api_key }}"

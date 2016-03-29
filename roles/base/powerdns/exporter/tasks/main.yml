@@ -1,8 +1,8 @@
 - name: set variables
   set_fact:
-    project: mc_banner
-    service: dck_mc_banner
+    service: 'dck_{{ project }}'
   tags:
+    - powerdns
     - powerdns-exporter
 
 
@@ -15,6 +15,7 @@
     group: root
   register: compose
   tags:
+    - powerdns
     - powerdns-exporter
 
 
@@ -22,45 +23,50 @@
   command: 'docker-compose -p {{ project }} -f /etc/init/{{ service }}.yml pull'
   when: docker_image_download
   tags:
+    - powerdns
     - powerdns-exporter
 
 
-# - name: upstart file
-#   template:
-#     src: upstart.conf
-#     dest: /etc/init/{{ service }}.conf
-#     mode: 0644
-#     owner: root
-#     group: root
-#   register: upstart
-#   tags:
-#     - powerdns-exporter
+- name: upstart file
+  template:
+    src: upstart.conf
+    dest: /etc/init/{{ service }}.conf
+    mode: 0644
+    owner: root
+    group: root
+  register: upstart
+  tags:
+    - powerdns
+    - powerdns-exporter
 
 
-# - name: restart service
-#   service:
-#     name: '{{ service }}'
-#     state: restarted
-#   when: compose.changed or upstart.changed
-#   tags:
-#     - powerdns-exporter
+- name: restart service
+  service:
+    name: '{{ service }}'
+    state: restarted
+  when: compose.changed or upstart.changed
+  tags:
+    - powerdns
+    - powerdns-exporter
 
 
-# - name: start service
-#   service:
-#     name: '{{ service }}'
-#     state: started
-#   tags:
-#     - powerdns-exporter
+- name: start service
+  service:
+    name: '{{ service }}'
+    state: started
+  tags:
+    - powerdns
+    - powerdns-exporter
 
 
-# - name: check service
-#   uri:
-#     url: '{{ item }}'
-#     timeout: 1
-#   with_items:
-#     - 'http://localhost:{{ port }}/'
-#     - 'http://localhost:{{ port }}/api/1.2/auth/profile'
-#   tags:
-#     - powerdns-exporter
-#     - powerdns-exporter-check
+- name: check service
+  uri:
+    url: '{{ item }}'
+    timeout: 1
+  with_items:
+    - 'http://localhost:{{ port }}/'
+    - 'http://localhost:{{ port }}/metrics'
+  tags:
+    - powerdns
+    - powerdns-exporter
+    - powerdns-exporter-check
