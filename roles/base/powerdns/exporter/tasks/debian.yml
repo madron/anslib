@@ -1,0 +1,7 @@
+- name: required packages
+  apt:
+    name: python-httplib2
+    state: present
+  tags:
+    - powerdns
+    - powerdns-exporter
