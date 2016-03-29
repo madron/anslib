@@ -31,7 +31,9 @@ iface {{ item.name }} inet {{ item.method|default('dhcp') }}
 {% endif %}
 
 {% for alias in item.aliases|default([]) %}
+{% if alias %}
 iface {{ item.name }} inet static
     address {{ alias }}
 
+{% endif %}
 {% endfor %}
