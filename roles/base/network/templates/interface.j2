@@ -34,6 +34,12 @@ iface {{ item.name }} inet {{ item.method|default('dhcp') }}
 {% if alias %}
 iface {{ item.name }} inet static
     address {{ alias }}
+{% if item.network is defined %}    network {{ item.network }}
+{% endif %}
+{% if item.netmask is defined %}    netmask {{ item.netmask }}
+{% endif %}
+{% if item.broadcast is defined %}    broadcast {{ item.broadcast }}
+{% endif %}
 
 {% endif %}
 {% endfor %}
