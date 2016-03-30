@@ -103,7 +103,7 @@
     - powerdns-recursor-config
 
 
-- name: pdns zone files
+- name: pdns zone override files
   template:
     src: db.zone
     dest: /etc/powerdns/db.{{ item.key }}
@@ -111,7 +111,22 @@
     owner: root
     group: root
   with_dict: powerdns_recursor_override
-  register: pdns_zone
+  register: pdns_zone_override
+  tags:
+    - powerdns
+    - powerdns-recursor
+    - powerdns-recursor-config
+
+
+- name: pdns zone domain files
+  template:
+    src: db.zone
+    dest: /etc/powerdns/db.{{ item.key }}
+    mode: 0644
+    owner: root
+    group: root
+  with_dict: powerdns_recursor_domain
+  register: pdns_zone_domain
   tags:
     - powerdns
     - powerdns-recursor
@@ -141,7 +156,7 @@
 
 - name: pdns zone reload
   command: pdns_control reload
-  when: pdns_zone.changed
+  when: pdns_zone_override.changed or pdns_zone_domain.changed
   tags:
     - powerdns
     - powerdns-recursor

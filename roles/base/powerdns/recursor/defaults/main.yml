@@ -25,6 +25,13 @@ powerdns_recursor_override: {}
 #     },
 # }
 
+powerdns_recursor_domain: {}
+# powerdns_recursor_domain: {
+#     'local': {
+#         'mail': '192.168.12.12',
+#     },
+# }
+
 powerdns_recursor_base_url: 'https://downloads.powerdns.com/releases/deb'
 powerdns_recursor_recursor_deb: pdns-recursor_3.7.3-1_amd64.deb
 powerdns_recursor_static_deb: pdns-static_3.4.8-1_amd64.deb
