@@ -1,0 +1,14 @@
+version: '2'
+
+services:
+  server:
+    container_name: {{ project }}
+    image: google/cadvisor:{{ version }}
+    restart: always
+    volumes:
+      - /var/run:/var/run:rw
+      - /:/rootfs:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    ports:
+      - "{{ port }}:8080"

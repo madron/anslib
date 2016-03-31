@@ -1,0 +1,75 @@
+- name: set variables
+  set_fact:
+    project: 'cadvisor'
+    service: 'dck_cadvisor'
+  tags:
+    - cadvisor
+
+
+- name: docker-compose file
+  template:
+    src: docker-compose.yml
+    dest: /etc/init/{{ service }}.yml
+    mode: 0644
+    owner: root
+    group: root
+  register: compose
+  tags:
+    - cadvisor
+
+
+- name: pull docker images
+  command: 'docker-compose -p {{ project }} -f /etc/init/{{ service }}.yml pull'
+  when: docker_image_download
+  tags:
+    - cadvisor
+
+
+- name: upstart file
+  template:
+    src: upstart.conf
+    dest: /etc/init/{{ service }}.conf
+    mode: 0644
+    owner: root
+    group: root
+  register: upstart
+  tags:
+    - cadvisor
+
+
+- name: restart service
+  service:
+    name: '{{ service }}'
+    state: restarted
+  when: compose.changed or upstart.changed
+  register: restart
+  tags:
+    - cadvisor
+
+
+- name: start service
+  service:
+    name: '{{ service }}'
+    state: started
+  register: start
+  tags:
+    - cadvisor
+
+
+- name: wait for service
+  wait_for:
+    port: '{{ port }}'
+    delay: 5
+  when: restart.changed or start.changed
+  tags:
+    - cadvisor
+
+
+- name: check service
+  uri:
+    url: '{{ item }}'
+    timeout: 1
+  with_items:
+    - 'http://localhost:{{ port }}/metrics'
+  tags:
+    - cadvisor
