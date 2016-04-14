@@ -8,6 +8,9 @@
 # Use DOCKER_OPTS to modify the daemon startup options.
 #DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4"
 {% set DOCKER_OPTS = '' %}
+{% if docker_engine_storage_driver %}
+{% set DOCKER_OPTS = DOCKER_OPTS ~ ' --storage-driver=' ~ docker_engine_storage_driver %}
+{% endif %}
 {% if docker_engine_tcp_bind_host %}
 {% set DOCKER_OPTS = DOCKER_OPTS ~ ' --host=unix:///run/docker.sock --host=tcp://' ~ docker_engine_tcp_bind_host ~ ':' ~ docker_engine_tcp_bind_port %}
 {% endif %}
