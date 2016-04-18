@@ -36,6 +36,23 @@
     - docker-engine
 
 
+- name: held packages
+  command: apt-mark showhold
+  register: held_packages
+  changed_when: false
+  tags:
+    - docker
+    - docker-engine
+
+
+- name: docker-engine version hold
+  command: apt-mark hold docker-engine
+  when: docker_engine_version_hold and '"docker-engine" not in held_packages.stdout'
+  tags:
+    - docker
+    - docker-engine
+
+
 - name: default docker
   template:
     src: default_docker.j2

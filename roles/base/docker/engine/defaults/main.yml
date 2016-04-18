@@ -1,6 +1,8 @@
 # docker_engine_version: 1.8.1-0~trusty
 # docker_engine_version: 1.9.1-0~trusty
 
+docker_engine_version_hold: false
+
 docker_engine_tcp_bind_host: ''
 docker_engine_tcp_bind_port: 2375
 
