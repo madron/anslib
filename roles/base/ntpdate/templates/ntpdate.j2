@@ -6,5 +6,5 @@ set -e
 
 ntpdate {{ ntpdate_servers }} 2>&1 | /usr/bin/logger -t ntpdate
 {% if ntpdate_hwclock %}
-hwclock --utc --systohc
+hwclock --utc --systohc  2>&1 | /usr/bin/logger -t ntpdate
 {% endif %}
