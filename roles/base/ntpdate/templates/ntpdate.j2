@@ -2,4 +2,9 @@
 
 # {{ ansible_managed }}
 
+set -e
+
 ntpdate {{ ntpdate_servers }} 2>&1 | /usr/bin/logger -t ntpdate
+{% if ntpdate_hwclock %}
+hwclock --utc --systohc
+{% endif %}
