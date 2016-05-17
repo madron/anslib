@@ -4,6 +4,11 @@ filesystems: []
 #   - { dev: /dev/sdb1, fstype: ext4, opts: '-cc' }
 
 # Parted:
+# parted -a optimal /dev/sdb mklabel msdos
+# parted -a optimal /dev/sdb mkpart primary 0% 100%
+
+# Interactive
 # parted /dev/sdb
+# mklabel msdos
 # mkpart primary 1 -1
 # quit
