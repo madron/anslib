@@ -1,0 +1,84 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - arduino
+
+
+- name: set variables
+  set_fact:
+    file_name: 'arduino-{{ arduino_version }}-{{ arduino_platform }}.tar.xz'
+  tags:
+    - arduino
+
+
+- name: create directories
+  file:
+    path: '{{ item }}'
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  with_items:
+    - /var/lib/ansible/arduino
+    - /root/.local/share/applications
+  tags:
+    - arduino
+
+
+- name: download
+  get_url:
+    url: 'https://downloads.arduino.cc/{{ file_name }}'
+    dest: '/var/lib/ansible/arduino/{{ file_name }}'
+    sha256sum: '{{ arduino_sha256sum }}'
+    mode: 0644
+    owner: root
+    group: root
+  register: download
+  tags:
+    - arduino
+
+
+- name: install script
+  template:
+    src: install.sh
+    dest: /var/lib/ansible/arduino/install.sh
+    mode: 0755
+    owner: root
+    group: root
+  register: install
+  tags:
+    - arduino
+
+
+- name: install if changed
+  command: '/var/lib/ansible/arduino/install.sh'
+  when: download.changed or install.changed
+  tags:
+    - arduino
+
+
+- name: install if missing
+  command: '/var/lib/ansible/arduino/install.sh'
+  args:
+    creates: /opt/arduino/arduino
+  tags:
+    - arduino
+
+
+- name: udev rules
+  template:
+    src: udev.rules
+    dest: /etc/udev/rules.d/99-arduino.rules
+    mode: 0644
+    owner: root
+    group: root
+  register: udev
+  tags:
+    - arduino
+
+
+- name: udev reload
+  command: 'udevadm control --reload'
+  when: udev.changed
+  tags:
+    - arduino

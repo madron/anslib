@@ -1,0 +1,3 @@
+# {{ ansible_managed }}
+
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="2341", MODE="0666"
