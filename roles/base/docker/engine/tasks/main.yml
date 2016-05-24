@@ -34,7 +34,7 @@
 
 - name: accounts
   command: docker login --username {{ item.value.username }} --password {{ item.value.password }} --email {{ item.value.email|default('no') }} {{ item.key }}
-  with_dict: docker_engine_accounts
+  with_dict: '{{ docker_engine_accounts }}'
   tags:
     - docker
     - docker-engine

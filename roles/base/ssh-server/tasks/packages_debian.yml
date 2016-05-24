@@ -1,7 +1,7 @@
 - name: required packages
-  apt: >
-    pkg={{ item }}
-    state=latest
-  with_items: ssh_server_packages
+  apt:
+    pkg: '{{ item }}'
+    state: latest
+  with_items: '{{ ssh_server_packages }}'
   tags:
     - ssh-server

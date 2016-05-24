@@ -2,6 +2,6 @@
   apt:
     name: '{{ item }}'
     state: latest
-  with_items: rdiff_backup_client_packages
+  with_items: '{{ rdiff_backup_client_packages }}'
   tags:
     - rdiff-backup-client

@@ -16,7 +16,7 @@
     mode: 0755
     owner: root
     group: root
-  with_items: docker_iptables_versions
+  with_items: '{{ docker_iptables_versions }}'
   tags:
     - docker-iptables
 
@@ -25,6 +25,6 @@
   unarchive:
     src: 'iptables-{{ item }}.tgz'
     dest: '/var/lib/iptables/{{ item }}'
-  with_items: docker_iptables_versions
+  with_items: '{{ docker_iptables_versions }}'
   tags:
     - docker-iptables

@@ -2,6 +2,6 @@
   apt: >
     pkg={{ item }}
     state=latest
-  with_items: ntpdate_packages
+  with_items: '{{ ntpdate_packages }}'
   tags:
     - ntpdate
