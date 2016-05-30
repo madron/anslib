@@ -6,6 +6,8 @@ prometheus_server_port: 9090
 
 prometheus_server_alertmanager_url: ''
 
+# prometheus_server_web_external_url: 'http://prometheus.example.com'
+
 prometheus_server_storage_local_retention: 360h
 
 # How frequently to scrape targets by default.
