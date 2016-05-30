@@ -1,6 +1,6 @@
 docker_image_download: false
 
-prometheus_server_image: 'prom/prometheus:0.15.1'
+prometheus_server_image: 'prom/prometheus:0.19.2'
 
 prometheus_server_port: 9090
 
