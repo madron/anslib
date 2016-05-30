@@ -1,6 +1,6 @@
-version: 8.1
+version: 8.4
 
-# docker run --rm sentry:8.1 generate-secret-key
+# docker run --rm sentry:8.4 generate-secret-key
 secret_key: ''
 
 port: 80
@@ -11,8 +11,8 @@ docker_image_download: false
 sentry_allowed_hosts: '*'
 sentry_url_prefix: 'http://localhost'
 sentry_email_host: 'localhost'
-sentry_email_host_password: ''
-sentry_email_host_user: ''
+sentry_email_password: ''
+sentry_email_user: ''
 sentry_email_port: 25
 sentry_email_use_tls: false
 
