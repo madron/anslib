@@ -39,9 +39,9 @@
     - prometheus-alertmanager-downlod
 
 
-- name: alertmanager.conf
+- name: alertmanager.yml
   template:
-    src: alertmanager.conf
+    src: alertmanager.yml
     dest: '/etc/container/{{ prometheus_alertmanager_container }}'
     mode: 0644
     owner: root
