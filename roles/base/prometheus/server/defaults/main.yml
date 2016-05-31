@@ -23,3 +23,7 @@ prometheus_server_scrape_configs: |
     - job_name: 'prometheus'
       target_groups:
         - targets: ['localhost:9090']
+
+
+prometheus_server_log_opt_max_size: 1m
+prometheus_server_log_opt_max_file: 10
