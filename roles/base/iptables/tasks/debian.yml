@@ -2,7 +2,7 @@
   apt:
     name: '{{ item }}'
     state: present
-  with_items: iptables_packages
+  with_items: '{{ iptables_packages }}'
   tags:
     - iptables
 
@@ -10,6 +10,6 @@
   apt:
     name: '{{ item }}'
     state: absent
-  with_items: iptables_remove_packages
+  with_items: '{{ iptables_remove_packages }}'
   tags:
     - iptables
