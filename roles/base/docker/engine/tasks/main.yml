@@ -30,10 +30,14 @@
   tags:
     - docker
     - docker-engine
+    - docker-engine-py
 
 
 - name: accounts
-  command: docker login --username {{ item.value.username }} --password {{ item.value.password }} --email {{ item.value.email|default('no') }} {{ item.key }}
+  docker_login:
+    registry: '{{ item.key }}'
+    username: '{{ item.value.username }}'
+    password: '{{ item.value.password }}'
   with_dict: '{{ docker_engine_accounts }}'
   tags:
     - docker

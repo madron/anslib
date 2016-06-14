@@ -20,6 +20,6 @@ docker_engine_insecure_registries: []
 
 docker_engine_accounts: {}
 # docker_engine_accounts: {
-#   registry.example.com: { username: bob, password: secret, email: 'bob@example.com' },
+#   registry.example.com: { username: bob, password: secret },
 #   hub.example.com: { username: fred, password: notsosecret },
 # }
