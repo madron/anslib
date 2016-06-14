@@ -63,6 +63,7 @@
     mode: 0644
     owner: root
     group: root
+    backup: true
   register: default
   tags:
     - docker

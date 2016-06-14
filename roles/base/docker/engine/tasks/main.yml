@@ -50,7 +50,6 @@
     registry: '{{ item.key }}'
     username: '{{ item.value.username }}'
     password: '{{ item.value.password }}'
-  when: '{{ not docker_engine_api_version }}'
   with_dict: '{{ docker_engine_accounts }}'
   tags:
     - docker
