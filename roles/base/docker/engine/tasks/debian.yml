@@ -39,18 +39,21 @@
 - name: held packages
   command: apt-mark showhold
   register: held_packages
+  when: docker_engine_version_hold
   changed_when: false
   tags:
     - docker
     - docker-engine
+    - docker-engine-hold
 
 
 - name: docker-engine version hold
   command: apt-mark hold docker-engine
-  when: docker_engine_version_hold and '"docker-engine" not in held_packages.stdout'
+  when: docker_engine_version_hold and "docker-engine" not in held_packages.stdout
   tags:
     - docker
     - docker-engine
+    - docker-engine-hold
 
 
 - name: default docker

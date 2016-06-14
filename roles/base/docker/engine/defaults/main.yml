@@ -9,7 +9,7 @@ docker_engine_tcp_bind_port: 2375
 docker_engine_storage_driver: ''
 # docker_engine_storage_driver: aufs
 
-docker_engine_install_docker_py: true
+docker_engine_py_version: latest
 
 # docker_engine_registry_mirror: http://mirror.example.com:5000
 

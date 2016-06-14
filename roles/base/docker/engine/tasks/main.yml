@@ -22,11 +22,23 @@
     - docker-engine
 
 
-- name: docker-py
+- name: docker-py latest
   pip:
     name: docker-py
     state: latest
-  when: docker_engine_install_docker_py
+  when: docker_engine_py_version == 'latest'
+  tags:
+    - docker
+    - docker-engine
+    - docker-engine-py
+
+
+- name: docker-py version
+  pip:
+    name: docker-py
+    state: present
+    version: '{{ docker_engine_py_version }}'
+  when: docker_engine_py_version and not docker_engine_py_version == 'latest'
   tags:
     - docker
     - docker-engine
@@ -38,6 +50,7 @@
     registry: '{{ item.key }}'
     username: '{{ item.value.username }}'
     password: '{{ item.value.password }}'
+  when: '{{ not docker_engine_api_version }}'
   with_dict: '{{ docker_engine_accounts }}'
   tags:
     - docker
