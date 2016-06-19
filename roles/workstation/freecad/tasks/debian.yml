@@ -1,0 +1,12 @@
+- name: ppa repository
+  apt_repository:
+    repo: 'ppa:freecad-maintainers/freecad-stable'
+    state: present
+  tags: freecad
+
+
+- name: required packages
+  apt:
+    pkg: freecad
+    state: latest
+  tags: freecad
