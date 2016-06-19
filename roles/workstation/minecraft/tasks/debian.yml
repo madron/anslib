@@ -1,0 +1,16 @@
+- name: repository
+  apt_repository:
+    repo: 'ppa:minecraft-installer-peeps/minecraft-installer'
+    state: present
+  tags:
+    - minecraft
+
+
+- name: required packages
+  apt:
+    pkg: '{{ item }}'
+    state: latest
+  with_items:
+    - default-jre
+    - minecraft-installer
+  tags: minecraft
