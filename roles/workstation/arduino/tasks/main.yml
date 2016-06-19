@@ -4,9 +4,17 @@
     - arduino
 
 
+- name: set platform
+  set_fact:
+    arduino_platform: "{% if ansible_machine == 'x86_64' %}linux64{% elif ansible_machine == 'i386' %}linux32{% endif %}"
+  tags:
+    - arduino
+
+
 - name: set variables
   set_fact:
     file_name: 'arduino-{{ arduino_version }}-{{ arduino_platform }}.tar.xz'
+    checksum: '{{ arduino_checksum[arduino_platform][arduino_version] }}'
   tags:
     - arduino
 
@@ -29,7 +37,7 @@
   get_url:
     url: 'https://downloads.arduino.cc/{{ file_name }}'
     dest: '/var/lib/ansible/arduino/{{ file_name }}'
-    sha256sum: '{{ arduino_sha256sum }}'
+    checksum: '{{ checksum }}'
     mode: 0644
     owner: root
     group: root

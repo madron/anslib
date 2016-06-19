@@ -1,3 +1,9 @@
-arduino_version: 1.6.8
-arduino_platform: linux32
-arduino_sha256sum: 'a8ba68eec71f763b6968d99b721c60acef27ffb2d2f2a1b7f358855f4664151e'
+arduino_version: 1.6.9
+
+arduino_checksum:
+    linux32:
+        '1.6.8': 'md5:7f0fac53a0c5599c3e469667a75e9775'
+        '1.6.9': 'md5:afd97cbf3c076f3dfab3aabe5f143378'
+    linux64:
+        '1.6.8': 'md5:72b04291d27ffca070f990fc5ccdf63b'
+        '1.6.9': 'md5:cf31421f10e2726afc2d2b320c2b5127'
