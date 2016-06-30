@@ -5,28 +5,27 @@
     - docker-compose
 
 
-- include: debian.yml
-  when: ansible_os_family == 'Debian'
+- name: version file
+  template:
+    src: docker-compose-version.txt
+    dest: /usr/local/bin/docker-compose-version.txt
+    mode: 0644
+    owner: root
+    group: root
+  register: version
   tags:
     - docker
     - docker-compose
 
 
-- name: fix ubuntu trusty pip installation
-  command: easy_install -U pip
-  args:
-    creates: /usr/local/bin/pip
-  when: ansible_lsb.id == 'Ubuntu' and ansible_lsb.codename == 'trusty'
-  tags:
-    - docker
-    - docker-compose
-
-
-- name: docker-compose
-  pip:
-    name: docker-compose
-    version: '{{ docker_compose_version }}'
-    state: present
+- name: download
+  get_url:
+    url: 'https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64'
+    dest: /usr/local/bin/docker-compose
+    force: '{{ version.changed }}'
+    mode: 0755
+    owner: root
+    group: root
   tags:
     - docker
     - docker-compose
