@@ -1,5 +1,4 @@
-# docker_engine_version: 1.8.1-0~trusty
-# docker_engine_version: 1.9.1-0~trusty
+# docker_engine_version: 1.10.3
 
 docker_engine_version_hold: false
 

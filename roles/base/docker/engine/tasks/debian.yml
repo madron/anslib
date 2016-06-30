@@ -29,7 +29,7 @@
 
 - name: docker-engine package
   apt:
-    name: 'docker-engine={{ docker_engine_version }}'
+    name: 'docker-engine={{ docker_engine_version }}-0~{{ ansible_lsb.codename }}'
     state: present
   tags:
     - docker
