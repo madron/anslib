@@ -1,7 +1,7 @@
 # {{ ansible_managed }}
 
 127.0.0.1       localhost
-127.0.1.1       {{ hostname }}   {% if hostname_domain %}{{ hostname }}.{{ hostname_domain }}{% endif %}
+127.0.1.1       {{ hostname|default(inventory_hostname) }}   {% if hostname_domain %}{{ hostname|default(inventory_hostname) }}.{{ hostname_domain }}{% endif %}
 
 
 {% for host in hostname_additional_hosts %}

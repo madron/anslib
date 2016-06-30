@@ -5,20 +5,18 @@
 
 
 - name: hostname
-  hostname: >
-    name={{ hostname }}
-  when: hostname is defined
+  hostname:
+    name: '{{ hostname|default(inventory_hostname) }}'
   tags:
     - hostname
 
 
 - name: /etc/hosts
-  template: >
-    src=hosts.j2
-    dest=/etc/hosts
-    mode=0644
-    owner=root
-    group=root
-  when: hostname is defined
+  template:
+    src: hosts.j2
+    dest: /etc/hosts
+    mode: 0644
+    owner: root
+    group: root
   tags:
     - hostname
