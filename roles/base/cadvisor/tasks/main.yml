@@ -28,11 +28,34 @@
 - name: upstart file
   template:
     src: upstart.conf
-    dest: /etc/init/{{ service }}.conf
+    dest: '/etc/init/{{ service }}.conf'
     mode: 0644
     owner: root
     group: root
-  register: upstart
+    backup: yes
+  when: ansible_service_mgr == 'upstart'
+  register: service_mgr
+  tags:
+    - cadvisor
+
+
+- name: systemd file
+  template:
+    src: systemd.service
+    dest: '/etc/systemd/system/{{ service }}.service'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  when: ansible_service_mgr == 'systemd'
+  register: service_mgr
+  tags:
+    - cadvisor
+
+
+- name: systemctl daemon-reload
+  command: systemctl daemon-reload
+  when: ansible_service_mgr == 'systemd' and service_mgr.changed
   tags:
     - cadvisor
 
@@ -41,7 +64,7 @@
   service:
     name: '{{ service }}'
     state: restarted
-  when: compose.changed or upstart.changed
+  when: compose.changed or service_mgr.changed
   register: restart
   tags:
     - cadvisor
@@ -59,7 +82,7 @@
 - name: wait for service
   wait_for:
     port: '{{ port }}'
-    delay: 10
+    delay: 20
   when: restart.changed or start.changed
   tags:
     - cadvisor
@@ -68,7 +91,7 @@
 - name: check service
   uri:
     url: '{{ item }}'
-    timeout: 1
+    timeout: 5
   with_items:
     - 'http://localhost:{{ port }}/metrics'
   tags:
