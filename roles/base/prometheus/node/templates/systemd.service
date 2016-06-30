@@ -1,0 +1,23 @@
+[Unit]
+Description=Prometheus node exporter
+Wants=network.target
+
+[Service]
+ExecStart=/usr/local/sbin/node_exporter \
+        -auth.pass="{{ prometheus_node_pass }}" \
+        -auth.user="{{ prometheus_node_user }}" \
+        -collector.diskstats.ignored-devices="{{ prometheus_node_diskstats_ignored_devices }}" \
+        -collector.filesystem.ignored-mount-points="{{ prometheus_node_filesystem_ignored_mount_points }}" \
+        -collector.megacli.command="{{ prometheus_node_megacli_command }}" \
+        -collector.netdev.ignored-devices="{{ prometheus_node_netdev_ignored_devices }}" \
+        -collector.ntp.server="{{ prometheus_node_ntp_server }}" \
+        -collector.textfile.directory="/var/lib/prometheus/textfiles" \
+        -collectors.enabled="{{ prometheus_node_collectors_enabled}}" \
+        -log.level={{ prometheus_node_log_level }} \
+        -web.listen-address=":{{ prometheus_node_port }}"
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

@@ -84,7 +84,31 @@
     owner: root
     group: root
     backup: yes
-  register: upstart
+  when: ansible_service_mgr == 'upstart'
+  register: service
+  tags:
+    - prometheus-node
+    - prometheus-node-config
+
+
+- name: systemd file
+  template:
+    src: systemd.service
+    dest: '/etc/systemd/system/{{ prometheus_node_service }}.service'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  when: ansible_service_mgr == 'systemd'
+  register: service
+  tags:
+    - prometheus-node
+    - prometheus-node-config
+
+
+- name: systemctl daemon-reload
+  command: systemctl daemon-reload
+  when: ansible_service_mgr == 'systemd' and service.changed
   tags:
     - prometheus-node
     - prometheus-node-config
@@ -94,7 +118,7 @@
   service:
     name: '{{ prometheus_node_service }}'
     state: restarted
-  when: upstart.changed or download.changed
+  when: service.changed or download.changed
   tags:
     - prometheus-node
     - prometheus-node-config
