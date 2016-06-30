@@ -1,11 +1,13 @@
 [Unit]
 Description=Cadvisor
-Wants=docker.service
+Requires=docker.service
+After=docker.service
 
 [Service]
+Restart=always
+RestartSec=10
 ExecStart=/usr/local/bin/docker-compose -p {{ project }} -f /etc/init/{{ service }}.yml up
 ExecStop=/usr/local/bin/docker-compose -p {{ project }} -f /etc/init/{{ service }}.yml down -v
-Restart=on-failure
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
