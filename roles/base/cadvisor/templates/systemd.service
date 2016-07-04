@@ -1,6 +1,5 @@
 [Unit]
 Description=Cadvisor
-Requires=docker.service
 After=docker.service
 
 [Service]
