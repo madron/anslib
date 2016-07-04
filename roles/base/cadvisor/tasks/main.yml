@@ -13,6 +13,7 @@
     mode: 0644
     owner: root
     group: root
+    backup: yes
   register: compose
   tags:
     - cadvisor
@@ -63,6 +64,7 @@
 - name: restart service
   service:
     name: '{{ service }}'
+    enabled: yes
     state: restarted
   when: compose.changed or service_mgr.changed
   register: restart
@@ -73,6 +75,7 @@
 - name: start service
   service:
     name: '{{ service }}'
+    enabled: yes
     state: started
   register: start
   tags:
