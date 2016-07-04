@@ -39,7 +39,29 @@
     owner: root
     group: root
     backup: yes
-  register: upstart
+  when: ansible_service_mgr == 'upstart'
+  register: service_mgr
+  tags:
+    - prometheus-check-docker
+
+
+- name: systemd file
+  template:
+    src: systemd.service
+    dest: '/etc/systemd/system/{{ prometheus_check_docker_service }}.service'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  when: ansible_service_mgr == 'systemd'
+  register: service_mgr
+  tags:
+    - prometheus-check-docker
+
+
+- name: systemctl daemon-reload
+  command: systemctl daemon-reload
+  when: ansible_service_mgr == 'systemd' and service_mgr.changed
   tags:
     - prometheus-check-docker
 
@@ -47,8 +69,10 @@
 - name: service restarted
   service:
     name: '{{ prometheus_check_docker_service }}'
+    enabled: yes
     state: restarted
-  when: upstart.changed or executable.changed
+  register: restart
+  when: service_mgr.changed or executable.changed
   tags:
     - prometheus-check-docker
 
@@ -56,6 +80,28 @@
 - name: service started
   service:
     name: '{{ prometheus_check_docker_service }}'
+    enabled: yes
     state: started
+  register: start
   tags:
+    - prometheus-check-docker
+
+
+- name: wait for service
+  wait_for:
+    port: '{{ prometheus_check_docker_port }}'
+    delay: 5
+  when: restart.changed or start.changed
+  tags:
+    - prometheus-check-docker
+
+
+- name: check service
+  uri:
+    url: '{{ item }}'
+    timeout: 5
+  with_items:
+    - 'http://localhost:{{ prometheus_check_docker_port }}/metrics'
+  tags:
+    - cadvisor
     - prometheus-check-docker
