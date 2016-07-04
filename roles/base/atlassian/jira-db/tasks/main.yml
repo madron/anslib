@@ -2,8 +2,8 @@
   postgresql_user:
     user: '{{ atlassian_jira_db_username }}'
     password: '{{ atlassian_jira_db_password }}'
-  sudo: True
-  sudo_user: postgres
+  become: True
+  become_user: postgres
   tags:
     - atlassian-jira-db
 
@@ -14,7 +14,7 @@
     owner: '{{ atlassian_jira_db_username }}'
     encoding: 'UTF-8'
     template: 'template0'
-  sudo: True
-  sudo_user: postgres
+  become: True
+  become_user: postgres
   tags:
     - atlassian-jira-db

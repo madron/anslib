@@ -17,8 +17,8 @@
   postgresql_user: >
     user={{ django_site_db_user }}
     password={{ django_site_db_pass }}
-  sudo: True
-  sudo_user: postgres
+  become: True
+  become_user: postgres
   when: django_site_db_user is defined
   when: django_site_db_pass is defined
   tags:
@@ -32,8 +32,8 @@
     owner='{{ django_site_db_user }}'
     encoding='UTF-8'
     template='template0'
-  sudo: True
-  sudo_user: postgres
+  become: True
+  become_user: postgres
   register: create_database
   when: django_site_db_name is defined
   when: django_site_db_user is defined
