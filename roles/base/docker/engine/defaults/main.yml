@@ -24,3 +24,9 @@ docker_engine_accounts: {}
 #   registry.example.com: { username: bob, password: secret },
 #   hub.example.com: { username: fred, password: notsosecret },
 # }
+
+docker_engine_labels: {}
+# docker_engine_labels: {
+#     storage: ssd,
+#     dc: europe,
+# }
