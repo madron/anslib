@@ -12,7 +12,7 @@
     mode: 0644
     owner: root
     group: root
-  register: version
+  register: docker_compose_version_file
   tags:
     - docker
     - docker-compose
@@ -22,7 +22,7 @@
   get_url:
     url: 'https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64'
     dest: /usr/local/bin/docker-compose
-    force: '{{ version.changed }}'
+    force: '{{ docker_compose_version_file.changed }}'
     mode: 0755
     owner: root
     group: root
