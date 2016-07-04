@@ -1,5 +1,7 @@
 # docker_engine_version: 1.10.3
 
+docker_engine_repository: stable
+
 docker_engine_version_hold: false
 
 docker_engine_tcp_bind_host: ''
