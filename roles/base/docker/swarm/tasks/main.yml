@@ -1,0 +1,16 @@
+- name: node list
+  command: 'docker node ls -f name={{ inventory_hostname }}'
+  register: node_list
+  changed_when: false
+  failed_when: node_list.rc > 1
+  tags:
+    - docker
+    - docker-swarm
+
+
+- name: swarm init
+  command: docker swarm init
+  when: docker_swarm_role == 'manager' and ( node_list.stdout_lines|length() == 1 or node_list.rc == 1)
+  tags:
+    - docker
+    - docker-swarm
