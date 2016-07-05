@@ -1,6 +1,6 @@
 # docker_engine_version: 1.10.3
 
-docker_engine_repository: stable
+docker_engine_repository: main
 
 docker_engine_version_hold: false
 
