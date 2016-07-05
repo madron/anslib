@@ -17,10 +17,7 @@
 {% if docker_engine_registry_mirror is defined %}
 {% set DOCKER_OPTS = DOCKER_OPTS ~ ' --registry-mirror=' ~ docker_engine_registry_mirror %}
 {% endif %}
-DOCKER_OPTS="{{ DOCKER_OPTS }}{% for r in docker_engine_insecure_registries %} --insecure-registry {{ r }}{% endfor %}"
-{% if docker_engine_labels %}
-DOCKER_OPTS="{{ DOCKER_OPTS }}{% for k, v in docker_engine_labels.iteritems() %} --label {{ k }}="{{ v }}"{% endfor %}"
-{% endif %}
+DOCKER_OPTS="{{ DOCKER_OPTS }}{% for k, v in docker_engine_labels.iteritems() %} --label {{ k }}={{ v }}{% endfor %}{% for r in docker_engine_insecure_registries %} --insecure-registry {{ r }}{% endfor %}"
 
 # If you need Docker to use an HTTP proxy, it can also be specified here.
 #export http_proxy="http://127.0.0.1:3128/"

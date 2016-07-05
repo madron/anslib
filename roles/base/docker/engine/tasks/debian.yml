@@ -70,11 +70,67 @@
     - docker-engine
 
 
+- name: upstart noop
+  assert:
+    that: true
+  when: ansible_service_mgr == 'upstart'
+  register: service_mgr
+  tags:
+    - docker
+    - docker-engine
+
+
+# - name: remove /etc/systemd/system/multi-user.target.wants/docker.service symlink
+#   file:
+#     path: /etc/systemd/system/multi-user.target.wants/docker.service
+#     state: absent
+#   when: ansible_service_mgr == 'systemd'
+#   tags:
+#     - docker
+#     - docker-engine
+
+
+- name: systemd docker directory
+  file:
+    path: /etc/systemd/system/docker.service.d
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  when: ansible_service_mgr == 'systemd'
+  tags:
+    - docker
+    - docker-engine
+
+
+- name: systemd drop-in file
+  template:
+    src: docker.conf
+    dest: /etc/systemd/system/docker.service.d/docker.conf
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  when: ansible_service_mgr == 'systemd'
+  register: service_mgr
+  tags:
+    - docker
+    - docker-engine
+
+
+- name: systemctl daemon-reload
+  command: systemctl daemon-reload
+  when: ansible_service_mgr == 'systemd' and service_mgr.changed
+  tags:
+    - docker
+    - docker-engine
+
+
 - name: service restarted
   service:
     name: docker
     state: restarted
-  when: default.changed
+  when: default.changed or service_mgr.changed
   tags:
     - docker
     - docker-engine
