@@ -7,7 +7,7 @@ strongswan_ca_common_name: example
 
 # strongswan_server_ip: 51.254.37.6
 strongswan_left_id: vpn.example.com
-strongswan_left_subnet: 10.9.0.1/32
+strongswan_left_ip: 10.9.0.1
 strongswan_right_subnet: 10.9.0.1/24
 strongswan_right_dns: ''
 

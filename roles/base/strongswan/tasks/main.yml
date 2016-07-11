@@ -57,8 +57,29 @@
     - strongswan
 
 
-- name: create virtual interface
-  shell: 'ifconfig lo:0 10.9.0.1 netmask 255.255.255.0'
+- name: configure loopback vpn subnet
+  template:
+    src: network_interface.conf
+    dest: /etc/network/interfaces.d/strongswan_lo0.conf
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  register: network_config
+  tags:
+    - strongswan
+
+
+- name: ifdown lo:0
+  command: 'ifdown lo:0'
+  when: network_config.changed
+  tags:
+    - strongswan
+
+
+- name: ifup lo:0
+  command: 'ifup lo:0'
+  when: network_config.changed
   tags:
     - strongswan
 
