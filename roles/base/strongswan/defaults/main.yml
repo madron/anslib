@@ -5,22 +5,15 @@ strongswan_ca_organization: 'Example inc.'
 strongswan_ca_common_name: example
 
 
-# strongswan_server_ip: 51.254.37.6
+strongswan_left: '%any'
 strongswan_left_id: vpn.example.com
 strongswan_left_ip: 10.9.0.1
 strongswan_right_subnet: 10.9.0.1/24
 strongswan_right_dns: ''
 
-strongswan_clients_v1: []
-# strongswan_clients_v1:
+strongswan_clients: []
+# strongswan_clients:
 #  - {clientname: client1, password: MYSECRET1}
 #  - {clientname: client2, password: MYSECRET2}
 #  - {clientname: client3, password: MYSECRET3}
 #  - {clientname: client4, password: MYSECRET4}
-
-strongswan_clients_v2: []
-# strongswan_clients_v2:
-#  - {clientname: client5, password: MYSECRET5}
-#  - {clientname: client6, password: MYSECRET6}
-#  - {clientname: client7, password: MYSECRET7}
-#  - {clientname: client8, password: MYSECRET8}
