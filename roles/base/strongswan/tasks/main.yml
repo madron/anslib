@@ -34,7 +34,7 @@
 
 
 - name: create strongswanCert.der
-  shell: 'ipsec pki --self --ca --lifetime 3650 --in /etc/ipsec.d/private/strongswanKey.der --type rsa --dn "C=IT, O=MasterTraining, CN=strongSwan ca" --outform der > /etc/ipsec.d/cacerts/strongswanCert.der'
+  shell: 'ipsec pki --self --ca --lifetime {{ strongswan_certificate_lifetime }} --in /etc/ipsec.d/private/strongswanKey.der --type rsa --dn "C={{ strongswan_ca_country }}, O={{ strongswan_ca_organization }}, CN={{ strongswan_ca_common_name }}" --outform der > /etc/ipsec.d/cacerts/strongswanCert.der'
   args:
     creates: /etc/ipsec.d/cacerts/strongswanCert.der
   tags:
@@ -50,7 +50,7 @@
 
 
 - name: create vpnHostCert.der
-  shell: 'ipsec pki --pub --in /etc/ipsec.d/private/vpnHostKey.der --type rsa | ipsec pki --issue --lifetime 730 --cacert /etc/ipsec.d/cacerts/strongswanCert.der --cakey /etc/ipsec.d/private/strongswanKey.der --dn "C=IT, O=MasterTraining, CN=vpn.example.com" --san vpn.example.com --san {{ server_ip }}  --san @{{ server_ip }} --flag serverAuth --flag ikeIntermediate --outform der > /etc/ipsec.d/certs/vpnHostCert.der'
+  shell: 'ipsec pki --pub --in /etc/ipsec.d/private/vpnHostKey.der --type rsa | ipsec pki --issue --lifetime {{ strongswan_certificate_lifetime }} --cacert /etc/ipsec.d/cacerts/strongswanCert.der --cakey /etc/ipsec.d/private/strongswanKey.der --dn "C={{ strongswan_ca_country }}, O={{ strongswan_ca_organization }}, CN={{ strongswan_ca_common_name }}" --san {{ strongswan_server_ip }} --san @{{ strongswan_server_ip }} --san {{ strongswan_left_id }} --flag serverAuth --flag ikeIntermediate --outform der > /etc/ipsec.d/certs/vpnHostCert.der'
   args:
     creates: /etc/ipsec.d/certs/vpnHostCert.der
   tags:
