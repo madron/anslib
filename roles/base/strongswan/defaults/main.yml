@@ -1,4 +1,4 @@
-strongswan_strongswan_server_key: SERVERKEY
+strongswan_server_key: SERVERKEY
 strongswan_certificate_lifetime: 3650
 strongswan_ca_country: US
 strongswan_ca_organization: 'Example inc.'

@@ -59,8 +59,8 @@
 
 - name: configure loopback vpn subnet
   template:
-    src: network_interface.conf
-    dest: /etc/network/interfaces.d/strongswan_lo0.conf
+    src: network_interface.cfg
+    dest: /etc/network/interfaces.d/strongswan_lo0.cfg
     owner: root
     group: root
     mode: 0644
