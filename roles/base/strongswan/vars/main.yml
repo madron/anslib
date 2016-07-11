@@ -1,0 +1,14 @@
+server_key: SERVERKEY
+server_ip: 51.254.37.6
+
+vpn_clients_v1:
+ - {clientname: cliente1, password: MYSECRET1}
+ - {clientname: cliente2, password: MYSECRET2}
+ - {clientname: cliente3, password: MYSECRET3}
+ - {clientname: cliente4, password: MYSECRET4}
+
+vpn_clients_v2:
+ - {clientname: cliente5, password: MYSECRET5}
+ - {clientname: cliente6, password: MYSECRET6}
+ - {clientname: cliente7, password: MYSECRET7}
+ - {clientname: cliente8, password: MYSECRET8}
