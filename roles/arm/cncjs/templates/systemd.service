@@ -1,0 +1,14 @@
+[Unit]
+Description=cncjs
+Wants=network.target
+
+[Service]
+ExecStart=/usr/local/bin/cnc --host {{ cncjs_host }} --port {{ cncjs_port }}
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=always
+User=nobody
+Group=nogroup
+
+[Install]
+WantedBy=multi-user.target

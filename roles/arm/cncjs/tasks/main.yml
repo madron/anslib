@@ -1,0 +1,58 @@
+- name: debian packages
+  apt:
+    pkg: '{{ item }}'
+    state: present
+  with_items:
+    - build-essential
+    - nodejs
+    - nodejs-legacy
+    - npm
+  tags:
+    - cncjs
+
+
+- name: npm packages
+  npm:
+    name: cncjs
+    global: yes
+    version: 1.3.2
+    state: present
+  tags:
+    - cncjs
+
+
+- name: systemd file
+  template:
+    src: systemd.service
+    dest: '/etc/systemd/system/cncjs.service'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: service_mgr
+  tags:
+    - cncjs
+
+
+- name: systemctl daemon-reload
+  command: systemctl daemon-reload
+  when: service_mgr.changed
+  tags:
+    - cncjs
+
+
+- name: service restarted
+  service:
+    name: cncjs
+    state: restarted
+  when: service_mgr.changed
+  tags:
+    - cncjs
+
+
+- name: service started
+  service:
+    name: cncjs
+    state: started
+  tags:
+    - cncjs
