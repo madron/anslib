@@ -1,6 +1,6 @@
 # {{ ansible_managed }}
 
-{% if ansible_lsb.codename in ('wheezy') %}
+{% if ansible_lsb.codename in ('wheezy', 'jessie') %}
 deb http://http.debian.net/debian/   {{ ansible_lsb.codename }}           main contrib
 deb http://http.debian.net/debian/   {{ ansible_lsb.codename }}-updates   main contrib
 deb http://security.debian.org/      {{ ansible_lsb.codename }}/updates   main contrib
