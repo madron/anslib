@@ -1,0 +1,76 @@
+- name: set variables
+  set_fact:
+    prometheus_blackbox_service: 'dck-prometheus-blackbox'
+    prometheus_blackbox_container: 'prometheus-blackbox'
+  tags:
+    - prometheus-blackbox
+    - prometheus-blackbox-downlod
+
+
+- name: create config directory
+  file:
+    path: '/etc/container/{{ prometheus_blackbox_container }}'
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - prometheus-blackbox
+
+
+- name: pull image
+  command: 'docker pull {{ prometheus_blackbox_image }}'
+  when: docker_image_download
+  tags:
+    - prometheus-blackbox
+    - prometheus-blackbox-downlod
+
+
+- name: blackbox.yml
+  template:
+    src: blackbox.yml
+    dest: '/etc/container/{{ prometheus_blackbox_container }}'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: config
+  tags:
+    - prometheus-blackbox
+
+
+- name: upstart file
+  template:
+    src: upstart.conf
+    dest: '/etc/init/{{ prometheus_blackbox_service }}.conf'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: upstart
+  tags:
+    - prometheus-blackbox
+
+
+- name: service restarted
+  service:
+    name: '{{ prometheus_blackbox_service }}'
+    state: restarted
+  when: upstart.changed or config.changed
+  tags:
+    - prometheus-blackbox
+
+
+- name: service started
+  service:
+    name: '{{ prometheus_blackbox_service }}'
+    state: started
+  tags:
+    - prometheus-blackbox
+
+
+# - name: reload iptables rules file
+#   command: 'docker exec --user root {{ prometheus_blackbox_container }} /etc/docker-iptables/rules'
+#   when: iptables.changed
+#   tags:
+#     - prometheus-blackbox
