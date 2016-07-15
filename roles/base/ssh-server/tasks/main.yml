@@ -4,19 +4,20 @@
     - ssh-server
 
 
-- include: packages_debian.yml
+- include: debian.yml
   when: ansible_os_family == 'Debian'
   tags:
     - ssh-server
 
 
 - name: sshd_config
-  template: >
-    src=sshd_config.j2
-    dest=/etc/ssh/sshd_config
-    mode=0644
-    owner=root
-    group=root
+  template:
+    src: sshd_config
+    dest: /etc/ssh/sshd_config
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
   notify: restart ssh
   tags:
     - ssh-server

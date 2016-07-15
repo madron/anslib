@@ -1,0 +1,6 @@
+- name: required packages
+  apt:
+    pkg: 'openssh-server'
+    state: present
+  tags:
+    - ssh-server
