@@ -3,7 +3,7 @@ Description=cncjs
 Wants=network.target
 
 [Service]
-ExecStart=/usr/local/bin/cnc --host {{ cncjs_host }} --port {{ cncjs_port }}
+ExecStart=/usr/local/bin/cnc --host {{ cncjs_host }} --port {{ cncjs_port }} --config /etc/cncjs/cncrc
 ExecReload=/bin/kill -HUP $MAINPID
 KillMode=process
 Restart=always

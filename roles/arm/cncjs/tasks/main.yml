@@ -21,6 +21,30 @@
     - cncjs
 
 
+- name: /etc/cncjs directory
+  file:
+    path: /etc/cncjs
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - cncjs
+
+
+- name: cncrc file
+  template:
+    src: cncrc
+    dest: /etc/cncjs/cncrc
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: cncrc
+  tags:
+    - cncjs
+
+
 - name: systemd file
   template:
     src: systemd.service
@@ -30,6 +54,17 @@
     group: root
     backup: yes
   register: service_mgr
+  tags:
+    - cncjs
+
+
+- name: multi-user.target
+  file:
+    src: /etc/systemd/system/cncjs.service
+    dest: /etc/systemd/system/multi-user.target.wants/cncjs.service
+    state: link
+    owner: root
+    group: root
   tags:
     - cncjs
 
@@ -45,7 +80,7 @@
   service:
     name: cncjs
     state: restarted
-  when: service_mgr.changed
+  when: service_mgr.changed or cncrc.changed
   tags:
     - cncjs
 
