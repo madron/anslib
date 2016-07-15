@@ -1,0 +1,82 @@
+- name: variables
+  set_fact:
+    file_name: '{{ bcnc_version }}.tar.gz'
+  tags:
+    - bcnc
+
+
+- name: bcnc user
+  user:
+    name: bcnc
+    group: users
+    password: '{{ bcnc_password }}'
+    generate_ssh_key: yes
+    # shell: '/opt/bCNC-{{ bcnc_version }}/bCNC'
+  tags:
+    - bcnc
+
+
+- name: required packages
+  apt:
+    pkg: '{{ item }}'
+    state: present
+  with_items:
+    - python-tk
+    - python-serial
+  tags:
+    - bcnc
+
+
+- name: required directories
+  file:
+    path: '{{ item }}'
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  with_items:
+    - /opt
+    - /var/lib/ansible/bcnc
+  tags:
+    - bcnc
+
+
+- name: download installer
+  get_url:
+    url: 'https://github.com/vlachoudis/bCNC/archive/{{ file_name }}'
+    dest: '/var/lib/ansible/bcnc/{{ file_name }}'
+    mode: 0755
+  tags:
+    - bcnc
+
+
+- name: untar
+  unarchive:
+    src: '/var/lib/ansible/bcnc/{{ file_name }}'
+    dest: /opt
+    copy: no
+  tags:
+    - bcnc
+
+
+- name: launcher
+  template:
+    src: bcnc.sh
+    dest: /usr/local/bin/bCNC
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - bcnc
+
+
+# - name: config file
+#   template:
+#     src: config
+#     dest: /home/bcnc/.bCNC
+#     mode: 0644
+#     owner: root
+#     group: root
+#     backup: yes
+#   tags:
+#     - bcnc
