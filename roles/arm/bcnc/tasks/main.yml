@@ -11,6 +11,7 @@
     group: users
     password: '{{ bcnc_password }}'
     generate_ssh_key: yes
+    shell: '/bin/bash'
     # shell: '/opt/bCNC-{{ bcnc_version }}/bCNC'
   tags:
     - bcnc
