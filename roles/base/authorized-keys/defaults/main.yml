@@ -1,0 +1,3 @@
+authorized_keys_user: root
+authorized_keys_group: root
+authorized_keys_home: /root
