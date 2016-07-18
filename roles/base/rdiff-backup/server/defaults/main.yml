@@ -21,12 +21,14 @@ rdiff_backup_server_packages:
   - rdiff-backup
   - rdiff-backup-fs
   - python-pip
+  - build-essential
   - python-dev
+  - libffi-dev
   - parallel
   - coreutils
 
 rdiff_backup_server_pip_packages:
   - { name: ecdsa, version: 0.11 }
   - { name: pycrypto, version: 2.6.1 }
-  - { name: paramiko, version: 1.15.2 }
+  - { name: paramiko, version: 1.16.2 }
   - { name: prometheus_client, version: 0.0.13 }
