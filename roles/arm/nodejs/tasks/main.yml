@@ -1,0 +1,30 @@
+- name: apt-transport-https package
+  apt:
+    pkg: apt-transport-https
+    state: present
+  tags:
+    - nodejs
+
+
+- name: repository key
+  apt_key:
+    url: 'https://deb.nodesource.com/gpgkey/nodesource.gpg.key'
+    state: present
+  tags:
+    - nodejs
+
+
+- name: repository
+  apt_repository:
+    repo: 'deb https://deb.nodesource.com/node_4.x jessie main'
+    state: present
+  tags:
+    - nodejs
+
+
+- name: nodejs package
+  apt:
+    pkg: nodejs
+    state: present
+  tags:
+    - nodejs
