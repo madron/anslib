@@ -3,12 +3,12 @@ Description=cncjs
 Wants=network.target
 
 [Service]
-ExecStart=/usr/local/bin/cnc --host {{ cncjs_host }} --port {{ cncjs_port }} --config /etc/cncjs/cncrc
+ExecStart=/usr/bin/cnc --host {{ cncjs_host }} --port {{ cncjs_port }} --config /etc/cncjs/cncrc
 ExecReload=/bin/kill -HUP $MAINPID
 KillMode=process
 Restart=always
-User=nobody
-Group=nogroup
+User=root
+Group=root
 
 [Install]
 WantedBy=multi-user.target
