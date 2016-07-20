@@ -1,0 +1,51 @@
+
+IKEV1
+ |
+ |--ANDROID: - Impostazioni -> Altro -> VPN -> +
+ |           - Nome -> <Descrizione>
+ |             Tipo IPSec Xauth PSK
+ |             Indirizzo server -> strongswan_left_ip_pubblic
+ |             Chiave pre-condivisa IPSec -> strongswan_server_key
+ |           - Salva
+ |           - <Descrizione> -> Nome utente -> strongswan_clients.clientname
+ |                              Password -> strongswan_clients.password
+ |                              Salva informazioni account -> Check
+ |           - Connetti
+ |
+ |--IOS: - Impostazioni -> VPN -> Aggiungi configurazione VPN
+         - Tipo -> IPSec
+           Descrizione -> <Descrizione>
+           Server -> strongswan_left_ip_pubblic or strongswan_left_domain_name
+           Account -> strongswan_clients.clientname
+           Password -> strongswan_clients.password
+           Segreto -> strongswan_server_key
+         - Fine
+         - Selezionare <Descrizione>
+         - Stato -> Connesso
+
+
+IKEV2
+ |
+ |--ANDROID: - Install strongSwan client
+ |           - Install certificate (vpnHostCert.der)
+ |           - Open strongSwan -> Add vpn profile
+ |           - Server -> strongswan_left_ip_pubblic
+ |             VPN Type -> IKEv2 EAP (Username/Password)
+ |             Username -> strongswan_clients.clientname
+ |             Password -> strongswan_clients.password
+ |             CA certificate -> Select CA certificate -> Imported
+ |           - Save
+ |           - Connect (Profile name)
+ |
+ |--IOS: - Install certificate (vpnHostCert.der, strongswanCert.der)
+         - Impostazioni -> VPN -> Aggiungi configurazione VPN
+         - Tipo -> IKEv2
+           Descrizione -> <Descrizione>
+           Server -> strongswan_left_ip_pubblic or strongswan_left_domain_name
+           ID remoto -> strongswan_left_domain_name
+           Autenticazione utente -> Nome utente e password
+           Nome utente -> strongswan_clients.clientname
+           Password -> strongswan_clients.password
+         - Fine
+         - Selezionare <Descrizione>
+         - Stato -> Connesso

@@ -2,10 +2,6 @@
   apt:
     name: '{{ item }}'
     state: present
-  with_items:
-  - strongswan
-  - strongswan-plugin-xauth-generic
-  - strongswan-plugin-eap-mschapv2
-  - strongswan-plugin-unity
+  with_items: '{{strongswan_packages}}'
   tags:
     - strongswan

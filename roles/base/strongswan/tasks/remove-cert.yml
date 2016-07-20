@@ -1,0 +1,47 @@
+- name: remove-cert - ask for confirmation
+  pause:
+   prompt: 'This will erase any strongswan certificate in the host machine. Press ENTER to continue, CTRL+C then A to exit.'
+  when: strongswan_remove_cert
+  tags:
+    - strongswan
+    - strongswan-remove-cert
+
+
+- name: remove-cert - remove strongswanKey.der
+  file:
+   path: '/etc/ipsec.d/private/strongswanKey.der'
+   state: absent
+  when: strongswan_remove_cert
+  tags:
+    - strongswan
+    - strongswan-remove-cert
+
+
+- name: remove-cert - remove strongswanCert.der
+  file:
+   path: '/etc/ipsec.d/cacerts/strongswanCert.der'
+   state: absent
+  when: strongswan_remove_cert
+  tags:
+    - strongswan
+    - strongswan-remove-cert
+
+
+- name: remove-cert - remove vpnHostKey.der
+  file:
+   path: '/etc/ipsec.d/private/vpnHostKey.der'
+   state: absent
+  when: strongswan_remove_cert
+  tags:
+    - strongswan
+    - strongswan-remove-cert
+
+
+- name: remove-cert - remove vpnHostCert.der
+  file:
+   path: '/etc/ipsec.d/certs/vpnHostCert.der'
+   state: absent
+  when: strongswan_remove_cert
+  tags:
+    - strongswan
+    - strongswan-remove-cert

@@ -10,7 +10,14 @@
     - strongswan
 
 
-- name: create nex folders for certificates
+- include: remove-cert.yml
+  when: strongswan_remove_cert
+  tags:
+    - strongswan
+    - strongswan-remove-cert
+
+
+- name: create new folders for certificates
   file:
     path: '/etc/ipsec.d/{{ item }}'
     state: directory
@@ -50,7 +57,7 @@
 
 
 - name: create vpnHostCert.der
-  shell: 'ipsec pki --pub --in /etc/ipsec.d/private/vpnHostKey.der --type rsa | ipsec pki --issue --lifetime {{ strongswan_certificate_lifetime }} --cacert /etc/ipsec.d/cacerts/strongswanCert.der --cakey /etc/ipsec.d/private/strongswanKey.der --dn "C={{ strongswan_ca_country }}, O={{ strongswan_ca_organization }}, CN={{ strongswan_ca_common_name }}" --san {{ strongswan_left }} --san @{{ strongswan_left }} --san {{ strongswan_left_id }} --flag serverAuth --flag ikeIntermediate --outform der > /etc/ipsec.d/certs/vpnHostCert.der'
+  shell: 'ipsec pki --pub --in /etc/ipsec.d/private/vpnHostKey.der --type rsa | ipsec pki --issue --lifetime {{ strongswan_certificate_lifetime }} --cacert /etc/ipsec.d/cacerts/strongswanCert.der --cakey /etc/ipsec.d/private/strongswanKey.der --dn "C={{ strongswan_ca_country }}, O={{ strongswan_ca_organization }}, CN={{ strongswan_ca_common_name }}" --san {{ strongswan_left_domain_name }}{% if strongswan_left_ip_pubblic %} --san {{ strongswan_left_ip_pubblic }}{% endif %}{% if strongswan_left_ip_private %} --san {{ strongswan_left_ip_private }}{% endif %} --flag serverAuth --flag ikeIntermediate --outform der > /etc/ipsec.d/certs/vpnHostCert.der'
   args:
     creates: /etc/ipsec.d/certs/vpnHostCert.der
   tags:

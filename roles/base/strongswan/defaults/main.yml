@@ -1,19 +1,27 @@
-strongswan_server_key: SERVERKEY
+strongswan_server_key: 'SERVERKEY'
 strongswan_certificate_lifetime: 3650
 strongswan_ca_country: US
 strongswan_ca_organization: 'Example inc.'
 strongswan_ca_common_name: example
 
-
 strongswan_left: '%any'
-strongswan_left_id: vpn.example.com
 strongswan_left_ip: 10.9.0.1
-strongswan_right_subnet: 10.9.0.1/24
+strongswan_right_ip_pool: 10.9.0.1/24
+strongswan_left_domain_name: 'example.com'
+strongswan_left_ip_pubblic: ''
+strongswan_left_ip_private: ''
 strongswan_right_dns: ''
 
-strongswan_clients: []
-# strongswan_clients:
-#  - {clientname: client1, password: MYSECRET1}
-#  - {clientname: client2, password: MYSECRET2}
+strongswan_packages:
+  - strongswan
+  - strongswan-plugin-xauth-generic
+  - strongswan-plugin-eap-mschapv2
+  - strongswan-plugin-unity
+
+strongswan_clients:
+  - {clientname: client1, password: MYSECRET1}
+  - {clientname: client2, password: MYSECRET2}
 #  - {clientname: client3, password: MYSECRET3}
 #  - {clientname: client4, password: MYSECRET4}
+
+strongswan_remove_cert: false
