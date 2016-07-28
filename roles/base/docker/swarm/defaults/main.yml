@@ -1,7 +1,13 @@
+# docker_swarm_role: 'leader'
+# docker_swarm_role: 'manager'
 docker_swarm_role: 'worker'
 
 # docker_swarm_manager: manager
 
 # docker_swarm_manager_host: '192.168.1.1'
+# docker_swarm_advertise_addr: '192.168.1.1'
 
 docker_swarm_manager_port: 2377
+
+docker_swarm_token_worker: ''
+docker_swarm_token_manager: ''

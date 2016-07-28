@@ -3,15 +3,34 @@
   register: node_list
   changed_when: false
   failed_when: node_list.rc > 1
-  when: docker_swarm_role == 'manager'
+  when: docker_swarm_role == 'leader'
   tags:
     - docker
     - docker-swarm
 
 
 - name: swarm init
-  command: 'docker swarm init --listen-addr {{ docker_swarm_manager_host|default(ansible_host) }}:{{ docker_swarm_manager_port }}'
-  when: docker_swarm_role == 'manager' and ( node_list.stdout_lines|length() == 1 or node_list.rc == 1 )
+  command: 'docker swarm init --advertise-addr {{ docker_swarm_advertise_addr|default(ansible_host) }} --listen-addr {{ docker_swarm_manager_host|default(ansible_host) }}:{{ docker_swarm_manager_port }}'
+  register: swarm_init
+  when: docker_swarm_role == 'leader' and ( node_list.stdout_lines|length() == 1 or node_list.rc == 1 )
+  tags:
+    - docker
+    - docker-swarm
+
+
+- name: tokens
+  debug:
+    msg: '{{ swarm_init.stdout_lines }}'
+  when: docker_swarm_role == 'leader' and ( node_list.stdout_lines|length() == 1 or node_list.rc == 1 )
+  tags:
+    - docker
+    - docker-swarm
+
+
+- name: collect tokens
+  fail:
+    msg: 'Collect tokens to *** docker_swarm_token_worker *** and *** docker_swarm_token_manager *** variables'
+  when: docker_swarm_role == 'leader' and ( node_list.stdout_lines|length() == 1 or node_list.rc == 1 )
   tags:
     - docker
     - docker-swarm
@@ -22,14 +41,22 @@
   register: docker_info
   changed_when: false
   failed_when: docker_info.rc > 1
-  when: docker_swarm_role == 'worker'
+  when: docker_swarm_role in ('manager', 'worker')
   tags:
     - docker
     - docker-swarm
 
 
-- name: swarm join
-  command: 'docker swarm join {{ docker_swarm_manager_host|default(hostvars[docker_swarm_manager].ansible_host) }}:{{ docker_swarm_manager_port }}'
+- name: swarm join manager
+  command: 'docker swarm join --advertise-addr {{ docker_swarm_advertise_addr|default(ansible_host) }} --token {{ docker_swarm_token_manager }} {{ docker_swarm_manager_host|default(hostvars[docker_swarm_manager].ansible_host) }}:{{ docker_swarm_manager_port }}'
+  when: docker_swarm_role == 'manager' and ( docker_info.stdout_lines|length() == 0  or docker_info.rc == 1 )
+  tags:
+    - docker
+    - docker-swarm
+
+
+- name: swarm join worker
+  command: 'docker swarm join --advertise-addr {{ docker_swarm_advertise_addr|default(ansible_host) }} --token {{ docker_swarm_token_worker }} {{ docker_swarm_manager_host|default(hostvars[docker_swarm_manager].ansible_host) }}:{{ docker_swarm_manager_port }}'
   when: docker_swarm_role == 'worker' and ( docker_info.stdout_lines|length() == 0  or docker_info.rc == 1 )
   tags:
     - docker
