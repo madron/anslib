@@ -1,0 +1,21 @@
+
+- name: get-cert - get strongswanCert.der
+  fetch:
+    src: '/etc/ipsec.d/cacerts/strongswanCert.der'
+    dest: '{{ destination_strongswan_certs }}/strongswanCert.der'
+    flat: yes
+    fail_on_missing: yes
+  tags:
+   - strongswan
+   - strongswan-get-cert
+
+
+- name: get-cert - get vpnHostCert.der
+  fetch:
+   src: '/etc/ipsec.d/certs/vpnHostCert.der'
+   dest: '{{ destination_strongswan_certs }}/vpnHostCert.der'
+   flat: yes
+   fail_on_missing: yes
+  tags:
+   - strongswan
+   - strongswan-get-cert

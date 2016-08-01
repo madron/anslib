@@ -11,6 +11,7 @@ strongswan_left_domain_name: 'example.com'
 strongswan_left_ip_pubblic: ''
 strongswan_left_ip_private: ''
 strongswan_right_dns: ''
+destination_strongswan_certs: ''
 
 strongswan_packages:
   - strongswan
@@ -25,3 +26,4 @@ strongswan_clients:
 #  - {clientname: client4, password: MYSECRET4}
 
 strongswan_remove_cert: false
+strongswan_get_cert: false

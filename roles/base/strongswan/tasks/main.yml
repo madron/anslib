@@ -131,3 +131,10 @@
     state: started
   tags:
     - strongswan
+
+
+- include: get-cert.yml
+  when: strongswan_get_cert
+  tags:
+    - strongswan
+    - strongswan-get-cert
