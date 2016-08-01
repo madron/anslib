@@ -1,0 +1,6 @@
+- name: required packages
+  apt:
+    name: isc-dhcp-server
+    state: present
+  tags:
+    - dhcp-isc

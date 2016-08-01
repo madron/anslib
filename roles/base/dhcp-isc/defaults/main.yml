@@ -1,0 +1,30 @@
+dhcp_isc_domain_name: 'example.com'
+dhcp_isc_domain_name_servers:
+   - dhcp.example.com
+   - 192.0.2.0
+
+dhcp_isc_default_lease_time: 600
+dhcp_isc_max_lease_time: 7200
+
+dhcp_isc_interfaces: []
+# dhcp_isc_interfaces:
+#    - eth0
+
+dhcp_isc_config:
+  - { dynamic_subnet: 192.168.1.0/24,
+      dynamic_ip_range: [
+        { start: 50, end: 200, },
+        { start: 210, end: 220, },
+      ],
+      dns: [
+        8.8.8.8,
+        8.8.4.4,
+      ],
+      gateway: 192.168.1.1,
+      static_leases: [
+        { name: 'pc-guest1',       ip: '192.168.1.1',       mac: 'ec:b1:d7:d7:0a:6c'},
+        { name: 'pc-guest2',       ip: '192.168.1.2',       mac: 'ec:b1:d7:d7:0a:6d'},
+        { name: 'pc-guest3',       ip: '192.168.1.3',       mac: 'ec:b1:d7:d7:0a:6e'},
+        { name: 'machine1',        ip: '192.168.1.4',       mac: 'ec:b1:d7:d7:0a:6f'},
+      ],
+    }

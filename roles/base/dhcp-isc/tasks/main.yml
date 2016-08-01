@@ -1,0 +1,45 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - dhcp-isc
+
+
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - dhcp-isc
+
+
+- name: Configure dhcp interface
+  template:
+    src: default
+    dest: /etc/default/isc-dhcp-server
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  register: default
+  tags:
+    - dhcp-isc
+
+
+- name: Configure dhcp service
+  template:
+    src: dhcpd.conf
+    dest: /etc/dhcp/dhcpd.conf
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  register: config
+  tags:
+    - dhcp-isc
+
+
+- name: service restarted
+  service:
+    name: isc-dhcp-server
+    state: restarted
+  when: default.changed or config.changed
+  tags:
+    - dhcp-isc
