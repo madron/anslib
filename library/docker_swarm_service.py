@@ -300,8 +300,8 @@ class SwarmServiceManager(DockerBaseClass):
         service = self.get_service()
         if not service:
             # Create
+            self.result['changed'] = True
             if not self.check_mode:
-                self.result['changed'] = True
                 return self.client.create_service(**wanted)
             return
         # self.result['service'] = service
@@ -311,9 +311,9 @@ class SwarmServiceManager(DockerBaseClass):
             # Update
             service_id = service['ID']
             version = service['Version']['Index']
+            self.result['changed'] = True
             if not self.check_mode:
                 self.client.update_service(service_id, version, **wanted)
-                self.result['changed'] = True
 
     def absent(self):
         service = self.get_service()
