@@ -32,3 +32,6 @@ docker_engine_labels: {}
 #     storage: ssd,
 #     dc: europe,
 # }
+
+docker_engine_update_cache: false
+docker_engine_force_install: false

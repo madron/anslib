@@ -31,6 +31,8 @@
   apt:
     name: 'docker-engine={{ docker_engine_version }}-0~{{ ansible_lsb.codename }}'
     state: present
+    update_cache: '{{ docker_engine_update_cache }}'
+    force: '{{ docker_engine_force_install }}'
   tags:
     - docker
     - docker-engine
