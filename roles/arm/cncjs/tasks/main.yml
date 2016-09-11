@@ -10,7 +10,7 @@
 
 
 - name: npm cncjs package
-  command: npm install --unsafe-perm -g cncjs@1.4.0
+  command: 'npm install --unsafe-perm -g cncjs@{{ cncjs_version }}'
   args:
     creates: /usr/lib/node_modules/cncjs/bin/cnc
   tags:
@@ -41,6 +41,15 @@
     - cncjs
 
 
+- name: disable serial-getty@ttyAMA0.service
+  command: systemctl mask serial-getty@ttyAMA0.service
+  args:
+    creates: /etc/systemd/system/serial-getty@ttyAMA0.service
+  register: serial_getty
+  tags:
+    - cncjs
+
+
 - name: systemd file
   template:
     src: systemd.service
@@ -67,7 +76,7 @@
 
 - name: systemctl daemon-reload
   command: systemctl daemon-reload
-  when: service_mgr.changed
+  when: serial_getty.changed or service_mgr.changed
   tags:
     - cncjs
 

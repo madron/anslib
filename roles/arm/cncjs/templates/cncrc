@@ -1,4 +1,10 @@
 {
     "ports": [
+{% if cncjs_serial_device %}
+        {
+            "comName": "{{ cncjs_serial_device }}",
+            "manufacturer": "{{ cncjs_manufacturer }}"
+        }
+{% endif %}
     ]
 }
