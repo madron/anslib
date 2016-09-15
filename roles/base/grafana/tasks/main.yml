@@ -17,8 +17,6 @@
     - '/var/lib/container/{{ grafana_container }}'
     - '/var/lib/container/{{ grafana_container }}/plugins'
     - '/var/lib/container/{{ grafana_container }}/dashboards'
-    - '/etc/container/{{ grafana_container }}/json'
-    - '/etc/container/{{ grafana_container }}/js'
   tags:
     - grafana
 
