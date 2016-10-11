@@ -106,11 +106,11 @@
 - name: pdns zone override files
   template:
     src: db.zone
-    dest: /etc/powerdns/db.{{ item.key }}
+    dest: '/etc/powerdns/db.{{ item.key }}'
     mode: 0644
     owner: root
     group: root
-  with_dict: powerdns_recursor_override
+  with_dict: '{{ powerdns_recursor_override }}'
   register: pdns_zone_override
   tags:
     - powerdns
@@ -121,11 +121,11 @@
 - name: pdns zone domain files
   template:
     src: db.zone
-    dest: /etc/powerdns/db.{{ item.key }}
+    dest: '/etc/powerdns/db.{{ item.key }}'
     mode: 0644
     owner: root
     group: root
-  with_dict: powerdns_recursor_domain
+  with_dict: '{{ powerdns_recursor_domain }}'
   register: pdns_zone_domain
   tags:
     - powerdns
