@@ -21,6 +21,7 @@
   register: default
   tags:
     - dhcp-isc
+    - dhcp-isc-config
 
 
 - name: Configure dhcp service
@@ -34,6 +35,7 @@
   register: config
   tags:
     - dhcp-isc
+    - dhcp-isc-config
 
 
 - name: service restarted
@@ -43,3 +45,4 @@
   when: default.changed or config.changed
   tags:
     - dhcp-isc
+    - dhcp-isc-config
