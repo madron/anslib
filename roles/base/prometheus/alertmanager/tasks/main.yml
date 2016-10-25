@@ -20,17 +20,6 @@
     - prometheus-alertmanager
 
 
-- name: create iptables directory
-  file:
-    path: '/etc/iptables-docker/{{ prometheus_alertmanager_container }}'
-    state: directory
-    mode: 0700
-    owner: root
-    group: root
-  tags:
-    - prometheus-alertmanager
-
-
 - name: pull prometheus server image
   command: 'docker pull {{ prometheus_alertmanager_image }}'
   when: docker_image_download
@@ -48,19 +37,6 @@
     group: root
     backup: yes
   register: config
-  tags:
-    - prometheus-alertmanager
-
-
-- name: iptables rules file
-  template:
-    src: templates/docker-iptables-rules
-    dest: '/etc/iptables-docker/{{ prometheus_alertmanager_container }}/rules'
-    mode: 0700
-    owner: root
-    group: root
-    backup: yes
-  register: iptables
   tags:
     - prometheus-alertmanager
 
@@ -91,12 +67,5 @@
   service:
     name: '{{ prometheus_alertmanager_service }}'
     state: started
-  tags:
-    - prometheus-alertmanager
-
-
-- name: reload iptables rules file
-  command: 'docker exec --user root {{ prometheus_alertmanager_container }} /etc/docker-iptables/rules'
-  when: iptables.changed
   tags:
     - prometheus-alertmanager
