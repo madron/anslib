@@ -5,7 +5,7 @@
     mode: 0755
     owner: root
     group: root
-  with_items: mounts
+  with_items: '{{ mounts }}'
   tags:
     - mount
 
@@ -19,6 +19,6 @@
     dump: '{{ item.dump|default(0) }}'
     passno: '{{ item.passno|default(2) }}'
     opts: '{{ item.opts|default("defaults") }}'
-  with_items: mounts
+  with_items: '{{ mounts }}'
   tags:
     - mount

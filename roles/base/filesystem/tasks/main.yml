@@ -3,6 +3,6 @@
     dev: '{{ item.dev }}'
     fstype: '{{ item.fstype }}'
     opts: '{{ item.opts|default() }}'
-  with_items: filesystems
+  with_items: '{{ filesystems }}'
   tags:
     - filesystem
