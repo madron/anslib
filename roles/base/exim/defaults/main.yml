@@ -1,9 +1,11 @@
+port: 25
+
 exim_mailname: hostname.example.com
 
-exim_trusted_networks: {
+exim_trusted_networks: [
   "127.0.0.1/8",
   "172.17.0.0/24",
- }
+ ]
 
 
 docker_image_download: false
@@ -42,7 +44,7 @@ docker_image_download: false
 
 ### Test
 # $ telnet {smtp_domain_name} {port_number}
-# hello velanapps.com
+# helo velanapps.com
 # mail from:<test@velanapps.com>
 # rcpt to:<to_email@velanapps.com>
 # data

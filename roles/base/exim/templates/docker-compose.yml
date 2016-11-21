@@ -22,3 +22,5 @@ services:
 {% if exim_ses_region is defined %}      - SES_REGION={{ exim_ses_region }}{% endif %}
     volumes:
       - /etc/container/{{ project }}:/home/eximtls:ro
+    ports:
+      - "0.0.0.0:{{ port }}:25/tcp"
