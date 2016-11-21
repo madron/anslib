@@ -1,0 +1,13 @@
+[Unit]
+Description={{ project }} containers
+After=docker.service
+
+[Service]
+Restart=always
+RestartSec=10
+ExecStartPre=/usr/local/bin/docker-compose -p {{ project }} -f /etc/systemd/system/{{ service }}.yml down
+ExecStart=/usr/local/bin/docker-compose -p {{ project }} -f /etc/systemd/system/{{ service }}.yml up
+ExecStop=/usr/local/bin/docker-compose -p {{ project }} -f /etc/systemd/system/{{ service }}.yml down
+
+[Install]
+WantedBy=default.target

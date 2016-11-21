@@ -1,0 +1,86 @@
+- name: set variables
+  set_fact:
+    image: giovannimorlini/exim
+    project: exim
+    service: dck_exim
+  tags:
+    - exim
+
+
+- name: create etc dir
+  file:
+    path: '/etc/container/{{ project }}'
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  when: (exim_tls_key is defined) and (exim_tls_certificate is defined)
+  tags:
+    - exim
+
+
+- name: copy etc files
+  copy:
+    src: files/
+    dest: '/etc/container/{{ project }}/'
+  when: (exim_tls_key is defined) and (exim_tls_certificate is defined)
+  tags:
+    - exim
+
+
+- name: docker-compose file
+  template:
+    src: docker-compose.yml
+    dest: '/etc/systemd/system/{{ service }}.yml'
+    mode: 0644
+    owner: root
+    group: root
+  register: compose
+  tags:
+    - exim
+
+
+- name: pull docker images
+  command: 'docker-compose -p {{ project }} -f /etc/systemd/system/{{ service }}.yml pull'
+  when: docker_image_download
+  tags:
+    - exim
+
+
+- name: systemd file
+  template:
+    src: systemd.service
+    dest: '/etc/systemd/system/{{ service }}.service'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: service_mgr
+  tags:
+    - exim
+
+
+- name: systemctl daemon-reload
+  command: systemctl daemon-reload
+  when: service_mgr.changed
+  tags:
+    - exim
+
+
+- name: restart service
+  service:
+    name: '{{ service }}'
+    state: restarted
+  when: compose.changed or service_mgr.changed
+  register: restart
+  tags:
+    - exim
+
+
+- name: start service
+  service:
+    name: '{{ service }}'
+    state: started
+  register: start
+  tags:
+    - exim

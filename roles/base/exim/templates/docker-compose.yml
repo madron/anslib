@@ -1,0 +1,24 @@
+version: '2'
+
+services:
+  server:
+    image: {{ image }}
+    network_mode: default
+    environment:
+      - MAILNAME={{ exim_mailname }}
+      - RELAY_NETWORKS={{ exim_trusted_networks | join(':') }}
+{% if exim_tls_key is defined %}      - KEY_PATH=/home/eximtls/{{ exim_tls_key }}{% endif %}
+{% if exim_tls_certificate is defined %}      - CERTIFICATE_PATH=/home/eximtls/{{ exim_tls_certificate }}{% endif %}
+{% if exim_relay_domains is defined %}      - RELAY_DOMAINS={{ exim_relay_domains | join (' : ') }}{% endif %}
+{% if exim_smarthost_address is defined %}      - SMARTHOST_ADDRESS={{ exim_smarthost_address }}{% endif %}
+{% if exim_smarthost_port is defined %}      - SMARTHOST_PORT={{ exim_smarthost_port }}{% endif %}
+{% if exim_smarthost_user is defined %}      - SMARTHOST_USER={{ exim_smarthost_user }}{% endif %}
+{% if exim_smarthost_password is defined %}      - SMARTHOST_PASSWORD={{ exim_smarthost_password }}{% endif %}
+{% if exim_smarthost_aliases is defined %}      - SMARTHOST_ALIASES={{ exim_smarthost_aliases }}{% endif %}
+{% if exim_gmail_user is defined %}      - GMAIL_USER={{ exim_gmail_user }}{% endif %}
+{% if exim_gmail_password is defined %}      - GMAIL_PASSWORD={{ exim_gmail_password }}{% endif %}
+{% if exim_ses_user is defined %}      - SES_USER={{ exim_ses_user }}{% endif %}
+{% if exim_ses_password is defined %}      - SES_PASSWORD={{ exim_ses_password }}{% endif %}
+{% if exim_ses_region is defined %}      - SES_REGION={{ exim_ses_region }}{% endif %}
+    volumes:
+      - /etc/container/{{ project }}:/home/eximtls:ro

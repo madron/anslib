@@ -1,0 +1,53 @@
+exim_mailname: hostname.example.com
+
+exim_trusted_networks: {
+  "127.0.0.1/8",
+  "172.17.0.0/24",
+ }
+
+
+docker_image_download: false
+
+#  OPTIONAL
+
+#exim_tls_key: keyfile
+#exim_tls_certificate: certificatefile
+
+
+#   USED AS A SECONDARY SMTP SERVER
+#exim_relay_domains: {
+#    "<domain1>",
+#    "<domain2>",
+# }
+
+
+#   USED AS A GMAIL RELAY
+#exim_gmail_user
+#exim_gmail_password
+
+
+#   USED AS AN AMAZON SES RELAY
+#exim_ses_user
+#exim_ses_password
+#exim_ses_region
+
+
+#   USED AS A GENERIC SMTP RELAY WITH SMARTHOST AUTHENTICATION
+#exim_smarthost_address: mail.mysmtp.com
+#exim_smarthost_port: 587
+#exim_smarthost_user: myuser
+#exim_smarthost_password: secret
+#exim_smarthost_aliases: *.mysmtp.com
+
+
+### Test
+# $ telnet {smtp_domain_name} {port_number}
+# hello velanapps.com
+# mail from:<test@velanapps.com>
+# rcpt to:<to_email@velanapps.com>
+# data
+# From: test@velanapps.com
+# Subject: test mail from command line
+#
+# this is a test
+# .
