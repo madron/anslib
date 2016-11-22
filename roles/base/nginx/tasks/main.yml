@@ -41,7 +41,7 @@
     mode: 0644
     owner: root
     group: root
-  with_items: nginx_ports
+  with_items: '{{ nginx_ports }}'
   notify: reload nginx
   tags:
     - nginx
@@ -56,7 +56,7 @@
     force: yes
     owner: root
     group: root
-  with_items: nginx_ports
+  with_items: '{{ nginx_ports }}'
   notify: reload nginx
   tags:
     - nginx
@@ -82,7 +82,7 @@
     mode: 0644
     owner: root
     group: root
-  with_items: nginx_certificates
+  with_items: '{{ nginx_certificates }}'
   notify: reload nginx
   tags:
     - nginx
@@ -96,7 +96,7 @@
     mode: 0644
     owner: root
     group: root
-  with_items: nginx_certificates
+  with_items: '{{ nginx_certificates }}'
   notify: reload nginx
   tags:
     - nginx
