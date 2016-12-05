@@ -38,6 +38,18 @@
     - dhcp-isc-config
 
 
+- name: Add custom configurations file
+  file:
+    path: /etc/dhcp/custom.conf
+    owner: root
+    group: root
+    mode: 0644
+    state: touch
+  tags:
+    - dhcp-isc
+    - dhcp-isc-config
+
+
 - name: service restarted
   service:
     name: isc-dhcp-server
