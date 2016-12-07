@@ -4,11 +4,20 @@ services:
   server:
     image: {{ image }}
     network_mode: default
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - /etc/container/{{ project }}:/etc/container/{{ project }}
+      - /var/lib/iptables/debian-jessie:/iptables:ro
+      - /etc/iptables-docker/{{ project }}:/etc/docker-iptables
+    ports:
+      - "25:25"
     environment:
       - MAILNAME={{ exim_mailname }}
       - RELAY_NETWORKS={{ exim_trusted_networks | join(':') }}
-{% if exim_tls_key is defined %}      - KEY_PATH=/home/eximtls/{{ exim_tls_key }}{% endif %}
-{% if exim_tls_certificate is defined %}      - CERTIFICATE_PATH=/home/eximtls/{{ exim_tls_certificate }}{% endif %}
+{% if exim_users_auth is defined %}      - PASSWORD_PATH=/etc/container/{{ project }}/passwd{% endif %}
+{% if exim_tls_key is defined %}      - KEY_PATH=/etc/container/{{ project }}/{{ exim_tls_key }}{% endif %}
+{% if exim_tls_certificate is defined %}      - CERTIFICATE_PATH=/etc/container/{{ project }}/{{ exim_tls_certificate }}{% endif %}
 {% if exim_relay_domains is defined %}      - RELAY_DOMAINS={{ exim_relay_domains | join (' : ') }}{% endif %}
 {% if exim_smarthost_address is defined %}      - SMARTHOST_ADDRESS={{ exim_smarthost_address }}{% endif %}
 {% if exim_smarthost_port is defined %}      - SMARTHOST_PORT={{ exim_smarthost_port }}{% endif %}
@@ -20,7 +29,3 @@ services:
 {% if exim_ses_user is defined %}      - SES_USER={{ exim_ses_user }}{% endif %}
 {% if exim_ses_password is defined %}      - SES_PASSWORD={{ exim_ses_password }}{% endif %}
 {% if exim_ses_region is defined %}      - SES_REGION={{ exim_ses_region }}{% endif %}
-    volumes:
-      - /etc/container/{{ project }}:/home/eximtls:ro
-    ports:
-      - "0.0.0.0:{{ port }}:25/tcp"

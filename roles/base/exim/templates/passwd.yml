@@ -1,0 +1,22 @@
+#########################################################################
+#    /etc/exim4/passwd: Client Passwords for Mail Submission to Exim    #
+#########################################################################
+
+# This file allows a user to authenticate a mail submission to the Exim SMTP.
+# Each line of this file should contain a "user:password:comment" field.
+# You can use the following Perl command line to generate the password:
+#   perl -MMIME::Base64 -e 'print encode_base64("\000username\000mysecret")'
+
+
+####################
+#   System users   #
+####################
+
+###################
+#   Local users   #
+###################
+{% set count = 0 %}
+{% for host in exim_users_auth %}
+{{ host.name }}:{{ host.password }}:user{{ count }}
+{% set count = count +1 %}
+{% endfor %}

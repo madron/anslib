@@ -7,6 +7,8 @@ Restart=always
 RestartSec=10
 ExecStartPre=/usr/local/bin/docker-compose -p {{ project }} -f /etc/systemd/system/{{ service }}.yml down
 ExecStart=/usr/local/bin/docker-compose -p {{ project }} -f /etc/systemd/system/{{ service }}.yml up
+ExecStartPost=/bin/sleep 10
+ExecStartPost=/usr/local/bin/docker-compose -p {{ project }} -f /etc/systemd/system/{{ service }}.yml exec -T server /etc/docker-iptables/rules
 ExecStop=/usr/local/bin/docker-compose -p {{ project }} -f /etc/systemd/system/{{ service }}.yml down
 
 [Install]

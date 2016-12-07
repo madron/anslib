@@ -1,16 +1,21 @@
-port: 25
 
+exim_image: quay.io/mtek/exim:3
+exim_project: exim
+exim_service: dck_exim
+
+docker_image_download: true
 exim_mailname: hostname.example.com
 
-exim_trusted_networks: [
+exim_trusted_networks: {
   "127.0.0.1/8",
-  "172.17.0.0/24",
- ]
+ }
 
-
-docker_image_download: false
 
 #  OPTIONAL
+
+exim_users_auth: [
+        { name: username, password: mysecret, },
+      ]
 
 #exim_tls_key: keyfile
 #exim_tls_certificate: certificatefile
@@ -44,7 +49,7 @@ docker_image_download: false
 
 ### Test
 # $ telnet {smtp_domain_name} {port_number}
-# helo velanapps.com
+# hello velanapps.com
 # mail from:<test@velanapps.com>
 # rcpt to:<to_email@velanapps.com>
 # data
@@ -52,4 +57,21 @@ docker_image_download: false
 # Subject: test mail from command line
 #
 # this is a test
+# .
+
+### Notes
+# If the password option is set, beware that it will work only outside of the trusted networks.
+# the password must be delivered as a Base64, disposed as "[null]<username>[null]<password>".
+# to test it:
+# perl -MMIME::Base64 -e 'print encode_base64("\000username\000mysecret")' -> to get the Base64 credentials
+# $ telnet {smtp_domain_name} {port_number}
+# ehlo velanapps.com
+# AUTH PLAIN AHVzZXJuYW1lAG15c2VjcmV0AHVzZXJuYW1lAG15c2VjcmV0
+# mail from:<test@velanapps.com>
+# rcpt to:<to_email@velanapps.com>
+# data
+# From: test@velanapps.com
+# Subject: test mail from command line
+#
+# this is a password test
 # .
