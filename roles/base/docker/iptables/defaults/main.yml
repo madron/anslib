@@ -1,3 +1,4 @@
 docker_iptables_versions:
   - debian-jessie
   - debian-wheezy
+  - alpine-3.4
