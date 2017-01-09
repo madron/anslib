@@ -1,3 +1,20 @@
+- name: set variables
+  set_fact:
+    docker_engine_package_version: '{{ docker_engine_version }}-0~{{ ansible_lsb.codename }}'
+  tags:
+    - docker
+    - docker-engine
+
+
+- name: set variables new versions
+  set_fact:
+    docker_engine_package_version: '{{ docker_engine_version }}-0~{{ ansible_lsb.id|lower() }}-{{ ansible_lsb.codename }}'
+  when: docker_engine_version >= '1.12.4'
+  tags:
+    - docker
+    - docker-engine
+
+
 - name: repository key
   apt_key:
     url: https://apt.dockerproject.org/gpg
@@ -29,7 +46,7 @@
 
 - name: docker-engine package
   apt:
-    name: 'docker-engine={{ docker_engine_version }}-0~{{ ansible_lsb.codename }}'
+    name: 'docker-engine={{ docker_engine_package_version }}'
     state: present
     update_cache: '{{ docker_engine_update_cache }}'
     force: '{{ docker_engine_force_install }}'
