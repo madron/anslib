@@ -56,23 +56,59 @@
     - exim
 
 
-- name: docker-compose file
+- name: docker-compose file upstart
+  template:
+    src: docker-compose.yml
+    dest: '/etc/init/{{ service }}.yml'
+    mode: 0644
+    owner: root
+    group: root
+  when: ansible_service_mgr == 'upstart'
+  register: compose
+  tags:
+    - exim
+
+
+- name: docker-compose file systemd
   template:
     src: docker-compose.yml
     dest: '/etc/systemd/system/{{ service }}.yml'
     mode: 0644
     owner: root
     group: root
+  when: ansible_service_mgr == 'systemd'
   register: compose
   tags:
     - exim
 
 
-- name: docker compose pull
-  command: 'docker-compose -p {{ project }} -f /etc/systemd/system/{{ service }}.yml pull'
-  when: docker_image_download
+- name: docker compose pull upstart
+  command: 'docker-compose -p {{ project }} -f /etc/init/{{ service }}.yml pull'
+  when: docker_image_download and ansible_service_mgr == 'upstart'
   tags:
     - exim
+
+
+- name: docker compose pull systemd
+  command: 'docker-compose -p {{ project }} -f /etc/systemd/system/{{ service }}.yml pull'
+  when: docker_image_download and ansible_service_mgr == 'systemd'
+  tags:
+    - exim
+
+
+- name: upstart file
+  template:
+    src: upstart.conf
+    dest: '/etc/init/{{ service }}.conf'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  when: ansible_service_mgr == 'upstart'
+  register: service_mgr
+  tags:
+    - exim
+
 
 
 - name: systemd file
@@ -83,6 +119,7 @@
     owner: root
     group: root
     backup: yes
+  when: ansible_service_mgr == 'systemd'
   register: service_mgr
   tags:
     - exim
@@ -90,7 +127,7 @@
 
 - name: systemctl daemon-reload
   command: systemctl daemon-reload
-  when: service_mgr.changed
+  when: ansible_service_mgr == 'systemd' and service_mgr.changed
   tags:
     - exim
 
