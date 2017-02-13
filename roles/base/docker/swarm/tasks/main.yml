@@ -18,9 +18,27 @@
     - docker-swarm
 
 
-- name: tokens
+- name: collect token manager
+  command:  docker swarm join-token manager
+  register: token_manager
+  when: docker_swarm_role == 'leader' and ( node_list.stdout_lines|length() == 1 or node_list.rc == 1 )
+  tags:
+    - docker
+    - docker-swarm
+
+
+- name: collect token worker
+  command:  docker swarm join-token worker
+  register: token_worker
+  when: docker_swarm_role == 'leader' and ( node_list.stdout_lines|length() == 1 or node_list.rc == 1 )
+  tags:
+    - docker
+    - docker-swarm
+
+
+- name: show tokens
   debug:
-    msg: '{{ swarm_init.stdout_lines }}'
+    msg: '{{ token_manager.stdout_lines }} + {{ token_worker.stdout_lines }}'
   when: docker_swarm_role == 'leader' and ( node_list.stdout_lines|length() == 1 or node_list.rc == 1 )
   tags:
     - docker
