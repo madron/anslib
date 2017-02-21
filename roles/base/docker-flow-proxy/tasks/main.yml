@@ -1,0 +1,80 @@
+- name: set variables
+  set_fact:
+    project: proxy
+  tags:
+    - docker-flow-proxy
+
+
+- name: docker-compose file
+  template:
+    src: docker-compose.yml
+    dest: /etc/systemd/system/{{ project }}.yml
+    mode: 0644
+    owner: root
+    group: root
+  register: compose
+  tags:
+    - docker-flow-proxy
+
+
+- name: systemd file
+  template:
+    src: systemd.service
+    dest: '/etc/systemd/system/{{ project }}.service'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: service_mgr
+  tags:
+    - docker-flow-proxy
+
+
+- name: systemctl daemon-reload
+  command: systemctl daemon-reload
+  when: service_mgr.changed
+  tags:
+    - docker-flow-proxy
+
+
+- name: restart service
+  service:
+    name: '{{ project }}'
+    enabled: yes
+    state: restarted
+  when: compose.changed or service_mgr.changed
+  register: restart
+  tags:
+    - docker-flow-proxy
+
+
+- name: start service
+  service:
+    name: '{{ project }}'
+    enabled: yes
+    state: started
+  register: start
+  tags:
+    - docker-flow-proxy
+
+
+- name: force restart - stop
+  service:
+    name: '{{ project }}'
+    enabled: yes
+    state: stopped
+  when: docker_flow_proxy_restart
+  tags:
+    - docker-flow-proxy
+    - docker-flow-proxy-restart
+
+
+- name: force restart - start
+  service:
+    name: '{{ project }}'
+    enabled: yes
+    state: started
+  register: force_restart
+  tags:
+    - docker-flow-proxy
+    - docker-flow-proxy-restart

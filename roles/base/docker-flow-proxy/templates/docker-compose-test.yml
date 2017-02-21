@@ -1,0 +1,39 @@
+version: '3.1'
+
+services:
+  proxy:
+    image: vfarcic/docker-flow-proxy:latest
+    environment:
+      - MODE=swarm
+    ports:
+      - "0.0.0.0:80:80/tcp"
+      - "0.0.0.0:443:443/tcp"
+    networks:
+     - global_proxy
+     - private
+    deploy:
+      replicas: 1
+
+  listener:
+    image: vfarcic/docker-flow-swarm-listener:latest
+    environment:
+      - DF_NOTIFY_CREATE_SERVICE_URL=http://proxy:8080/v1/docker-flow-proxy/reconfigure
+      - DF_NOTIFY_REMOVE_SERVICE_URL=http://proxy:8080/v1/docker-flow-proxy/remove
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - proxy
+    networks:
+     - private
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role==manager
+
+
+networks:
+  global_proxy:
+    external: true
+  private:
+    driver: overlay

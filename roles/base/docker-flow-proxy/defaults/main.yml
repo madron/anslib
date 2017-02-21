@@ -1,0 +1,6 @@
+proxy_version: latest
+listener_version: latest
+http_port: 80
+https_port: 443
+
+docker_flow_proxy_restart: false

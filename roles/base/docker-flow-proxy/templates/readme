@@ -1,0 +1,10 @@
+docker network create -d overlay global_proxy
+
+docker stack deploy -c docker-compose-test.yml proxy
+
+docker service create --name nginx1 -l com.df.notify=true -l com.df.servicePath=/demo1 -l com.df.port=80 --network global_proxy nginx:alpine
+docker service create --name nginx2 -l com.df.notify=true -l com.df.servicePath=/demo2 -l com.df.port=80 --network global_proxy nginx:alpine
+
+docker service rm nginx1
+docker service rm nginx2
+docker stack rm proxy
