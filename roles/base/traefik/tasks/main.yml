@@ -1,0 +1,73 @@
+- name: docker-compose file
+  template:
+    src: docker-compose.yml
+    dest: /etc/systemd/system/{{ stack }}.yml
+    mode: 0644
+    owner: root
+    group: root
+  register: compose
+  tags:
+    - traefik
+
+
+- name: systemd file
+  template:
+    src: systemd.service
+    dest: '/etc/systemd/system/{{ stack }}.service'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: service_mgr
+  tags:
+    - traefik
+
+
+- name: systemctl daemon-reload
+  command: systemctl daemon-reload
+  when: service_mgr.changed
+  tags:
+    - traefik
+
+
+- name: restart service
+  service:
+    name: '{{ stack }}'
+    enabled: yes
+    state: restarted
+  when: compose.changed or service_mgr.changed
+  register: restart
+  tags:
+    - traefik
+
+
+- name: start service
+  service:
+    name: '{{ traefik }}'
+    enabled: yes
+    state: started
+  register: start
+  tags:
+    - traefik
+
+
+- name: force restart - stop
+  service:
+    name: '{{ traefik }}'
+    enabled: yes
+    state: stopped
+  when: traefik_restart
+  tags:
+    - traefik
+    - traefik-restart
+
+
+- name: force restart - start
+  service:
+    name: '{{ traefik }}'
+    enabled: yes
+    state: started
+  register: force_restart
+  tags:
+    - traefik
+    - traefik-restart

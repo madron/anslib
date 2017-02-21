@@ -1,0 +1,24 @@
+version: '3.1'
+
+services:
+  proxy:
+    image: traefik:{{ version }}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /dev/null:/traefik.toml
+    ports:
+      - "0.0.0.0:{{ http_port }}:80/tcp"
+      - "0.0.0.0:{{ https_port }}:443/tcp"
+    networks:
+     - {{ traefik_network }}
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role==manager
+    command: --docker --docker.swarmmode --docker.domain=localhost --docker.watch --web
+
+
+networks:
+  {{ traefik_network }}:
+    external: true

@@ -1,0 +1,12 @@
+[Unit]
+Description={{ stack }} stack
+After=docker.service
+
+[Service]
+Type=forking
+RemainAfterExit=yes
+ExecStart=/usr/bin/docker stack deploy -c /etc/systemd/system/{{ stack }}.yml {{ stack }}
+ExecStop=/usr/bin/docker stack rm {{ stack }}
+
+[Install]
+WantedBy=default.target

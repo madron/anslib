@@ -1,0 +1,8 @@
+stack: traefik
+version: latest
+http_port: 80
+https_port: 443
+
+traefik_network: global_proxy
+
+traefik_restart: false

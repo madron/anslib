@@ -1,0 +1,22 @@
+version: '3.1'
+
+services:
+  proxy:
+    image: traefik:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /dev/null:/traefik.toml
+    ports:
+      - "0.0.0.0:80:80/tcp"
+      - "0.0.0.0:443:443/tcp"
+      - "0.0.0.0:8080:8080/tcp"
+    networks:
+     - global_proxy
+    deploy:
+      replicas: 1
+    command: --docker --docker.swarmmode --docker.domain=localhost --docker.watch --web --logLevel=DEBUG
+
+
+networks:
+  global_proxy:
+    external: true
