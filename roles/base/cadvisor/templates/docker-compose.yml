@@ -4,6 +4,7 @@ services:
   server:
     container_name: {{ project }}
     image: google/cadvisor:{{ version }}
+    network_mode: default
     restart: always
     volumes:
       - /var/run:/var/run:rw
