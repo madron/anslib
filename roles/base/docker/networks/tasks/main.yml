@@ -1,0 +1,9 @@
+- name: create network
+  debug:
+    msg: 'docker_network does not support overlay network. Please create manually: docker network create --driver {{ item.driver|default("bridge") }}{% if item.encrypted|default(false) %} --opt encrypted=1{% endif %} {{ item.name }} '
+    # name: '{{ item.name }}'
+    # driver: '{{ item.driver|default("bridge") }}'
+    # driver_options: '{{ item.driver_options|default({}) }}'
+  with_items: '{{ docker_networks }}'
+  tags:
+    - docker-networks
