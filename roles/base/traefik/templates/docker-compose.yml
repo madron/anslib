@@ -6,19 +6,28 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /dev/null:/traefik.toml
+    command: {{ traefik_options }}
+{% if traefik_global_networks %}
+    networks:
+{% for network in traefik_global_networks %}
+      - {{ network }}
+{% endfor %}
+{% endif %}
     ports:
       - "0.0.0.0:{{ http_port }}:80/tcp"
       - "0.0.0.0:{{ https_port }}:443/tcp"
-    networks:
-     - {{ traefik_network }}
+      - "0.0.0.0:7080:8080/tcp"
     deploy:
-      replicas: 1
+      replicas: {{ replicas }}
       placement:
         constraints:
-          - node.role==manager
-    command: --docker --docker.swarmmode --docker.domain=localhost --docker.watch --web
+{% for constraint in traefik_constraints %}
+          - {{ constraint }}
+{% endfor %}
 
 
 networks:
-  {{ traefik_network }}:
+{% for network in traefik_global_networks %}
+  {{ network }}:
     external: true
+{% endfor %}

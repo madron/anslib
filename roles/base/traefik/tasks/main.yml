@@ -1,3 +1,11 @@
+- name: set variables
+  set_fact:
+    traefik_constraints: '["node.role==manager"] + {{ constraints }}'
+    service: dck-sentry
+  tags:
+    - traefik
+
+
 - name: docker-compose file
   template:
     src: docker-compose.yml
@@ -43,7 +51,7 @@
 
 - name: start service
   service:
-    name: '{{ traefik }}'
+    name: '{{ stack }}'
     enabled: yes
     state: started
   register: start
@@ -53,7 +61,7 @@
 
 - name: force restart - stop
   service:
-    name: '{{ traefik }}'
+    name: '{{ stack }}'
     enabled: yes
     state: stopped
   when: traefik_restart
@@ -64,7 +72,7 @@
 
 - name: force restart - start
   service:
-    name: '{{ traefik }}'
+    name: '{{ stack }}'
     enabled: yes
     state: started
   register: force_restart

@@ -2,19 +2,16 @@ version: '3.1'
 
 services:
   proxy:
-    image: traefik:latest
+    image: traefik:v1.2.0-rc1
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /dev/null:/traefik.toml
-    ports:
-      - "0.0.0.0:80:80/tcp"
-      - "0.0.0.0:443:443/tcp"
-      - "0.0.0.0:8080:8080/tcp"
+    command: --web --web.metrics.prometheus --docker --docker.swarmmode --docker.watch --docker.domain=docker.localhost --logLevel=DEBUG
     networks:
-     - global_proxy
-    deploy:
-      replicas: 1
-    command: --docker --docker.swarmmode --docker.domain=localhost --docker.watch --web --logLevel=DEBUG
+      - global_proxy
+    ports:
+      - "80:80"
+      - "8080:8080"
 
 
 networks:

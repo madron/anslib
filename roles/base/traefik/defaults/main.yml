@@ -2,7 +2,13 @@ stack: traefik
 version: latest
 http_port: 80
 https_port: 443
+replicas: 1
+constraints: []
 
-traefik_network: global_proxy
+traefik_options: "--web --web.metrics.prometheus --docker --docker.swarmmode --docker.watch --logLevel=INFO"
+
+traefik_global_networks:
+  - global_proxy
+  - global_monitor
 
 traefik_restart: false
