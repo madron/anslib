@@ -2,6 +2,6 @@
   apt:
     name: '{{ item }}'
     state: latest
-  with_items: mercurial_packages
+  with_items: '{{ mercurial_packages }}'
   tags:
     - mercurial
