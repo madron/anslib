@@ -1,0 +1,11 @@
+stack: haproxy
+version: latest
+http_port: 80
+https_port: 443
+replicas: 1
+constraints: []
+
+global_networks:
+  - proxy
+
+haproxy_restart: false

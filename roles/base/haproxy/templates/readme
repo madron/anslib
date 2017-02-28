@@ -1,0 +1,13 @@
+docker network create -d overlay global_proxy
+
+docker stack deploy -c docker-compose-test.yml haproxy
+
+docker service create --name web1 --label haproxy.port=80 -l haproxy.frontend.rule=Host:local1 --network global_proxy katacoda/docker-http-server
+docker service create --name web2 --label haproxy.port=80 -l haproxy.frontend.rule=Host:local2 --network global_proxy katacoda/docker-http-server:v2
+
+curl --header 'Host: local1' http://localhost
+curl --header 'Host: local2' http://localhost
+
+
+docker service rm nginx1
+docker stack rm haproxy

@@ -1,0 +1,81 @@
+- name: set variables
+  set_fact:
+    haproxy_constraints: '["node.role==manager"] + {{ constraints }}'
+    service: dck-sentry
+  tags:
+    - haproxy
+
+
+- name: docker-compose file
+  template:
+    src: docker-compose.yml
+    dest: /etc/systemd/system/{{ stack }}.yml
+    mode: 0644
+    owner: root
+    group: root
+  register: compose
+  tags:
+    - haproxy
+
+
+- name: systemd file
+  template:
+    src: systemd.service
+    dest: '/etc/systemd/system/{{ stack }}.service'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: service_mgr
+  tags:
+    - haproxy
+
+
+- name: systemctl daemon-reload
+  command: systemctl daemon-reload
+  when: service_mgr.changed
+  tags:
+    - haproxy
+
+
+- name: restart service
+  service:
+    name: '{{ stack }}'
+    enabled: yes
+    state: restarted
+  when: compose.changed or service_mgr.changed
+  register: restart
+  tags:
+    - haproxy
+
+
+- name: start service
+  service:
+    name: '{{ stack }}'
+    enabled: yes
+    state: started
+  register: start
+  tags:
+    - haproxy
+
+
+- name: force restart - stop
+  service:
+    name: '{{ stack }}'
+    enabled: yes
+    state: stopped
+  when: haproxy_restart
+  tags:
+    - haproxy
+    - haproxy-restart
+
+
+- name: force restart - start
+  service:
+    name: '{{ stack }}'
+    enabled: yes
+    state: started
+  register: force_restart
+  tags:
+    - haproxy
+    - haproxy-restart
