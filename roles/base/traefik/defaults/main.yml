@@ -4,6 +4,8 @@ http_port: 80
 https_port: 443
 replicas: 1
 constraints: []
+publish_host: ''
+publish_network: ''
 
 traefik_options: "--web --web.metrics.prometheus --docker --docker.swarmmode --docker.watch --logLevel=INFO --accessLogsFile=/tmp/access.log"
 
