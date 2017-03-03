@@ -1,9 +1,29 @@
 - name: set variables
   set_fact:
-    haproxy_constraints: '["node.role==manager"] + {{ constraints }}'
-    service: dck-sentry
+    haproxy_config: "{{ lookup('template', 'haproxy.conf') }}"
   tags:
     - haproxy
+    - haproxy-config
+
+
+- name: environment file
+  template:
+    src: environment.conf
+    dest: /etc/systemd/system/{{ stack }}.env
+    mode: 0644
+    owner: root
+    group: root
+  register: config
+  tags:
+    - haproxy
+    - haproxy-config
+
+
+- name: docker-compose file fake
+  set_fact:
+  register: compose
+  tags:
+    - haproxy-config
 
 
 - name: docker-compose file
@@ -16,6 +36,14 @@
   register: compose
   tags:
     - haproxy
+
+
+- name: systemd file fake
+  set_fact:
+  register: service_mgr
+  tags:
+    - haproxy
+    - haproxy-config
 
 
 - name: systemd file
@@ -57,25 +85,12 @@
   register: start
   tags:
     - haproxy
+    - haproxy-config
 
 
-- name: force restart - stop
-  service:
-    name: '{{ stack }}'
-    enabled: yes
-    state: stopped
-  when: haproxy_restart
+- name: rolling update
+  command: 'docker service update --env-add HAPROXY_CONFIG={{ haproxy_config | b64encode }} {{ stack }}_server'
+  when: config.changed
   tags:
     - haproxy
-    - haproxy-restart
-
-
-- name: force restart - start
-  service:
-    name: '{{ stack }}'
-    enabled: yes
-    state: started
-  register: force_restart
-  tags:
-    - haproxy
-    - haproxy-restart
+    - haproxy-config

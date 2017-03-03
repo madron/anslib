@@ -7,5 +7,3 @@ constraints: []
 
 global_networks:
   - proxy
-
-haproxy_restart: false

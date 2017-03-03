@@ -2,9 +2,8 @@ version: '3.1'
 
 services:
   server:
-    image: dockercloud/haproxy:{{ version }}
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+    image: quay.io/madron/haproxy:{{ version }}
+    env_file: /etc/systemd/system/{{ stack }}.env
     networks:
 {% for network in global_networks %}
       - {{ network }}
@@ -14,11 +13,13 @@ services:
       - "0.0.0.0:{{ https_port }}:443/tcp"
     deploy:
       replicas: {{ replicas }}
+{% if constraints %}
       placement:
         constraints:
-{% for constraint in haproxy_constraints %}
+{% for constraint in constraints %}
           - {{ constraint }}
 {% endfor %}
+{% endif %}
 
 
 networks:
