@@ -1,0 +1,64 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - restic
+
+
+- name: set variables
+  set_fact:
+    restic_zip_path: '/var/lib/ansible/restic/restic_{{ restic_version }}_linux_amd64.bz2'
+  tags:
+    - restic
+    - restic-config
+
+
+- name: create directories
+  file:
+    path: '{{ item }}'
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  with_items:
+    - /var/lib/ansible/restic
+  tags:
+    - restic
+
+
+- name: download
+  get_url:
+    url: 'https://github.com/restic/restic/releases/download/v{{ restic_version }}/restic_{{ restic_version }}_linux_amd64.bz2'
+    dest: '{{ restic_zip_path }}'
+    checksum: '{{ restic_checksum }}'
+    mode: 0644
+    owner: root
+    group: root
+  register: download
+  tags:
+    - restic
+    - restic-config
+
+
+- name: uncompress if changed
+  shell: 'bzcat {{ restic_zip_path }} > /usr/local/bin/restic'
+  when: download.changed
+  tags:
+    - restic
+
+
+- name: uncompress if missing
+  shell: 'bzcat {{ restic_zip_path }} > /usr/local/bin/restic'
+  args:
+    creates: /usr/local/bin/restic
+  tags:
+    - restic
+
+
+- name: file permissions
+  file:
+    path: /usr/local/bin/restic
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - restic
