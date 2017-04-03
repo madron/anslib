@@ -1,4 +1,4 @@
-- name: set variables
+- name: set version
   set_fact:
     docker_engine_package_version: '{{ docker_engine_version }}-0~{{ ansible_lsb.codename }}'
   tags:
@@ -6,10 +6,19 @@
     - docker-engine
 
 
-- name: set variables new versions
+- name: set version greater then 1.12.4
   set_fact:
     docker_engine_package_version: '{{ docker_engine_version }}-0~{{ ansible_lsb.id|lower() }}-{{ ansible_lsb.codename }}'
   when: docker_engine_version >= '1.12.4'
+  tags:
+    - docker
+    - docker-engine
+
+
+- name: set version greater then 1.13.9
+  set_fact:
+    docker_engine_package_version: '{{ docker_engine_version }}~ce-0~{{ ansible_lsb.id|lower() }}-{{ ansible_lsb.codename }}'
+  when: docker_engine_version >= '1.13.9'
   tags:
     - docker
     - docker-engine
