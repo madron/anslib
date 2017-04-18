@@ -22,27 +22,27 @@
     - docker-engine
 
 
-- name: docker-py latest
+- name: docker python latest
   pip:
-    name: docker-py
+    name: docker
     state: latest
-  when: docker_engine_py_version == 'latest'
+  when: docker_engine_python_version == 'latest'
   tags:
     - docker
     - docker-engine
-    - docker-engine-py
+    - docker-engine-python
 
 
-- name: docker-py version
+- name: docker python version
   pip:
-    name: docker-py
+    name: docker
     state: present
-    version: '{{ docker_engine_py_version }}'
-  when: docker_engine_py_version and not docker_engine_py_version == 'latest'
+    version: '{{ docker_engine_python_version }}'
+  when: docker_engine_python_version and not docker_engine_python_version == 'latest'
   tags:
     - docker
     - docker-engine
-    - docker-engine-py
+    - docker-engine-python
 
 
 - name: accounts

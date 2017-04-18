@@ -14,7 +14,7 @@ docker_engine_live_restore: ''
 
 docker_engine_opts: ''
 
-docker_engine_py_version: latest
+docker_engine_python_version: latest
 
 # docker_engine_registry_mirror: http://mirror.example.com:5000
 
