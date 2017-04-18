@@ -3,3 +3,6 @@ docker_image_download: false
 prometheus_pushgateway_image: 'prom/pushgateway:latest'
 
 prometheus_pushgateway_port: 9091
+
+# Only log messages with the given severity or above. Valid levels: [debug, info, warn, error, fatal].
+prometheus_pushgateway_log_level: info
