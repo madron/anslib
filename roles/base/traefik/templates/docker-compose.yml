@@ -13,9 +13,6 @@ services:
       - {{ network }}
 {% endfor %}
 {% endif %}
-    ports:
-      - "0.0.0.0:{{ http_port }}:80/tcp"
-      - "0.0.0.0:{{ https_port }}:443/tcp"
     deploy:
       replicas: {{ replicas }}
       placement:
@@ -23,12 +20,6 @@ services:
 {% for constraint in traefik_constraints %}
           - {{ constraint }}
 {% endfor %}
-{% if publish_host %}
-      labels:
-        - "traefik.port=8080"
-        - "traefik.docker.network={{ publish_network }}"
-        - "traefik.frontend.rule=Host:{{ publish_host }}"
-{% endif %}
 
 
 networks:
