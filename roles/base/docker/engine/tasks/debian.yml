@@ -9,7 +9,7 @@
 - name: set version greater then 1.12.4
   set_fact:
     docker_engine_package_version: '{{ docker_engine_version }}-0~{{ ansible_lsb.id|lower() }}-{{ ansible_lsb.codename }}'
-  when: docker_engine_version >= '1.12.4'
+  when: docker_engine_version | version_compare('1.12.4', '>=', strict=True)
   tags:
     - docker
     - docker-engine
@@ -18,7 +18,7 @@
 - name: set version greater then 1.13.9
   set_fact:
     docker_engine_package_version: '{{ docker_engine_version }}~ce-0~{{ ansible_lsb.id|lower() }}-{{ ansible_lsb.codename }}'
-  when: docker_engine_version >= '1.13.9'
+  when: docker_engine_version | version_compare('1.13.9', '>=', strict=True)
   tags:
     - docker
     - docker-engine
