@@ -1,0 +1,9 @@
+zfspool: []
+# zfspool:
+#   - {
+#         name: poolname,
+#         devs: [
+#             '/dev/sdb',
+#         ],
+#         opts: '-f',
+#     }

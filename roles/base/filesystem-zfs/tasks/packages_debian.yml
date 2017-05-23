@@ -1,0 +1,18 @@
+
+- name: required repository
+  apt_repository:
+    repo: '{{ item }}'
+  with_items: 
+    - "{{ zfs_repository }}"
+  tags:
+    - filesystem-zfs
+
+
+- name: required package
+  apt:
+    name: '{{ item }}'
+    state: latest
+  with_items: 
+    - "{{ zfs_packages }}"
+  tags:
+    - filesystem-zfs

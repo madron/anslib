@@ -1,0 +1,26 @@
+
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - filesystem-zfs
+
+
+- include: packages_debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - filesystem-zfs
+
+
+- name: enable zfs
+  command: "/sbin/modprobe zfs"
+  tags:
+     - filesystem-zfs
+
+
+- name: create pool 
+  command: zpool create {{ item.name }} {{ item.opts|default() }} {{ item.devs | join(' ') }}
+  with_items: 
+    - "{{ zfspool }}"
+  tags:
+    - filesystem-zfs
+

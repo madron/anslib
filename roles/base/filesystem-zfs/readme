@@ -1,0 +1,159 @@
+
+
+CREATE A POOL - included in the ansible role
+$ sudo zpool create <pool-name> <options> <targets>
+$ sudo zpool destroy <pool-name>
+
+<options>: -o       set filesystem proprieties (mountpoint, compression, ecc..)
+           -f       force the creation (when the device is empty)
+           -m       specify mountpoint (default /)
+           mirror   set mirror between two devices (striped mirror if more devices are specified)
+           raidz    set raid5
+           raidz2   set raid5 with 2 disk failures (raid6)
+           raidz3   set raid5 with 3 disk failures
+
+<targets>: devices or files (64 Mb minimum)
+
+
+
+
+ADD FUNCTIONALITIES TO A POOL
+$ sudo zpool add <pool-name> <options>
+
+<options>: log <target>     add a ZFS Intent Log, to speed up the write capabilities of a zfs raid. Used usually on ssd (-f if is empty)
+           cache <target>   add an additional layer of caching between memory and disk
+
+
+
+
+MULTIPLE FILESYSTEMS PER POOL
+$ sudo zfs create <pool-name>/<filesystem>
+$ sudo zfs set <option> <pool-name>/<filesystem>
+$ sudo zfs destroy <pool-name>/<filesystem>
+
+
+
+
+ZFS SNAPSHOTS
+create a snapshot
+$ sudo zfs snapshot [-r] <pool-name>@<snap-name>                             -r -> create a snapshot for all descendent filesystems
+$ sudo zfs snapshot <options> <pool-name>/<filesystem>@<snap-name>
+
+list snapshots
+$ sudo zfs list -t snapshot
+
+remove snapshots
+$ sudo zfs destroy <pool-name>/<filesystem>@<snap-name>
+
+restore/clone a snapshot
+$ sudo zfs clone <pool-original>/<filesystem>@<snap-name> <pool-clone>/<filesystem>@<snap-name>
+
+
+
+
+SAVE / RESTORE A SNAPSHOTS
+create a file
+$ sudo zfs send <pool-name>/<filesystem>@<snap-name> > <file-path>.zfs
+
+apply a file
+$ sudo zfs receive -F <pool-name>/<filesystem>@<snap-name> < <file-path>.zfs
+
+
+
+
+POOL SCRUBBING
+$ sudo zpool scrub <pool-name>           initiate a data integrity check
+$ sudo zpool status -v <pool-name>       check the status of the scrub
+
+
+
+
+SET SPECIFIC OPTIONS TO ZFS
+$ sudo zfs set <option> <pool-name>
+
+<options>:   compression=     set a compression (ex. gzip-9)
+                                   $ zfs get compressratio      -> to check the compression level
+             copies=          set more redundant copies of data to copy
+             dedup=on         will discard identical blocks, replacing them with references (save space but increase memory consumption)
+             [..]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EXAMPLE OF DATA RECOVERY
+
+$ sudo zpool create mypool mirror /dev/sdc /dev/sdd mirror /dev/sde /dev/sdf -f
+$ sudo zpool status
+  pool: mypool
+ state: ONLINE
+  scan: none requested
+config:
+
+        NAME        STATE     READ WRITE CKSUM
+        mypool      ONLINE       0     0     0
+          mirror-0  ONLINE       0     0     0
+            sdc     ONLINE       0     0     0
+            sdd     ONLINE       0     0     0
+          mirror-1  ONLINE       0     0     0
+            sde     ONLINE       0     0     0
+            sdf     ONLINE       0     0     0
+
+
+Now populate it with some data and check sum the data:
+$ dd if=/dev/urandom of=/mypool/random.dat bs=1M count=4096
+$ md5sum /mypool/random.dat
+f0ca5a6e2718b8c98c2e0fdabd83d943  /mypool/random.dat
+
+
+Now we simulate catastrophic data loss by overwriting one of the VDEV devices with zeros:
+$ sudo dd if=/dev/zero of=/dev/sde bs=1M count=8192
+
+
+And now initiate a scrub:
+$ sudo zpool scrub mypool
+
+
+And check the status:
+$ sudo zpool status
+  pool: mypool
+ state: ONLINE
+status: One or more devices has experienced an unrecoverable error.  An
+        attempt was made to correct the error.  Applications are unaffected.
+action: Determine if the device needs to be replaced, and clear the errors
+        using 'zpool clear' or replace the device with 'zpool replace'.
+   see: http://zfsonlinux.org/msg/ZFS-8000-9P
+  scan: scrub in progress since Tue May 12 17:34:53 2015
+    244M scanned out of 1.91G at 61.0M/s, 0h0m to go
+    115M repaired, 12.46% done
+config:
+
+        NAME        STATE     READ WRITE CKSUM
+        mypool      ONLINE       0     0     0
+          mirror-0  ONLINE       0     0     0
+            sdc     ONLINE       0     0     0
+            sdd     ONLINE       0     0     0
+          mirror-1  ONLINE       0     0     0
+            sde     ONLINE       0     0   948  (repairing)
+            sdf     ONLINE       0     0     0
+
+
+...now let us remove the drive from the pool:
+$ sudo zpool detach mypool /dev/sde
+
+
+..hot swap it out and add a new one back:
+$ sudo zpool attach mypool /dev/sdf /dev/sde  -f
+
+
+..and initiate a scrub to repair the 2 x 2 mirror:
+$ sudo zpool scrub mypool

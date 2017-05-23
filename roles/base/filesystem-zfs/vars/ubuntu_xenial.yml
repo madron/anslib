@@ -1,0 +1,5 @@
+zfs_packages:
+  - ubuntu-zfs
+
+zfs_repository:
+  - ppa:zfs-native/stable
