@@ -1,0 +1,66 @@
+iptables_force_reload: no
+
+iptables_input_policy: ACCEPT
+iptables_output_policy: ACCEPT
+
+# Anti-lockout rules
+iptables_antilockout_rules: []
+# iptables_antilockout_rules: [
+#   '-p tcp --dport ssh -j ACCEPT',
+# ]
+
+# Multi level rules lists
+iptables_input_rules_0: []
+iptables_input_rules_1: []
+iptables_input_rules_2: []
+iptables_input_rules_3: []
+iptables_input_rules_4: []
+iptables_input_rules_5: []
+iptables_input_rules_6: []
+iptables_input_rules_7: []
+iptables_input_rules_8: []
+iptables_input_rules_9: []
+iptables_input_rules: []
+iptables_output_rules_0: []
+iptables_output_rules_1: []
+iptables_output_rules_2: []
+iptables_output_rules_3: []
+iptables_output_rules_4: []
+iptables_output_rules_5: []
+iptables_output_rules_6: []
+iptables_output_rules_7: []
+iptables_output_rules_8: []
+iptables_output_rules_9: []
+iptables_output_rules: []
+
+iptables_input_final_rules: []
+# iptables_input_final_rules: [
+#     '-m limit --limit 2/min -j LOG --log-prefix "iptables-INPUT-dropped: " --log-level 4',
+#     '-j DROP',
+# ]
+
+
+
+# Basic rules
+# iptables_input_rules_1: [
+#   '-i lo -j ACCEPT',
+#   # Icmp
+#   '-p icmp -j ACCEPT',
+#   #
+#   '-m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT',
+#   '-m state --state ESTABLISHED,RELATED -j ACCEPT',
+# ]
+
+# Services
+# iptables_input_rules: [
+#   '-p tcp --dport http -j ACCEPT',
+# ]
+
+iptables_packages:
+  - iptables
+  - iptables-persistent
+
+iptables_remove_packages:
+  - shorewall
+
+iptables_service_name: netfilter-persistent

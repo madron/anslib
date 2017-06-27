@@ -1,0 +1,38 @@
+# {{ ansible_managed }}
+
+# Set policies
+*filter
+:INPUT {{ iptables_input_policy }} [0:0]
+:OUTPUT {{ iptables_output_policy }} [0:0]
+
+
+### INPUT
+
+# Anti-lockout rules
+{% for rule in iptables_antilockout_rules %}
+-A INPUT {{ rule }}
+{% endfor %}
+
+# Rules
+{% for rules in iptables_input_rules_list %}
+{% for rule in rules %}
+-A INPUT {{ rule }}
+{% endfor %}
+{% endfor %}
+
+# Final rules
+{% for rule in iptables_input_final_rules %}
+-A INPUT {{ rule }}
+{% endfor %}
+
+
+### OUTPUT
+# Rules
+{% for rules in iptables_output_rules_list %}
+{% for rule in rules %}
+-A OUTPUT {{ rule }}
+{% endfor %}
+{% endfor %}
+
+
+COMMIT

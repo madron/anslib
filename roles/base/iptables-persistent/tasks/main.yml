@@ -1,0 +1,66 @@
+- name: os specific variables
+  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
+  tags:
+    - iptables
+    - iptables-rules
+
+
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - iptables
+
+
+- name: set variables
+  set_fact:
+    iptables_input_rules_list:
+      - '{{ iptables_input_rules_0 }}'
+      - '{{ iptables_input_rules_1 }}'
+      - '{{ iptables_input_rules_2 }}'
+      - '{{ iptables_input_rules_3 }}'
+      - '{{ iptables_input_rules_4 }}'
+      - '{{ iptables_input_rules_5 }}'
+      - '{{ iptables_input_rules_6 }}'
+      - '{{ iptables_input_rules_7 }}'
+      - '{{ iptables_input_rules_8 }}'
+      - '{{ iptables_input_rules_9 }}'
+      - '{{ iptables_input_rules }}'
+    iptables_output_rules_list:
+      - '{{ iptables_output_rules_0 }}'
+      - '{{ iptables_output_rules_1 }}'
+      - '{{ iptables_output_rules_2 }}'
+      - '{{ iptables_output_rules_3 }}'
+      - '{{ iptables_output_rules_4 }}'
+      - '{{ iptables_output_rules_5 }}'
+      - '{{ iptables_output_rules_6 }}'
+      - '{{ iptables_output_rules_7 }}'
+      - '{{ iptables_output_rules_8 }}'
+      - '{{ iptables_output_rules_9 }}'
+      - '{{ iptables_output_rules }}'
+  tags:
+    - iptables
+    - iptables-rules
+
+
+- name: /etc/iptables/rules.v4
+  template:
+    src: rules.v4
+    dest: /etc/iptables/rules.v4
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: rules
+  tags:
+    - iptables
+    - iptables-rules
+
+
+- name: reload rules
+  service:
+    name: '{{ iptables_service_name }}'
+    state: restarted
+  when: rules.changed or iptables_force_reload
+  tags:
+    - iptables
+    - iptables-rules
