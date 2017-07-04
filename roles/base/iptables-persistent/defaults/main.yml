@@ -1,5 +1,6 @@
 iptables_force_reload: no
 
+iptables_ip_forward: no
 iptables_input_policy: ACCEPT
 iptables_output_policy: ACCEPT
 
