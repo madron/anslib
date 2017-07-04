@@ -1,9 +1,15 @@
 - name: set version
   set_fact:
+    docker_engine_arch: amd64
+    docker_engine_apt_key_url: 'https://apt.dockerproject.org/gpg'
+    docker_engine_apt_key_id: 2C52609D
+    docker_engine_apt_repository: 'deb https://apt.dockerproject.org/repo {{ ansible_lsb.id|lower() }}-{{ ansible_lsb.codename }} {{ docker_engine_repository }}'
+    docker_engine_package_name: docker-engine
     docker_engine_package_version: '{{ docker_engine_version }}-0~{{ ansible_lsb.codename }}'
   tags:
     - docker
     - docker-engine
+    - docker-engine-hold
 
 
 - name: set version greater then 1.12.4
@@ -13,6 +19,7 @@
   tags:
     - docker
     - docker-engine
+    - docker-engine-hold
 
 
 - name: set version greater then 1.13.9
@@ -22,25 +29,21 @@
   tags:
     - docker
     - docker-engine
+    - docker-engine-hold
 
 
-- name: repository key
-  apt_key:
-    url: https://apt.dockerproject.org/gpg
-    id: 2C52609D
-    state: present
+- name: set version greater then 17.06
+  set_fact:
+    docker_engine_apt_key_url: 'https://download.docker.com/linux/ubuntu/gpg'
+    docker_engine_apt_key_id: 0EBFCD88
+    docker_engine_apt_repository: 'deb [arch={{ docker_engine_arch }}] https://download.docker.com/linux/{{ ansible_lsb.id|lower() }} {{ ansible_lsb.codename }} stable'
+    docker_engine_package_name: docker-ce
+    docker_engine_package_version: '{{ docker_engine_version }}~ce-0~{{ ansible_lsb.id|lower() }}'
+  when: docker_engine_version | version_compare('17.06', '>=', strict=True)
   tags:
     - docker
     - docker-engine
-
-
-- name: repository
-  apt_repository:
-    repo: 'deb https://apt.dockerproject.org/repo {{ ansible_lsb.id|lower() }}-{{ ansible_lsb.codename }} {{ docker_engine_repository }}'
-    state: present
-  tags:
-    - docker
-    - docker-engine
+    - docker-engine-hold
 
 
 - name: required packages
@@ -53,9 +56,28 @@
     - docker-engine
 
 
+- name: repository key
+  apt_key:
+    url: '{{ docker_engine_apt_key_url }}'
+    id: '{{ docker_engine_apt_key_id }}'
+    state: present
+  tags:
+    - docker
+    - docker-engine
+
+
+- name: repository
+  apt_repository:
+    repo: '{{ docker_engine_apt_repository }}'
+    state: present
+  tags:
+    - docker
+    - docker-engine
+
+
 - name: docker-engine package
   apt:
-    name: 'docker-engine={{ docker_engine_package_version }}'
+    name: '{{ docker_engine_package_name }}={{ docker_engine_package_version }}'
     state: present
     update_cache: '{{ docker_engine_update_cache }}'
     force: '{{ docker_engine_force_install }}'
@@ -76,8 +98,8 @@
 
 
 - name: docker-engine version hold
-  command: apt-mark hold docker-engine
-  when: docker_engine_version_hold and "docker-engine" not in held_packages.stdout
+  command: 'apt-mark hold {{ docker_engine_package_name }}'
+  when: docker_engine_version_hold and docker_engine_package_name not in held_packages.stdout
   tags:
     - docker
     - docker-engine
