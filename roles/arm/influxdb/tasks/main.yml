@@ -1,6 +1,13 @@
+- name: repository key
+  apt_key:
+    url: 'https://repos.influxdata.com/influxdb.key'
+    state: present
+  tags: influxdb
+
+
 - name: repository
   apt_repository:
-    repo: 'deb http://httpredir.debian.org/debian sid main'
+    repo: 'deb https://repos.influxdata.com/debian {{ ansible_lsb.codename }} stable'
     state: present
   tags: influxdb
 
