@@ -1,6 +1,7 @@
 - name: set version
   set_fact:
     docker_engine_arch: amd64
+    docker_engine_distribution: '{{ ansible_lsb.id|lower() }}'
     docker_engine_apt_key_url: 'https://apt.dockerproject.org/gpg'
     docker_engine_apt_key_id: 2C52609D
     docker_engine_apt_repository: 'deb https://apt.dockerproject.org/repo {{ ansible_lsb.id|lower() }}-{{ ansible_lsb.codename }} {{ docker_engine_repository }}'
@@ -11,10 +12,25 @@
     - docker-engine
     - docker-engine-hold
 
+- name: debug
+  debug:
+    msg: '{{ ansible_lsb.id }}'
+
+- name: fix raspbian
+  set_fact:
+    docker_engine_arch: armhf
+    docker_engine_distribution: debian
+    docker_engine_apt_repository: 'deb https://apt.dockerproject.org/repo debian-{{ ansible_lsb.codename }} {{ docker_engine_repository }}'
+  when: ansible_lsb.id == 'Raspbian'
+  tags:
+    - docker
+    - docker-engine
+    - docker-engine-hold
+
 
 - name: set version greater then 1.12.4
   set_fact:
-    docker_engine_package_version: '{{ docker_engine_version }}-0~{{ ansible_lsb.id|lower() }}-{{ ansible_lsb.codename }}'
+    docker_engine_package_version: '{{ docker_engine_version }}-0~{{ docker_engine_distribution }}-{{ ansible_lsb.codename }}'
   when: docker_engine_version | version_compare('1.12.4', '>=', strict=True)
   tags:
     - docker
@@ -24,7 +40,7 @@
 
 - name: set version greater then 1.13.9
   set_fact:
-    docker_engine_package_version: '{{ docker_engine_version }}~ce-0~{{ ansible_lsb.id|lower() }}-{{ ansible_lsb.codename }}'
+    docker_engine_package_version: '{{ docker_engine_version }}~ce-0~{{ docker_engine_distribution }}-{{ ansible_lsb.codename }}'
   when: docker_engine_version | version_compare('1.13.9', '>=', strict=True)
   tags:
     - docker
@@ -36,9 +52,9 @@
   set_fact:
     docker_engine_apt_key_url: 'https://download.docker.com/linux/ubuntu/gpg'
     docker_engine_apt_key_id: 0EBFCD88
-    docker_engine_apt_repository: 'deb [arch={{ docker_engine_arch }}] https://download.docker.com/linux/{{ ansible_lsb.id|lower() }} {{ ansible_lsb.codename }} stable'
+    docker_engine_apt_repository: 'deb [arch={{ docker_engine_arch }}] https://download.docker.com/linux/{{ docker_engine_distribution }} {{ ansible_lsb.codename }} stable'
     docker_engine_package_name: docker-ce
-    docker_engine_package_version: '{{ docker_engine_version }}~ce-0~{{ ansible_lsb.id|lower() }}'
+    docker_engine_package_version: '{{ docker_engine_version }}~ce-0~{{ docker_engine_distribution }}'
   when: docker_engine_version | version_compare('17.06', '>=', strict=True)
   tags:
     - docker
