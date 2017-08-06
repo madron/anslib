@@ -2,18 +2,49 @@
   apt_key:
     url: 'https://repos.influxdata.com/influxdb.key'
     state: present
-  tags: influxdb
+  tags:
+    - influxdb
 
 
 - name: repository
   apt_repository:
     repo: 'deb https://repos.influxdata.com/debian {{ ansible_lsb.codename }} stable'
     state: present
-  tags: influxdb
+  tags:
+    - influxdb
 
 
-- name: required packages
+- name: influxdb package
   apt:
     pkg: influxdb
-    state: latest
-  tags: influxdb
+    state: present
+  tags:
+    - influxdb
+
+
+- name: service started
+  systemd:
+    name: influxdb
+    enabled: yes
+    state: started
+  tags:
+    - influxdb
+
+
+- name: python influxdb
+  pip:
+    name: influxdb
+    version: '4.1.1'
+  tags:
+    - influxdb
+
+
+- name: create databases
+  influxdb_database:
+      hostname: localhost
+      database_name: '{{ item }}'
+      state: present
+  with_items: '{{ influxdb_databases }}'
+  tags:
+    - influxdb
+    - influxdb-databases
