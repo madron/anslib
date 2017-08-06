@@ -1,0 +1,6 @@
+raspbian_audio: yes
+raspbian_wifi: yes
+raspbian_bluetooth: yes
+raspbian_avahi_daemon: yes
+raspbian_triggerhappy: yes
+raspbian_max_usb_current: no

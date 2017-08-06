@@ -1,0 +1,59 @@
+- name: services
+  systemd:
+    name: '{{ item.name }}'
+    enabled: '{{ item.enabled }}'
+    state: '{% if item.enabled %}started{% else %}stopped{% endif %}'
+  with_items:
+    - { name: avahi-daemon, enabled: '{{ raspbian_avahi_daemon }}' }
+  tags:
+    - raspbian
+
+
+- name: packages
+  apt:
+    name: '{{ item.name }}'
+    state: '{% if item.enabled %}present{% else %}absent{% endif %}'
+  with_items:
+    - { name: triggerhappy, enabled: '{{ raspbian_triggerhappy }}' }
+  tags:
+    - raspbian
+
+
+- name: /boot/config.txt
+  template:
+    src: config.txt
+    dest: /boot/config.txt
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - raspbian
+
+
+# - name: remove unnedeed packages
+#   apt:
+#     name: '{{ item }}'
+#     state: absent
+#   with_items:
+#     - triggerhappy
+#     - avahi-daemon
+#     - samba-common
+#     - wpasupplicant
+#     - dhcpcd5
+#     - libbluetooth3
+#     - bluetooth
+#     - pi-bluetooth
+#   tags:
+#     - homeassistant
+#     - homeassistant-install
+
+
+# - name: install homeassistant
+#   pip:
+#     name: git+git://github.com/home-assistant/home-assistant.git@6e1785173fd670c9a57a2fd7d6dd468945597d20#egg=homeassistant
+#     executable: /srv/homeassistant/bin/pip
+#   notify:
+#      - restart homeassistant
+#   tags:
+#     - homeassistant
+#     - homeassistant-install
