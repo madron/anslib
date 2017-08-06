@@ -21,7 +21,7 @@
 
 - name: service started
   systemd:
-    name: grafana
+    name: grafana-server
     enabled: yes
     state: started
   tags:
