@@ -4,3 +4,4 @@ raspbian_bluetooth: yes
 raspbian_avahi_daemon: yes
 raspbian_triggerhappy: yes
 raspbian_max_usb_current: no
+raspbian_remove_pi_user: no

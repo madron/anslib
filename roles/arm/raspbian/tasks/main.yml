@@ -30,30 +30,10 @@
     - raspbian
 
 
-# - name: remove unnedeed packages
-#   apt:
-#     name: '{{ item }}'
-#     state: absent
-#   with_items:
-#     - triggerhappy
-#     - avahi-daemon
-#     - samba-common
-#     - wpasupplicant
-#     - dhcpcd5
-#     - libbluetooth3
-#     - bluetooth
-#     - pi-bluetooth
-#   tags:
-#     - homeassistant
-#     - homeassistant-install
-
-
-# - name: install homeassistant
-#   pip:
-#     name: git+git://github.com/home-assistant/home-assistant.git@6e1785173fd670c9a57a2fd7d6dd468945597d20#egg=homeassistant
-#     executable: /srv/homeassistant/bin/pip
-#   notify:
-#      - restart homeassistant
-#   tags:
-#     - homeassistant
-#     - homeassistant-install
+- name: remove pi user
+  user:
+    name: pi
+    state: absent
+  when: '{{ raspbian_remove_pi_user }}'
+  tags:
+    - raspbian
