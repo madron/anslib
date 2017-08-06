@@ -1,0 +1,1 @@
+homeassistant_package: git+git://github.com/home-assistant/home-assistant.git@6e1785173fd670c9a57a2fd7d6dd468945597d20#egg=homeassistant

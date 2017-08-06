@@ -1,0 +1,105 @@
+- name: homeassistant group
+  group:
+    name: homeassistant
+    system: yes
+    state: present
+  tags:
+    - homeassistant
+    - homeassistant-install
+
+
+- name: homeassistant user
+  user:
+    name: homeassistant
+    system: yes
+    group: homeassistant
+    state: present
+  tags:
+    - homeassistant
+    - homeassistant-install
+
+
+- name: required directories
+  file:
+    path: '{{ item }}'
+    state: directory
+    mode: 0755
+    owner: homeassistant
+    group: homeassistant
+  with_items:
+    - /var/lib/homeassistant
+  tags:
+    - homeassistant
+    - homeassistant-install
+
+
+- name: required packages
+  apt:
+    pkg: '{{ item }}'
+    state: present
+  with_items:
+    - python3.4
+    - virtualenv
+    - git
+  tags:
+    - homeassistant
+    - homeassistant-install
+
+
+- name: create virtualenv
+  pip:
+    name: pip
+    virtualenv: /var/lib/homeassistant/env
+    virtualenv_python: python3.4
+  become: true
+  become_user: homeassistant
+  tags:
+    - homeassistant
+    - homeassistant-install
+
+
+- name: install homeassistant
+  pip:
+    name: '{{ homeassistant_package }}'
+    executable: /var/lib/homeassistant/env/bin/pip
+  become: true
+  become_user: homeassistant
+  register: install
+  tags:
+    - homeassistant
+    - homeassistant-install
+
+
+- name: systemd service file
+  template:
+    src: systemd.service
+    dest: /etc/systemd/system/homeassistant.service
+    mode: 0644
+    owner: root
+    group: root
+  register: systemd
+  tags:
+    - homeassistant
+    - homeassistant-install
+
+
+- name: service restarted
+  systemd:
+    name: homeassistant
+    daemon_reload: '{{ systemd.changed }}'
+    enabled: yes
+    state: restarted
+  when: install.changed or systemd.changed
+  tags:
+    - homeassistant
+    - homeassistant-install
+
+
+- name: service started
+  systemd:
+    name: homeassistant
+    enabled: yes
+    state: started
+  tags:
+    - homeassistant
+    - homeassistant-install
