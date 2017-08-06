@@ -17,3 +17,12 @@
     pkg: grafana
     state: present
   tags: grafana
+
+
+- name: service started
+  systemd:
+    name: grafana
+    enabled: yes
+    state: started
+  tags:
+  tags: grafana
