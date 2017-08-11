@@ -1,0 +1,1 @@
+nginx_repo: 'deb http://nginx.org/packages/debian/ jessie nginx'

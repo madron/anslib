@@ -18,3 +18,8 @@ nginx_certificates: []
 
 nginx_proxy_send_timeout: 60s
 nginx_proxy_read_timeout: 60s
+
+nginx_packages:
+  - nginx-full
+
+nginx_repo: 'ppa:nginx/stable'

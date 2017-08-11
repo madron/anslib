@@ -1,6 +1,13 @@
+- name: repository key
+  apt_key:
+    url: 'http://nginx.org/keys/nginx_signing.key'
+    state: present
+  tags: grafana
+
+
 - name: ppa repository
   apt_repository:
-    repo: ppa:nginx/stable
+    repo: 'deb http://nginx.org/packages/debian/ jessie nginx'
     state: present
   tags: nginx
 

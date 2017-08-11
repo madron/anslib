@@ -1,2 +1,1 @@
-nginx_packages:
-  - nginx-full
+nginx_repo: 'deb http://nginx.org/packages/ubuntu/ trusty nginx'
