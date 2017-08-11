@@ -2,7 +2,7 @@
   apt_key:
     url: 'http://nginx.org/keys/nginx_signing.key'
     state: present
-  tags: grafana
+  tags: nginx
 
 
 - name: ppa repository
