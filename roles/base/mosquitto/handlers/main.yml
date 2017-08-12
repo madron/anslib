@@ -1,0 +1,10 @@
+- name: reload mosquitto
+  service:
+    name: mosquitto
+    state: reloaded
+
+
+- name: restart mosquitto
+  service:
+    name: mosquitto
+    state: restarted

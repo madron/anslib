@@ -1,0 +1,42 @@
+- name: set debian variables
+  set_fact:
+    mosquitto_debian_os: '{{ ansible_lsb.id|lower() }}'
+  tags:
+    - mosquitto
+
+
+- name: set raspbian variables
+  set_fact:
+    mosquitto_debian_os: debian
+  when: mosquitto_debian_os == 'raspbian'
+  tags:
+    - mosquitto
+
+
+- name: repository key
+  apt_key:
+    url: 'http://repo.mosquitto.org/debian/mosquitto-repo.gpg.key'
+    state: present
+  when: mosquitto_debian_os == 'debian'
+  tags:
+    - mosquitto
+
+
+- name: repository
+  apt_repository:
+    repo: 'deb http://repo.mosquitto.org/debian {{ ansible_lsb.codename }} main'
+    state: present
+  when: mosquitto_debian_os == 'debian'
+  tags:
+    - mosquitto
+
+
+- name: required packages
+  apt:
+    pkg: '{{ item }}'
+    state: latest
+  with_items:
+    - mosquitto
+    - mosquitto-clients
+  tags:
+    - mosquitto
