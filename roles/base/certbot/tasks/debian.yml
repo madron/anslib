@@ -1,0 +1,14 @@
+- name: repository
+  apt_repository:
+    repo: 'ppa:certbot/certbot'
+    state: present
+  tags:
+    - certbot
+
+
+- name: required packages
+  apt:
+    pkg: certbot
+    state: latest
+  tags:
+    - certbot
