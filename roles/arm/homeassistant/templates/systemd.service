@@ -1,6 +1,7 @@
 [Unit]
 Description=Home Assistant
-After=network.target influxdb
+After=network.target
+Wants=influxdb.service
 
 [Service]
 Type=simple
