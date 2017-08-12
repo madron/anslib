@@ -2,21 +2,38 @@
   apt_key:
     url: 'https://bintray.com/user/downloadSubjectPublicKey?username=bintray'
     state: present
-  tags: grafana
+  tags:
+    - grafana
 
 
 - name: repository
   apt_repository:
     repo: 'deb https://dl.bintray.com/fg2it/deb {{ ansible_lsb.codename }} main'
     state: present
-  tags: grafana
+  tags:
+    - grafana
+
+
+- name: configuration
+  template:
+    src: grafana.ini
+    dest: /etc/grafana/grafana.ini
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  notify: restart grafana
+  tags:
+    - grafana
+    - grafana-config
 
 
 - name: required packages
   apt:
     pkg: grafana
     state: present
-  tags: grafana
+  tags:
+    - grafana
 
 
 - name: service started
@@ -25,4 +42,4 @@
     enabled: yes
     state: started
   tags:
-  tags: grafana
+    - grafana
