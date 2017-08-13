@@ -8,3 +8,25 @@
   when: ansible_os_family == 'Debian'
   tags:
     - certbot
+
+
+- name: renew_hook script
+  template:
+    src: renew_hook.sh
+    dest: /etc/cron.daily/certbot_renew_hook.sh
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - certbot
+
+
+- name: daily renew
+  template:
+    src: cron.daily
+    dest: /etc/cron.daily/certbot
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - certbot

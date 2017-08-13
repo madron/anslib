@@ -1,0 +1,3 @@
+#!/bin/sh
+
+certbot renew --renew-hook "/etc/cron.daily/certbot_renew_hook.sh" 2>&1 | /usr/bin/logger -t certbot

@@ -1,0 +1,7 @@
+certbot_renew_hook: {}
+# certbot_renew_hook: {
+#     example.com: [
+#         'service apache2 restart',
+#         'service nginx restart',
+#     ]
+# }
