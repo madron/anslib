@@ -22,11 +22,20 @@
     - mosquitto
 
 
-- name: repository
+- name: repository debian
   apt_repository:
     repo: 'deb http://repo.mosquitto.org/debian {{ ansible_lsb.codename }} main'
     state: present
   when: mosquitto_debian_os == 'debian'
+  tags:
+    - mosquitto
+
+
+- name: repository ubuntu
+  apt_repository:
+    repo: 'ppa:mosquitto-dev/mosquitto-ppa'
+    state: present
+  when: mosquitto_debian_os == 'ubuntu'
   tags:
     - mosquitto
 

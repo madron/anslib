@@ -9,3 +9,110 @@
   when: ansible_os_family == 'Debian'
   tags:
     - mosquitto
+
+
+- include: init.yml
+  tags:
+    - mosquitto
+    - mosquitto-init
+
+
+- name: config
+  template:
+    src: mosquitto.conf
+    dest: '/etc/mosquitto/{{ mosquitto_instance }}/'
+    mode: 0644
+    owner: root
+    group: root
+  register: config
+  tags:
+    - mosquitto
+    - mosquitto-config
+
+
+- name: acl
+  template:
+    src: acl.conf
+    dest: '/etc/mosquitto/{{ mosquitto_instance }}/'
+    mode: 0644
+    owner: root
+    group: root
+  register: acl
+  tags:
+    - mosquitto
+    - mosquitto-config
+
+
+- name: users list
+  template:
+    src: users.list
+    dest: '/etc/mosquitto/{{ mosquitto_instance }}/users.list'
+    mode: 0640
+    owner: root
+    group: root
+  register: users
+  tags:
+    - mosquitto
+    - mosquitto-config
+    - mosquitto-users
+
+
+- name: remove user.passwd file
+  file:
+    path: '/etc/mosquitto/{{ mosquitto_instance }}/user.passwd'
+    state: absent
+  when: users.changed
+  tags:
+    - mosquitto
+    - mosquitto-config
+    - mosquitto-users
+
+
+- name: create user.passwd file
+  file:
+    path: '/etc/mosquitto/{{ mosquitto_instance }}/user.passwd'
+    state: touch
+  changed_when: false
+  tags:
+    - mosquitto
+    - mosquitto-config
+    - mosquitto-users
+
+
+- name: update user.passwd file
+  command: 'mosquitto_passwd -b /etc/mosquitto/{{ mosquitto_instance }}/user.passwd {{ item.username }} {{ item.password }}'
+  with_items: '{{ mosquitto_users }}'
+  when: users.changed
+  tags:
+    - mosquitto
+    - mosquitto-config
+    - mosquitto-users
+
+
+- name: stop service
+  service:
+    name: 'mosquitto_{{ mosquitto_instance }}'
+    state: stopped
+  when: config.changed
+  tags:
+    - mosquitto
+    - mosquitto-config
+
+
+- name: start service
+  service:
+    name: 'mosquitto_{{ mosquitto_instance }}'
+    state: started
+  tags:
+    - mosquitto
+    - mosquitto-config
+
+
+- name: reload service
+  service:
+    name: 'mosquitto_{{ mosquitto_instance }}'
+    state: reloaded
+  when: (acl.changed or users.changed) and not config.changed
+  tags:
+    - mosquitto
+    - mosquitto-config

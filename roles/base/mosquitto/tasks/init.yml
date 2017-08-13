@@ -1,0 +1,61 @@
+- name: init - stop default service
+  service:
+    name: mosquitto
+    state: stopped
+  failed_when: false
+  tags:
+    - mosquitto
+    - mosquitto-init
+
+
+- name: init - remove default files and directories
+  file:
+    name: '{{ item }}'
+    state: absent
+  with_items:
+    - /etc/init.d/mosquitto
+    - /etc/init/mosquitto.conf
+    - /etc/mosquitto/mosquitto.conf
+    - /etc/mosquitto/ca_certificates
+    - /etc/mosquitto/certs
+    - /etc/mosquitto/conf.d
+    - /var/lib/mosquitto/mosquitto.db
+  tags:
+    - mosquitto
+    - mosquitto-init
+
+
+- name: init - config directory
+  file:
+    name: /etc/mosquitto/{{ mosquitto_instance }}
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - mosquitto
+    - mosquitto-init
+
+
+- name: init - data directory
+  file:
+    name: /var/lib/mosquitto/{{ mosquitto_instance }}
+    state: directory
+    mode: 0775
+    owner: mosquitto
+    group: root
+  tags:
+    - mosquitto
+    - mosquitto-init
+
+
+- name: init - upstart file
+  template:
+    src: upstart.conf
+    dest: /etc/init/mosquitto_{{ mosquitto_instance }}.conf
+    mode: 0644
+    owner: root
+    group: root
+  tags:
+    - mosquitto
+    - mosquitto-init
