@@ -9,9 +9,6 @@ mosquitto_websocket_port: ''
 mosquitto_websocket_address: ''
 mosquitto_websocket_cert_dir: ''
 
-mosquitto_letsencrypt_fqdn: ''
-mosquitto_websocket_letsencrypt_fqdn: ''
-
 mosquitto_users: []
 # mosquitto_users: [
 #     { username: bob, password: secret },
