@@ -1,5 +1,7 @@
 mosquitto_instance: 'public'
 
+mosquitto_log_types: [error, warning, notice, information]
+
 mosquitto_mttq_port: 1883
 mosquitto_mttq_address: ''
 mosquitto_mttqs_port: ''
@@ -13,3 +15,15 @@ mosquitto_users: []
 # mosquitto_users: [
 #     { username: bob, password: secret },
 # ]
+
+mosquitto_patterns: []
+# mosquitto_patterns: [
+#     'write owntracks/%u/#',
+# ]
+
+mosquitto_acl: {}
+# mosquitto_acl: {
+#     watcher: [
+#         'read #',
+#     ],
+# }
