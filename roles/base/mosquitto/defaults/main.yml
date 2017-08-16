@@ -27,3 +27,15 @@ mosquitto_acl: {}
 #         'read #',
 #     ],
 # }
+
+mosquitto_bridge: {}
+# mosquitto_bridge: {
+#     remote: {
+#         address: mqtt.example.com:1883,
+#         username: tom,
+#         password: secret,
+#         topics: [
+#             'topic owntracks out 0 owntracks owntracks'
+#         ]
+#     }
+# }
