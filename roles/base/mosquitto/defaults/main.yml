@@ -34,6 +34,7 @@ mosquitto_bridge: {}
 #         address: mqtt.example.com:1883,
 #         username: tom,
 #         password: secret,
+#         capath: /etc/ssl/certs
 #         topics: [
 #             'topic owntracks out 0 owntracks owntracks'
 #         ]

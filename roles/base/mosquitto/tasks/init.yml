@@ -25,6 +25,24 @@
     - mosquitto-init
 
 
+- name: init - remove systemd service file
+  file:
+    name: /lib/systemd/system/mosquitto.service
+    state: absent
+  register: systemd_remove
+  tags:
+    - mosquitto
+    - mosquitto-init
+
+
+- name: systemctl daemon-reload
+  command: systemctl daemon-reload
+  when: systemd_remove.changed
+  tags:
+    - mosquitto
+    - mosquitto-init
+
+
 - name: init - config directory
   file:
     name: /etc/mosquitto/{{ mosquitto_instance }}
@@ -56,6 +74,28 @@
     mode: 0644
     owner: root
     group: root
+  when: ansible_service_mgr == 'upstart'
   tags:
     - mosquitto
     - mosquitto-init
+
+
+- name: init - systemd file
+  template:
+    src: systemd.service
+    dest: '/etc/systemd/system/mosquitto_{{ mosquitto_instance }}.service'
+    mode: 0644
+    owner: root
+    group: root
+  when: ansible_service_mgr == 'systemd'
+  register: systemd_file
+  tags:
+    - mosquitto
+    - mosquitto-init
+
+
+- name: systemctl daemon-reload
+  command: systemctl daemon-reload
+  when: systemd_file.changed
+  tags:
+    - cadvisor
