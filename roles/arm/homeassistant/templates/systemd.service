@@ -6,6 +6,7 @@ Wants=influxdb.service
 [Service]
 Type=simple
 User=homeassistant
+ExecStartPre=/bin/sh -c 'while ! /usr/bin/influx -execute help </dev/null >/dev/null 2>&1; do sleep 1; done'
 ExecStart=/var/lib/homeassistant/env/bin/hass -c /var/lib/homeassistant
 
 [Install]
