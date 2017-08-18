@@ -7,7 +7,7 @@
 
 - name: ppa repository
   apt_repository:
-    repo: 'deb http://nginx.org/packages/debian/ jessie nginx'
+    repo: '{{ nginx_repo }}'
     state: present
   tags: nginx
 
