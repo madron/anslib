@@ -19,25 +19,15 @@
 
 - name: config
   template:
-    src: mosquitto.conf
+    src: '{{ item }}'
     dest: '/etc/mosquitto/{{ mosquitto_instance }}/'
     mode: 0644
     owner: root
     group: root
   register: config
-  tags:
-    - mosquitto
-    - mosquitto-config
-
-
-- name: acl
-  template:
-    src: acl.conf
-    dest: '/etc/mosquitto/{{ mosquitto_instance }}/'
-    mode: 0644
-    owner: root
-    group: root
-  register: acl
+  with_items:
+    - mosquitto.conf
+    - acl.conf
   tags:
     - mosquitto
     - mosquitto-config
@@ -93,7 +83,7 @@
   service:
     name: 'mosquitto_{{ mosquitto_instance }}'
     state: stopped
-  when: config.changed
+  when: config.changed or users.changed
   tags:
     - mosquitto
     - mosquitto-config
@@ -103,16 +93,6 @@
   service:
     name: 'mosquitto_{{ mosquitto_instance }}'
     state: started
-  tags:
-    - mosquitto
-    - mosquitto-config
-
-
-- name: reload service
-  service:
-    name: 'mosquitto_{{ mosquitto_instance }}'
-    state: reloaded
-  when: (acl.changed or users.changed) and not config.changed
   tags:
     - mosquitto
     - mosquitto-config
