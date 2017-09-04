@@ -3,6 +3,10 @@ powerdns_recursor_local_addresses: [
 ]
 # powerdns_recursor_local_addresses: ['0.0.0.0']
 
+powerdns_recursor_max_cache_ttl: 86400
+powerdns_recursor_max_negative_ttl: 3600
+
+
 powerdns_recursor_local_port: 53
 
 powerdns_recursor_allow_from: [
