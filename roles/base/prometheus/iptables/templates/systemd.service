@@ -1,0 +1,11 @@
+[Unit]
+Description=Prometheus iptables-exporter
+After=network.target
+
+[Service]
+Restart=always
+RestartSec=10
+ExecStart=/usr/local/bin/iptables-exporter --port {{ prometheus_iptables_port }}
+
+[Install]
+WantedBy=default.target

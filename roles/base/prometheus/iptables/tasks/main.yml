@@ -35,7 +35,31 @@
     owner: root
     group: root
     backup: yes
-  register: upstart
+  when: ansible_service_mgr == 'upstart'
+  register: service_mgr
+  tags:
+    - prometheus-iptables
+    - prometheus-iptables-config
+
+
+- name: systemd file
+  template:
+    src: systemd.service
+    dest: '/etc/systemd/system/{{ prometheus_iptables_service }}.service'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  when: ansible_service_mgr == 'systemd'
+  register: service_mgr
+  tags:
+    - prometheus-iptables
+    - prometheus-iptables-config
+
+
+- name: systemctl daemon-reload
+  command: systemctl daemon-reload
+  when: ansible_service_mgr == 'systemd' and service_mgr.changed
   tags:
     - prometheus-iptables
     - prometheus-iptables-config
@@ -45,7 +69,7 @@
   service:
     name: '{{ prometheus_iptables_service }}'
     state: restarted
-  when: upstart.changed
+  when: service_mgr.changed
   tags:
     - prometheus-iptables
     - prometheus-iptables-config
