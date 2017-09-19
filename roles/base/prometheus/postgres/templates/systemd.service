@@ -1,0 +1,12 @@
+[Unit]
+Description=Prometheus postgres-exporter
+After=network.target
+
+[Service]
+Restart=always
+RestartSec=10
+Environment=DATA_SOURCE_NAME="{{ prometheus_postgres_data_source }}"
+ExecStart=/usr/local/sbin/postgres_exporter -web.listen-address=":{{ prometheus_postgres_port }}"
+
+[Install]
+WantedBy=default.target

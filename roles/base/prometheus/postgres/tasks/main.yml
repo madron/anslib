@@ -39,7 +39,31 @@
     owner: root
     group: root
     backup: yes
-  register: upstart
+  when: ansible_service_mgr == 'upstart'
+  register: service_mgr
+  tags:
+    - prometheus-postgres
+    - prometheus-postgres-config
+
+
+- name: systemd file
+  template:
+    src: systemd.service
+    dest: '/etc/systemd/system/{{ prometheus_postgres_service }}.service'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  when: ansible_service_mgr == 'systemd'
+  register: service_mgr
+  tags:
+    - prometheus-postgres
+    - prometheus-postgres-config
+
+
+- name: systemctl daemon-reload
+  command: systemctl daemon-reload
+  when: ansible_service_mgr == 'systemd' and service_mgr.changed
   tags:
     - prometheus-postgres
     - prometheus-postgres-config
@@ -49,7 +73,7 @@
   service:
     name: '{{ prometheus_postgres_service }}'
     state: restarted
-  when: upstart.changed
+  when: service_mgr.changed
   tags:
     - prometheus-postgres
     - prometheus-postgres-config
