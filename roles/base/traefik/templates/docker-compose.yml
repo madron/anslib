@@ -20,6 +20,12 @@ services:
 {% for constraint in traefik_constraints %}
           - {{ constraint }}
 {% endfor %}
+{% if publish_host %}
+      labels:
+        - "traefik.port=8080"
+        - "traefik.docker.network=global_proxy"
+        - "traefik.frontend.rule=Host:{{ publish_host }}"
+{% endif %}
 
 
 networks:
