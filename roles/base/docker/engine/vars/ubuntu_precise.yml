@@ -3,3 +3,4 @@ docker_engine_packages:
   - linux-image-generic-lts-trusty
   - linux-headers-generic-lts-trusty
   - apparmor
+  - curl
