@@ -14,6 +14,17 @@
     - grafana
 
 
+- name: configuration directory
+  file:
+    path: /etc/grafana
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - grafana
+
+
 - name: configuration
   template:
     src: grafana.ini
