@@ -53,7 +53,7 @@
   set_fact:
     docker_engine_apt_key_url: 'https://download.docker.com/linux/ubuntu/gpg'
     docker_engine_apt_key_id: 0EBFCD88
-    docker_engine_apt_repository: 'deb [arch={{ docker_engine_arch }}] https://download.docker.com/linux/{{ docker_engine_distribution }} {{ ansible_lsb.codename }} stable'
+    docker_engine_apt_repository: 'deb [arch={{ docker_engine_arch }}] https://download.docker.com/linux/{{ docker_engine_distribution }} {{ ansible_lsb.codename }} {{ docker_engine_repository }}'
     docker_engine_package_name: docker-ce
     docker_engine_package_version: '{{ docker_engine_version }}~ce-0~{{ docker_engine_distribution }}'
     docker_engine_old_packages:
