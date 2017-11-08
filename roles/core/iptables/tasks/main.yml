@@ -60,6 +60,7 @@
 - name: reload rules
   systemd:
     name: iptables
+    enabled: yes
     state: reloaded
     daemon_reload: yes
   when: systemd.changed or rules.changed or iptables_force_reload
