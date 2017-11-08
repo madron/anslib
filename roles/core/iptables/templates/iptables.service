@@ -1,0 +1,15 @@
+[Unit]
+Description=Iptables filter
+DefaultDependencies=no
+After=systemd-sysctl.service
+Before=sysinit.target
+
+[Service]
+Type=oneshot
+ExecStart=/etc/systemd/system/iptables.rules
+ExecReload=/etc/systemd/system/iptables.rules
+ExecStop=/etc/systemd/system/iptables.rules stop
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

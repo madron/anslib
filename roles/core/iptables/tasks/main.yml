@@ -1,0 +1,68 @@
+- name: set variables
+  set_fact:
+    systemd: { changed: false }
+    iptables_input_rules_list:
+      - '{{ iptables_input_rules_0 }}'
+      - '{{ iptables_input_rules_1 }}'
+      - '{{ iptables_input_rules_2 }}'
+      - '{{ iptables_input_rules_3 }}'
+      - '{{ iptables_input_rules_4 }}'
+      - '{{ iptables_input_rules_5 }}'
+      - '{{ iptables_input_rules_6 }}'
+      - '{{ iptables_input_rules_7 }}'
+      - '{{ iptables_input_rules_8 }}'
+      - '{{ iptables_input_rules_9 }}'
+      - '{{ iptables_input_rules }}'
+    iptables_output_rules_list:
+      - '{{ iptables_output_rules_0 }}'
+      - '{{ iptables_output_rules_1 }}'
+      - '{{ iptables_output_rules_2 }}'
+      - '{{ iptables_output_rules_3 }}'
+      - '{{ iptables_output_rules_4 }}'
+      - '{{ iptables_output_rules_5 }}'
+      - '{{ iptables_output_rules_6 }}'
+      - '{{ iptables_output_rules_7 }}'
+      - '{{ iptables_output_rules_8 }}'
+      - '{{ iptables_output_rules_9 }}'
+      - '{{ iptables_output_rules }}'
+  tags:
+    - iptables
+    - iptables-rules
+
+
+- name: /etc/systemd/system/iptables.service
+  template:
+    src: iptables.service
+    dest: /etc/systemd/system/iptables.service
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: systemd
+  tags:
+    - iptables
+
+
+- name: /etc/systemd/system/iptables.rules
+  template:
+    src: iptables.rules
+    dest: /etc/systemd/system/iptables.rules
+    mode: 0755
+    owner: root
+    group: root
+    backup: yes
+  register: rules
+  tags:
+    - iptables
+    - iptables-rules
+
+
+- name: reload rules
+  systemd:
+    name: iptables
+    state: reloaded
+    daemon_reload: yes
+  when: systemd.changed or rules.changed or iptables_force_reload
+  tags:
+    - iptables
+    - iptables-rules
