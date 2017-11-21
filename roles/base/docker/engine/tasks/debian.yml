@@ -4,10 +4,11 @@
     docker_engine_distribution: '{{ ansible_lsb.id|lower() }}'
     docker_engine_apt_key_url: 'https://apt.dockerproject.org/gpg'
     docker_engine_apt_key_id: 2C52609D
-    docker_engine_apt_repository: 'deb https://apt.dockerproject.org/repo {{ ansible_lsb.id|lower() }}-{{ ansible_lsb.codename }} {{ docker_engine_repository }}'
+    docker_engine_apt_repository: 'deb https://apt.dockerproject.org/repo {{ ansible_lsb.id|lower() }}-{{ ansible_lsb.codename }} {{ docker_engine_repository|default("main") }}'
     docker_engine_package_name: docker-engine
     docker_engine_package_version: '{{ docker_engine_version }}-0~{{ ansible_lsb.codename }}'
     docker_engine_old_packages: []
+    python_version: '{{ ansible_python_version|replace("+", "") }}'
   tags:
     - docker
     - docker-engine
@@ -21,7 +22,7 @@
   set_fact:
     docker_engine_arch: armhf
     docker_engine_distribution: debian
-    docker_engine_apt_repository: 'deb https://apt.dockerproject.org/repo debian-{{ ansible_lsb.codename }} {{ docker_engine_repository }}'
+    docker_engine_apt_repository: 'deb https://apt.dockerproject.org/repo debian-{{ ansible_lsb.codename }} {{ docker_engine_repository|default("main") }}'
   when: ansible_lsb.id == 'Raspbian'
   tags:
     - docker
@@ -53,7 +54,7 @@
   set_fact:
     docker_engine_apt_key_url: 'https://download.docker.com/linux/ubuntu/gpg'
     docker_engine_apt_key_id: 0EBFCD88
-    docker_engine_apt_repository: 'deb [arch={{ docker_engine_arch }}] https://download.docker.com/linux/{{ docker_engine_distribution }} {{ ansible_lsb.codename }} stable'
+    docker_engine_apt_repository: 'deb [arch={{ docker_engine_arch }}] https://download.docker.com/linux/{{ docker_engine_distribution }} {{ ansible_lsb.codename }} {{ docker_engine_repository|default("stable") }}'
     docker_engine_package_name: docker-ce
     docker_engine_package_version: '{{ docker_engine_version }}~ce-0~{{ docker_engine_distribution }}'
     docker_engine_old_packages:
@@ -77,7 +78,7 @@
 
 - name: repository key
   shell: 'curl -s {{ docker_engine_apt_key_url }} | apt-key add -'
-  when: ansible_python_version | version_compare('2.7.9', '<', strict=True)
+  when: python_version | version_compare('2.7.9', '<', strict=False)
   tags:
     - docker
     - docker-engine
@@ -88,7 +89,7 @@
     url: '{{ docker_engine_apt_key_url }}'
     id: '{{ docker_engine_apt_key_id }}'
     state: present
-  when: ansible_python_version | version_compare('2.7.9', '>=', strict=True)
+  when: python_version | version_compare('2.7.9', '>=', strict=True)
   tags:
     - docker
     - docker-engine

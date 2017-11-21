@@ -1,0 +1,56 @@
+#!/bin/sh
+
+# {{ ansible_managed }}
+
+set -e
+
+# Flush INPUT and OUTPUT rules on start
+iptables --policy INPUT ACCEPT
+iptables --policy OUTPUT ACCEPT
+iptables --flush INPUT
+iptables --flush OUTPUT
+
+if [ "$1" == "stop" ]; then
+   exit 0
+fi
+
+{% if iptables_ipset %}
+# Drop ipsets
+ipset destroy
+
+# Create ipsets
+{% for name, value in iptables_ipset.iteritems() %}
+ipset create {{ name }} {{ value.type }}
+{% for member in value.members %}
+ipset add {{ name }} {{ member }}
+{% endfor %}
+{% endfor %}
+
+{% endif %}
+
+### INPUT
+# Rules
+{% for rules in iptables_input_rules_list %}
+{% for rule in rules %}
+iptables --append INPUT {{ rule }}
+{% endfor %}
+{% endfor %}
+
+# Log and drop everything else
+iptables --append INPUT -m limit --limit 2/min -j LOG --log-prefix "iptables-INPUT-dropped: " --log-level 4
+iptables --append INPUT -j DROP
+
+# Policy
+iptables --policy INPUT {{ iptables_input_policy }}
+
+
+### OUTPUT
+# Rules
+{% for rules in iptables_output_rules_list %}
+{% for rule in rules %}
+iptables --append OUTPUT {{ rule }}
+{% endfor %}
+{% endfor %}
+
+# Policy
+iptables --policy OUTPUT {{ iptables_output_policy }}

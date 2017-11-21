@@ -1,4 +1,0 @@
-ntpdate_packages:
-  - cron
-  - ntpdate
-  - bsdutils

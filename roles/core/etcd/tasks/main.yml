@@ -1,0 +1,49 @@
+- name: set variables
+  set_fact:
+    systemd: { changed: false }
+    etcd_cluster: '=https://10.0.1.10:2380'
+  tags:
+    - etcd
+
+
+- name: /etc/systemd/system/etcd-member.service.d
+  file:
+    path: /etc/systemd/system/etcd-member.service.d
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - etcd
+
+
+- name: /etc/systemd/system/etcd-member.service.d/20-clct-etcd-member.conf
+  template:
+    src: 20-clct-etcd-member.conf
+    dest: /etc/systemd/system/etcd-member.service.d/20-clct-etcd-member.conf
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: systemd
+  tags:
+    - etcd
+
+
+- name: daemon_reload
+  systemd:
+    name: etcd-member
+    state: started
+    daemon_reload: yes
+  when: systemd.changed
+  tags:
+    - etcd
+
+
+- name: start service
+  systemd:
+    name: etcd-member
+    enabled: yes
+    state: started
+  tags:
+    - etcd
