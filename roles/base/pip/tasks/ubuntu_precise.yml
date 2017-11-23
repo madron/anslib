@@ -1,0 +1,28 @@
+- name: download directory
+  file:
+    path: /var/lib/ansible/base/pip
+    state: directory
+    mode: 0644
+    owner: root
+    group: root
+
+- name: install pip
+  command: pip install --index-url=https://pypi.python.org/simple/ pip==9.0.1
+  args:
+    creates: /var/lib/ansible/base/pip/installed
+
+- name: /var/lib/ansible/base/pip/installed
+  file:
+    src: /usr/local/bin/pip
+    dest: /var/lib/ansible/base/pip/installed
+    state: link
+    owner: root
+    group: root
+
+- name: symlink to /usr/bin/pip
+  file:
+    src: /usr/local/bin/pip
+    dest: /usr/bin/pip
+    state: link
+    owner: root
+    group: root
