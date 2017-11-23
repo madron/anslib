@@ -3,6 +3,9 @@ Description=Prometheus node exporter
 Wants=network.target
 
 [Service]
+Restart=always
+RestartSec=10
+
 ExecStart=/usr/local/sbin/node_exporter \
         -auth.pass="{{ prometheus_node_pass }}" \
         -auth.user="{{ prometheus_node_user }}" \
@@ -17,7 +20,6 @@ ExecStart=/usr/local/sbin/node_exporter \
         -web.listen-address=":{{ prometheus_node_port }}"
 ExecReload=/bin/kill -HUP $MAINPID
 KillMode=process
-Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
