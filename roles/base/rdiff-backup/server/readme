@@ -1,0 +1,7 @@
+docker build -t rdiff .
+
+docker run -d --name rdiff -v ~/dev/anslib/roles/base/rdiff-backup/server/files/batch-rdiff-backup.py:/batch-rdiff-backup.py -v ~/.ssh:/root/.ssh:ro rdiff sleep 999d
+
+docker exec -it rdiff python /batch-rdiff-backup.py --host example.com --includes /etc --sysout
+
+docker exec -it rdiff python /batch-rdiff-backup.py --host example.com --source /etc --sysout --push --retain-days 1 --backup-dir /var/backups/mv_restore --retain-days=1 --post-execute-commands /bin/true

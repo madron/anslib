@@ -8,11 +8,10 @@ import sys
 import paramiko
 import platform
 import rdiff_backup.Main
-import time
 from contextlib import contextmanager
 from StringIO import StringIO
 from prometheus_client import REGISTRY, CollectorRegistry
-from prometheus_client import Gauge, Histogram
+from prometheus_client import Gauge
 from prometheus_client import pushadd_to_gateway
 
 BACKUP_BASE = '/var/backups'
@@ -33,7 +32,7 @@ rdiff_backup_seconds = Gauge(
 )
 rdiff_backup_command_seconds = Gauge(
     'rdiff_backup_command_seconds',
-    'Pre execute commands time, in seconds.',
+    'Commands time, in seconds.',
 )
 rdiff_backup_transfer_seconds = Gauge(
     'rdiff_backup_transfer_seconds',
@@ -42,7 +41,7 @@ rdiff_backup_transfer_seconds = Gauge(
 # Success metrics
 rdiff_backup_command_success = Gauge(
     'rdiff_backup_command_success',
-    'Pre execute command succedeed: 1 -> success - 0 -> failure.',
+    'Command succedeed: 1 -> success - 0 -> failure.',
 )
 rdiff_backup_transfer_success = Gauge(
     'rdiff_backup_transfer_success',
@@ -256,12 +255,16 @@ def run(**kwargs):
 
 @rdiff_backup_seconds.time()
 def run_backup(**kwargs):
-    # Command
-    command_success = run_command(**kwargs)
-    rdiff_backup_command_success.set(command_success)
+    # Pre command
+    pre_command_success = run_command('pre', **kwargs)
+    rdiff_backup_command_success.set(pre_command_success)
     # Transfer
     transfer_success = run_transfer(**kwargs)
     rdiff_backup_transfer_success.set(transfer_success)
+    # Post command
+    command_success = run_command('post', **kwargs)
+    command_success = command_success and pre_command_success
+    rdiff_backup_command_success.set(command_success)
     # Backup
     success = command_success and transfer_success
     rdiff_backup_success.set(success)
@@ -271,19 +274,22 @@ def run_backup(**kwargs):
 
 
 @rdiff_backup_command_seconds.time()
-def run_command(**kwargs):
+def run_command(type, **kwargs):
     logger = kwargs['logger']
     host = kwargs['host']
     port = kwargs['port']
     user = kwargs['user']
     command_timeout = kwargs['command_timeout']
-    commands = kwargs['pre_execute_commands']
+    if type == 'pre':
+        commands = kwargs['pre_execute_commands']
+    else:
+        commands = kwargs['post_execute_commands']
     no_errors = kwargs['no_errors']
     success = True
     if host == 'localhost' and commands:
-        logger.error('pre_execute_commands not supported on localhost')
+        logger.error('execute_commands not supported on localhost')
         return False
-    #Connection check and pre-exececute-commands
+    #Connection check and exececute commands
     if not host == 'localhost':
         ssh_client = get_ssh_client(host, port, user)
         for command in commands:
@@ -334,9 +340,16 @@ def backup(**kwargs):
     logger = kwargs['logger']
     host = kwargs['host']
     port = kwargs['port']
+    push = kwargs['push']
     user = kwargs['user']
-    includes = kwargs['includes']
-    excludes = kwargs['excludes']
+    source = kwargs['source']
+    if source:
+        includes = []
+        excludes = []
+    else:
+        includes = kwargs['includes']
+        excludes = kwargs['excludes']
+        source = '/'
     backup_dir = kwargs['backup_dir']
     timeout = kwargs['transfer_timeout']
     args = [
@@ -349,29 +362,41 @@ def backup(**kwargs):
     for path in includes:
         args.append('--include')
         args.append(path)
-    args.extend(['--exclude', '/'])
+    if includes:
+        args.extend(['--exclude', '/'])
     if host == 'localhost':
-        args.append('/')
+        args.append(source)
+        args.append(backup_dir)
     else:
         args.append('--remote-schema')
         args.append('ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -C -p %d ' % port + ' %s rdiff-backup --server')
-        args.append('%s@%s::/' % (user, host))
-    args.append(backup_dir)
+        if push:
+            args.append(source)
+            args.append('%s@%s::%s' % (user, host, backup_dir))
+        else:
+            args.append('%s@%s::%s' % (user, host, source))
+            args.append(backup_dir)
     logger.info('File transfer started.')
     return rdiff_backup_command(logger, args, timeout=timeout)
 
 
 def check_backup(**kwargs):
     logger = kwargs['logger']
-    includes = kwargs['includes']
+    source = kwargs['source']
+    if source:
+        includes = [source]
+    else:
+        includes = kwargs['includes']
     backup_dir = kwargs['backup_dir']
+    push = kwargs['push']
     success = True
-    for remote_path in includes:
-        path = os.path.join(backup_dir, remote_path.lstrip('/'))
-        logger.info("Checking path: '%s'" % path)
-        if not os.path.exists(path):
-            success = False
-            logger.error("Path '%s' does not exist on remote host" % remote_path)
+    if not push:
+        for remote_path in includes:
+            path = os.path.join(backup_dir, remote_path.lstrip('/'))
+            logger.info("Checking path: '%s'" % path)
+            if not os.path.exists(path):
+                success = False
+                logger.error("Path '%s' does not exist on remote host" % remote_path)
     return success
 
 
@@ -379,6 +404,10 @@ def clean_backup(**kwargs):
     logger = kwargs['logger']
     backup_dir = kwargs['backup_dir']
     days = kwargs['retain_days']
+    push = kwargs['push']
+    host = kwargs['host']
+    port = kwargs['port']
+    user = kwargs['user']
     if not days:
         logger.info('retain-days parameter not supplied: not removing old backups.')
         return 0, [], []
@@ -387,9 +416,14 @@ def clean_backup(**kwargs):
     args.append('--force')
     args.append('--remove-older-than')
     args.append('%dD' % days)
-    args.append('--remote-schema')
-    args.append('')
-    args.append(backup_dir)
+    if push:
+        args.append('--remote-schema')
+        args.append('ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -C -p %d ' % port + ' %s rdiff-backup --server')
+        args.append('%s@%s::%s' % (user, host, backup_dir))
+    else:
+        args.append('--remote-schema')
+        args.append('')
+        args.append(backup_dir)
     return rdiff_backup_command(logger, args)
 
 
@@ -403,8 +437,12 @@ if __name__ == '__main__':
                         help='Ssh port')
     parser.add_argument('--user', metavar='USER', type=str, default=DEFAULT_USER,
                         help='Ssh user')
+    parser.add_argument('--push', default=False, action='store_true',
+                        help='Push backup instead of pull.')
+    parser.add_argument('--source', metavar='PATH', type=str, default='',
+                        help='Path to backup')
     parser.add_argument('--includes', metavar='PATH', type=str, nargs='+',
-                        required=True, help='Paths to backup')
+                        default=[], help='Paths to backup')
     parser.add_argument('--excludes', metavar='PATH', type=str, nargs='+',
                         default=[], help='Paths to exclude from backup')
     parser.add_argument('--backup-base', metavar='DIR', type=str,
@@ -415,10 +453,13 @@ if __name__ == '__main__':
                         default=LOG_PREFIX, help='Log file name prefix')
     parser.add_argument('--pre-execute-commands', metavar='COMMAND',
                         type=str, nargs='+', default=[],
-                        help='Commands to execute on remote host')
+                        help='Commands to execute on remote host before transfer')
+    parser.add_argument('--post-execute-commands', metavar='COMMAND',
+                        type=str, nargs='+', default=[],
+                        help='Commands to execute on remote host after transfer')
     parser.add_argument('--command-timeout', metavar='SECONDS',
                         type=int, default=None,
-                        help='Timeout for pre execute command')
+                        help='Timeout for execute command')
     parser.add_argument('--transfer-timeout', metavar='SECONDS',
                         type=int, default=None,
                         help='Timeout for transfer')
