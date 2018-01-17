@@ -2,37 +2,37 @@ version: '2'
 
 services:
   memcached:
-    container_name: {{ project }}_memcached
-    image: memcached
+    container_name: {{ service }}_memcached
+    image: memcached:1.5.4-alpine
     restart: always
     networks:
       - private
 
   redis:
-    container_name: {{ project }}_redis
-    image: redis:3.0.7-alpine
+    container_name: {{ service }}_redis
+    image: redis:4.0.6-alpine
     restart: always
     networks:
       - private
 
   postgres:
-    container_name: {{ project }}_postgres
-    image: postgres:9.5
+    container_name: {{ service }}_postgres
+    image: postgres:10.1-alpine
     restart: always
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres:/var/lib/postgresql/data
     networks:
       - private
 
   smtp:
-    container_name: {{ project }}_smtp
+    container_name: {{ service }}_smtp
     image: tianon/exim4
     restart: always
     networks:
       - private
 
   celery_beat:
-    container_name: {{ project }}_celery_beat
+    container_name: {{ service }}_celery_beat
     image: sentry:{{ version }}
     restart: always
     environment:
@@ -61,11 +61,11 @@ services:
       - private
 
   server:
-    container_name: {{ project }}_server
+    container_name: {{ service }}_server
     image: sentry:{{ version }}
     restart: always
     volumes:
-      - server_data:/var/lib/sentry/files
+      - server:/var/lib/sentry/files
     environment:
       - SENTRY_MEMCACHED_HOST=memcached
       - SENTRY_REDIS_HOST=redis
@@ -96,9 +96,9 @@ services:
       - private
 
 volumes:
-  postgres_data:
+  postgres:
     driver: local
-  server_data:
+  server:
     driver: local
 
 

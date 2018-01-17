@@ -1,0 +1,26 @@
+[Unit]
+Description={{ service }} service
+After=docker.service
+
+[Service]
+Restart=always
+RestartSec=10
+ExecStartPre=/usr/local/bin/docker-compose -p {{ service }} -f /etc/container/{{ service }}/docker-compose.yml down
+ExecStart=/usr/local/bin/docker-compose -p {{ service }} -f /etc/container/{{ service }}/docker-compose.yml up
+ExecStop=/usr/local/bin/docker-compose -p {{ service }} -f /etc/container/{{ service }}/docker-compose.yml down
+
+[Install]
+WantedBy=default.target
+
+
+### Initialize/Upgrade
+# docker exec -it {{ service }}_server sentry upgrade --noinput
+
+### Create superuser
+# docker exec -it {{ service }}_server sentry createuser --superuser --email admin
+
+### Backup
+# docker exec -i --user postgres {{ service }}_postgres pg_dump postgres > /tmp/sentry_dump.sql
+
+### Restore
+# docker exec -i --user postgres {{ service }}_postgres psql postgres < /tmp/sentry_dump.sql

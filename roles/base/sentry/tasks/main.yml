@@ -6,8 +6,7 @@
 
 - name: set variables
   set_fact:
-    project: sentry
-    service: dck-sentry
+    service: sentry
   tags:
     - sentry
 
@@ -23,10 +22,21 @@
     - sentry
 
 
+- name: /etc/container/ directory
+  file:
+    path: '/etc/container/{{ service }}'
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - sentry
+
+
 - name: docker-compose file
   template:
     src: docker-compose.yml
-    dest: /etc/init/{{ service }}.yml
+    dest: /etc/container/{{ service }}/docker-compose.yml
     mode: 0644
     owner: root
     group: root
@@ -35,30 +45,34 @@
     - sentry
 
 
-- name: upstart file
-  template:
-    src: upstart.conf
-    dest: /etc/init/{{ service }}.conf
-    mode: 0644
-    owner: root
-    group: root
-  register: upstart
-  tags:
-    - sentry
-
-
 - name: pull docker images
-  command: 'docker-compose -p {{ project }} -f /etc/init/{{ service }}.yml pull'
+  command: '/usr/local/bin/docker-compose -p {{ service }} -f /etc/container/{{ service }}/docker-compose.yml pull'
   when: docker_image_download
   tags:
     - sentry
 
 
-- name: restart service
-  service:
+- name: systemd service file
+  template:
+    src: systemd.service
+    dest: '/etc/systemd/system/{{ service }}.service'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: systemd
+  tags:
+    - sentry
+
+
+- name: restart service - stop
+  systemd:
     name: '{{ service }}'
-    state: restarted
-  when: compose.changed or upstart.changed
+    daemon_reload: yes
+    enabled: yes
+    state: stopped
+  register: restart
+  when: systemd.changed or compose.changed
   tags:
     - sentry
 
@@ -67,5 +81,26 @@
   service:
     name: '{{ service }}'
     state: started
+  register: start
   tags:
     - sentry
+
+
+- name: wait for service
+  wait_for:
+    port: '{{ port }}'
+    delay: 10
+  when: start.changed or restart.changed
+  tags:
+    - sentry
+
+
+- name: check service
+  uri:
+    url: '{{ item }}'
+    timeout: 1
+  with_items:
+    - 'http://localhost:{{ port }}/auth/login/'
+  tags:
+    - sentry
+    - sentry-check
