@@ -24,7 +24,7 @@
     - kernel
 
 
-- include: ubuntu.yml
+- include_tasks: ubuntu.yml
   when: ansible_lsb.id == 'Ubuntu'
   tags:
     - kernel

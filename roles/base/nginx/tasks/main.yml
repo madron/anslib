@@ -5,7 +5,7 @@
     - nginx-config
 
 
-- include: debian.yml
+- include_tasks: debian.yml
   when: ansible_os_family == 'Debian'
   tags:
     - nginx

@@ -4,7 +4,7 @@
     - kvm
 
 
-- include: debian.yml
+- include_tasks: debian.yml
   when: ansible_os_family == 'Debian'
   tags:
     - kvm
@@ -32,7 +32,7 @@
     - kvm
 
 
-- include: vm.yml
+- include_tasks: vm.yml
   tags:
     - kvm
     - kvm-vm

@@ -4,13 +4,13 @@
     - strongswan
 
 
-- include: debian.yml
+- include_tasks: debian.yml
   when: ansible_os_family == 'Debian'
   tags:
     - strongswan
 
 
-- include: remove-cert.yml
+- include_tasks: remove-cert.yml
   when: strongswan_remove_cert
   tags:
     - strongswan
@@ -133,7 +133,7 @@
     - strongswan
 
 
-- include: get-cert.yml
+- include_tasks: get-cert.yml
   when: strongswan_get_cert
   tags:
     - strongswan

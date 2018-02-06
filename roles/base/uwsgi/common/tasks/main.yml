@@ -10,14 +10,14 @@
     - uwsgi-common
 
 
-- include: apt_repository.yml
+- include_tasks: apt_repository.yml
   when: uwsgi_common_apt_repository is defined
   tags:
     - uwsgi
     - uwsgi-common
 
 
-- include: packages_debian.yml
+- include_tasks: packages_debian.yml
   when: ansible_os_family == 'Debian'
   tags:
     - uwsgi

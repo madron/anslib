@@ -5,13 +5,13 @@
     - mosquitto-config
 
 
-- include: debian.yml
+- include_tasks: debian.yml
   when: ansible_os_family == 'Debian'
   tags:
     - mosquitto
 
 
-- include: init.yml
+- include_tasks: init.yml
   tags:
     - mosquitto
     - mosquitto-init

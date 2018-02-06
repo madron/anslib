@@ -5,7 +5,7 @@
     - icinga2
 
 
-- include: packages_debian.yml
+- include_tasks: packages_debian.yml
   when: ansible_os_family == 'Debian'
   tags:
     - icinga2

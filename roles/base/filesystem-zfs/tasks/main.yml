@@ -5,7 +5,7 @@
     - filesystem-zfs
 
 
-- include: packages_debian.yml
+- include_tasks: packages_debian.yml
   when: ansible_os_family == 'Debian'
   tags:
     - filesystem-zfs
@@ -17,9 +17,9 @@
      - filesystem-zfs
 
 
-- name: create pool 
+- name: create pool
   command: zpool create {{ item.name }} {{ item.opts|default() }} {{ item.devs | join(' ') }}
-  with_items: 
+  with_items:
     - "{{ zfspool }}"
   tags:
     - filesystem-zfs

@@ -52,7 +52,7 @@
   tags:
     - webdav
 
-- include: auth_file.yml
+- include_tasks: auth_file.yml
   when: webdav_auth_provider == 'file'
   tags:
     - webdav
