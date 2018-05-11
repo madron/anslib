@@ -78,7 +78,7 @@
 
 - name: repository key
   shell: 'curl -s {{ docker_engine_apt_key_url }} | apt-key add -'
-  when: python_version | version_compare('2.7.9', '<', strict=False)
+  when: python_version is version_compare('2.7.9', '<', strict=False)
   tags:
     - docker
     - docker-engine
@@ -89,7 +89,7 @@
     url: '{{ docker_engine_apt_key_url }}'
     id: '{{ docker_engine_apt_key_id }}'
     state: present
-  when: python_version | version_compare('2.7.9', '>=', strict=True)
+  when: python_version is version_compare('2.7.9', '>=', strict=True)
   tags:
     - docker
     - docker-engine
