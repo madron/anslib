@@ -1,0 +1,36 @@
+gitlab_version: latest
+
+gitlab_http_port: 80
+gitlab_https_port: 443
+gitlab_ssh_port: 22
+
+gitlab_external_url: https://gitlab.example.com/
+
+gitlab_email_enabled: true
+gitlab_email_from: example@example.com
+gitlab_email_display_name: Example
+gitlab_email_reply_to: noreply@example.com
+gitlab_email_subject_suffix: ''
+
+gitlab_smtp_enable: true
+gitlab_smtp_address: smtp.server
+gitlab_smtp_port: 465
+gitlab_smtp_user_name: 'smtp user'
+gitlab_smtp_password: 'smtp password'
+gitlab_smtp_domain: 'example.com'
+gitlab_smtp_authentication: 'login'
+gitlab_smtp_enable_starttls_auto: true
+gitlab_smtp_tls: false
+
+gitlab_registry_host: registry.gitlab.example.com
+gitlab_registry_port: 5005
+
+gitlab_omniauth_providers: []
+# gitlab_omniauth_providers: [
+#   {
+#     name: google_oauth2,
+#     app_id: YOUR APP ID,
+#     app_secret: YOUR APP SECRET,
+#     args: '{ "access_type" => "offline", "approval_prompt" => "" }',
+#   },
+# ]

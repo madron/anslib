@@ -1,0 +1,18 @@
+version: '2'
+
+services:
+  server:
+    image: gitlab/gitlab-ce:{{ gitlab_version }}
+    container_name: {{ service }}_server
+    volumes:
+        - /etc/container/{{ service }}/gitlab.rb:/etc/gitlab/gitlab.rb:ro
+        - data:/var/opt/gitlab:rw
+    ports:
+      - "{{ gitlab_http_port }}:80"
+      - "{{ gitlab_https_port }}:443"
+      - "{{ gitlab_ssh_port }}:22"
+      - "{{ gitlab_registry_port }}:{{ gitlab_registry_port }}"
+
+volumes:
+  data:
+    driver: local

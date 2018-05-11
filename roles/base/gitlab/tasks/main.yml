@@ -1,0 +1,81 @@
+- name: set variables
+  set_fact:
+    service: gitlab
+  tags:
+    - gitlab
+
+
+- name: directories
+  file:
+    path: '/etc/container/{{ service }}'
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - gitlab
+
+
+- name: config file
+  template:
+    src: gitlab.rb
+    dest: '/etc/container/{{ service }}/gitlab.rb'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: config
+  tags:
+    - gitlab
+
+
+- name: compose file
+  template:
+    src: docker-compose
+    dest: '/etc/container/{{ service }}/docker-compose.yml'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: compose
+  tags:
+    - gitlab
+
+
+- name: pull images
+  command: '/usr/local/bin/docker-compose -p {{ service }} -f /etc/container/{{ service }}/docker-compose.yml pull'
+  when: compose.changed
+  tags:
+    - gitlab
+
+
+- name: service file
+  template:
+    src: service
+    dest: '/etc/systemd/system/{{ service }}.service'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: service_file
+  tags:
+    - gitlab
+
+
+- name: restart service
+  systemd:
+    name: '{{ service }}'
+    state: restarted
+    daemon_reload: yes
+  when: service_file.changed or compose.changed or config.changed
+  tags:
+    - gitlab
+
+
+- name: start service
+  systemd:
+    name: '{{ service }}'
+    state: started
+    enabled: yes
+  tags:
+    - gitlab
