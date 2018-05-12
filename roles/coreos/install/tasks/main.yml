@@ -1,0 +1,45 @@
+- name: download coreos-install script
+  get_url:
+    url: https://raw.github.com/coreos/init/master/bin/coreos-install
+    dest: /usr/local/sbin/coreos-install
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - coreos-install
+
+
+- name: install ct transpiler
+  get_url:
+    url: https://github.com/coreos/container-linux-config-transpiler/releases/download/{{ coreos_install_traspiler_version }}/ct-{{ coreos_install_traspiler_version }}-x86_64-unknown-linux-gnu
+    dest: /usr/local/bin/ct
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - coreos-install
+
+
+- name: config.yml
+  template:
+    src: config.yml
+    dest: /root/config.yml
+    backup: yes
+  tags:
+    - coreos-install
+
+
+- name: transpile to ignition.json
+  command: ct -in-file /root/config.yml -out-file /root/ignition.js -pretty -strict
+  tags:
+    - coreos-install
+
+
+- name: readme
+  debug:
+    msg:
+      - Find a suitabe disk device for installation; eg: /dev/vdb)
+      - Umount filesystems; eg: umount /dev/vdb1 )
+      - Install coreos; eg: coreos-install -d /dev/vdb -C stable -i ignition.js
+  tags:
+    - coreos-install

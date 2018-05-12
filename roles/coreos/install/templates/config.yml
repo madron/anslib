@@ -1,0 +1,21 @@
+passwd:
+  users:
+    - name: root
+      ssh_authorized_keys:
+{% for key in authorized_keys %}
+{% for value in ssh_public_keys[key] %}
+        - {{ value }}
+{% endfor %}
+{% endfor %}
+
+{% if coreos_ssh_port is defined %}
+systemd:
+  units:
+    - name: sshd.socket
+      dropins:
+      - name: 10-sshd-port.conf
+        contents: |
+          [Socket]
+          ListenStream=
+          ListenStream=3022
+{% endif %}
