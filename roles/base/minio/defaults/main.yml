@@ -1,0 +1,16 @@
+minio_instance: 1
+minio_mountpoint: ''
+
+minio_domain: example.com
+minio_domain_prefix: m
+minio_protocol: http
+
+minio_version: latest
+minio_name: minio
+minio_instances: 4
+minio_starting_port: 9001
+minio_access_key: admin
+minio_secret_key: admin
+minio_browser: 'on'
+# minio_storage_class_standard: 'EC:8'
+# minio_storage_class_rrs: 'EC:2'

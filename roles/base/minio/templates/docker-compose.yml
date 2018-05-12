@@ -1,0 +1,28 @@
+version: '2'
+
+{% set port = minio_starting_port - 1 + minio_instance %}
+{% set server_name = minio_domain_prefix + instance + '.' + minio_domain %}
+services:
+  {{ stack }}:
+    image: minio/minio:{{ minio_version }}
+    container_name: {{ stack }}
+    hostname: {{ server_name }}
+    volumes:
+{% if minio_mountpoint %}
+      - {{ minio_mountpoint }}:/data
+{% else %}
+      - data{{ instance }}:/data
+{% endif %}
+    ports:
+      - "{{ port }}:{{ port }}"
+    environment:
+      MINIO_ACCESS_KEY: {{ minio_access_key }}
+      MINIO_SECRET_KEY: {{ minio_secret_key }}
+      MINIO_BROWSER: "{{ minio_browser }}"
+    command: server --address {{ server_name }}:{{ port }} {% for i in range(1, minio_instances + 1) %} {{ minio_domain_prefix }}{{ '%02d' | format(i) }}.{{ minio_domain }}:{{ minio_starting_port - 1 + i }}/data{% endfor %}
+
+{% if not minio_mountpoint %}
+
+volumes:
+  data{{ instance }}:
+{% endif %}

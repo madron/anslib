@@ -1,0 +1,63 @@
+- name: set variables
+  set_fact:
+    stack: "{{ minio_name }}_{{ '%02d' | format(minio_instance) }}"
+    instance: "{{ '%02d' | format(minio_instance) }}"
+  tags:
+    - minio
+
+
+- name: /etc/stack/ directory
+  file:
+    path: '/etc/stack/{{ stack }}'
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - minio
+
+
+- name: docker-compose file
+  template:
+    src: docker-compose.yml
+    dest: /etc/stack/{{ stack }}/docker-compose.yml
+    mode: 0644
+    owner: root
+    group: root
+  register: compose
+  tags:
+    - minio
+
+
+- name: systemd service file
+  template:
+    src: systemd.service
+    dest: '/etc/systemd/system/{{ stack }}.service'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: systemd
+  tags:
+    - minio
+
+
+- name: restart service
+  systemd:
+    name: '{{ stack }}'
+    daemon_reload: yes
+    enabled: yes
+    state: stopped
+  register: restart
+  when: systemd.changed or compose.changed
+  tags:
+    - minio
+
+
+- name: start service
+  systemd:
+    name: '{{ stack }}'
+    enabled: yes
+    state: started
+  tags:
+    - minio
