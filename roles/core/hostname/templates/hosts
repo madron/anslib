@@ -1,7 +1,0 @@
-# {{ ansible_managed }}
-
-127.0.0.1       localhost {{ hostname }} {% if hostname_domain %}{{ hostname }}.{{ hostname_domain }}{% endif %}
-
-{% for host in hostname_additional_hosts %}
-{{ host }}
-{% endfor %}

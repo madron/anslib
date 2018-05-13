@@ -1,0 +1,17 @@
+- name: /etc/hostname
+  template:
+    src: hostname
+    dest: /etc/hostname
+    mode: 0644
+    owner: root
+    group: root
+  register: hostname
+  tags:
+    - coreos-hostname
+
+
+- name: hostnamectl set-hostname
+  command: 'hostnamectl set-hostname {{ coreos_hostname | default(inventory_hostname) }}'
+  when: hostname.changed
+  tags:
+    - coreos-hostname
