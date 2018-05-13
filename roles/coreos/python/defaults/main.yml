@@ -1,0 +1,5 @@
+ap_releases: https://downloads.activestate.com/ActivePython/releases
+ap_python2_version: 2.7.13.2715
+ap_python2_package_name: "ActivePython-{{ap_python2_version}}-linux-x86_64-glibc-2.12-402695"
+ap_python2_package_file_name: "{{ap_python2_package_name}}.tar.gz"
+coreos_python_url: "https://downloads.activestate.com/ActivePython/releases/2.7.14.2717/ActivePython-2.7.14.2717-linux-x86_64-glibc-2.12-404899.tar.gz"
