@@ -1,11 +1,3 @@
-- name: set variables
-  set_fact:
-    systemd: { changed: false }
-    etcd_cluster: '=https://10.0.1.10:2380'
-  tags:
-    - etcd
-
-
 - name: /etc/systemd/system/etcd-member.service.d
   file:
     path: /etc/systemd/system/etcd-member.service.d
@@ -14,30 +6,30 @@
     owner: root
     group: root
   tags:
-    - etcd
+    - coreos-etcd
 
 
-- name: /etc/systemd/system/etcd-member.service.d/20-clct-etcd-member.conf
+- name: service drop-in
   template:
-    src: 20-clct-etcd-member.conf
-    dest: /etc/systemd/system/etcd-member.service.d/20-clct-etcd-member.conf
+    src: start.conf
+    dest: /etc/systemd/system/etcd-member.service.d/start.conf
     mode: 0644
     owner: root
     group: root
     backup: yes
   register: systemd
   tags:
-    - etcd
+    - coreos-etcd
 
 
-- name: daemon_reload
+- name: restart service
   systemd:
     name: etcd-member
-    state: started
+    state: restarted
     daemon_reload: yes
   when: systemd.changed
   tags:
-    - etcd
+    - coreos-etcd
 
 
 - name: start service
@@ -46,4 +38,4 @@
     enabled: yes
     state: started
   tags:
-    - etcd
+    - coreos-etcd
