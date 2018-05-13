@@ -3,60 +3,22 @@
     install: true
   tags: coreos-python
 
-- name: check for installed python2 (in opt/bin)
-  raw: "[ -f /opt/bin/python2 ] && echo 'installed' || echo 'missing'"
+
+- name: check for installed python (in opt/bin)
+  raw: "[ -f /opt/bin/python ] && echo 'installed' || echo 'missing'"
   changed_when: false
-  register: py2_check
+  register: py_check
   tags: coreos-python
+
 
 - name: install false
   set_fact:
     install: false
-  when: py2_check.stdout_lines[0] == "installed"
+  when: py_check.stdout_lines[0] == "installed"
   tags: coreos-python
 
-- name: download ActivePython
-  raw: 'wget -O /root/active_python.tgz {{ coreos_python_url }}'
-  when: install
-  tags: coreos-python
 
-- name: unzip ActivePython
-  raw: mkdir -p /root/active_python ; tar -xvf active_python.tgz --strip-components=1 -C /root/active_python
-  when: install
-  tags: coreos-python
-
-- name: create the resulting directory for ActivePython
-  raw: 'mkdir -p /opt/bin/active_python'
-  when: install
-  tags: coreos-python
-
-- name: install ActivePython
-  raw: 'cd /root/active_python && ./install.sh -I /opt/bin/active_python'
-  when: install
-  tags: coreos-python
-
-# Setup links
-- name: link easy_install
-  raw: ln -sf /opt/bin/active_python/bin/easy_install /opt/bin/easy_install
-  when: install
-  tags: coreos-python
-
-- name: link pip
-  raw: ln -sf /opt/bin/active_python/bin/pip /opt/bin/pip
-  when: install
-  tags: coreos-python
-
-- name: link python
-  raw: ln -sf /opt/bin/active_python/bin/python /opt/bin/python
-  when: install
-  tags: coreos-python
-
-- name: link python2
-  raw: ln -sf /opt/bin/active_python/bin/python /opt/bin/python2
-  when: install
-  tags: coreos-python
-
-- name: link virtualenv
-  raw: ln -sf /opt/bin/active_python/bin/virtualenv /opt/bin/virtualenv
+- name: install pypy2
+  script: bootstrap.sh
   when: install
   tags: coreos-python
