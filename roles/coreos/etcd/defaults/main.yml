@@ -1,1 +1,4 @@
 coreos_etcd_master_hosts: []
+
+coreos_etcd_peer_protocol: https
+coreos_etcd_client_protocol: https
