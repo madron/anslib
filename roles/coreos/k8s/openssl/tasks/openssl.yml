@@ -1,0 +1,12 @@
+- name: certificate authority key
+  command: openssl genrsa -out ca-key.pem 2048
+  args:
+    chdir: '{{ k8s_certs_dir }}'
+    creates: '{{ k8s_certs_dir }}/ca-key.pem'
+
+
+- name: certificate authority cert
+  command: openssl req -x509 -new -nodes -key ca-key.pem -days 10000 -out ca.pem -subj "/CN=kube-ca"
+  args:
+    chdir: '{{ k8s_certs_dir }}'
+    creates: '{{ k8s_certs_dir }}/ca.pem'
