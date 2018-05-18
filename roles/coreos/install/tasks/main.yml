@@ -40,6 +40,6 @@
     msg:
       - Find a suitabe disk device for installation; eg: /dev/vdb)
       - Umount filesystems; eg: umount /dev/vdb1 )
-      - Install coreos; eg: coreos-install -d /dev/vdb -C stable -i ignition.js
+      - Install coreos; eg: coreos-install -C stable -i ignition.js -d /dev/???
   tags:
     - coreos-install
