@@ -15,4 +15,5 @@ wget -O - $URL | tar -xjf - --strip-components=1 -C /opt/pypy
 ln -snf /usr/lib64/libncurses.so.5.9 /opt/pypy/bin/libtinfo.so.5
 
 # python symlink
+mkdir -p /opt/bin
 ln -snf /opt/pypy/bin/pypy /opt/bin/python
