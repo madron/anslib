@@ -1,0 +1,66 @@
+- name: ssl dir
+  file:
+    path: /etc/kubernetes/ssl
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  tags:
+    - k8s-kubelet
+
+- name: ssl keys
+  copy:
+    src: '{{ k8s_certs_dir }}/{{ item }}'
+    dest: /etc/kubernetes/ssl/
+    owner: root
+    group: root
+    mode: 0600
+  with_items:
+    - apiserver-key.pem
+  tags:
+    - k8s-kubelet
+
+- name: ssl certs
+  copy:
+    src: '{{ k8s_certs_dir }}/{{ item }}'
+    dest: /etc/kubernetes/ssl/
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - ca.pem
+    - apiserver.pem
+  tags:
+    - k8s-kubelet
+
+
+- name: /etc/systemd/system/kubelet.service
+  template:
+    src: kubelet.service
+    dest: /etc/systemd/system/kubelet.service
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: systemd
+  tags:
+    - k8s-kubelet
+
+
+- name: restart service
+  systemd:
+    name: kubelet
+    state: restarted
+    daemon_reload: yes
+  when: systemd.changed
+  tags:
+    - k8s-kubelet
+
+
+- name: start service
+  systemd:
+    name: kubelet
+    enabled: yes
+    state: started
+  tags:
+    - k8s-kubelet
