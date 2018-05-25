@@ -1,9 +1,0 @@
-- name: 20-ignition.preset
-  template:
-    src: 20-ignition.preset
-    dest: /etc/systemd/system-preset/20-ignition.preset
-    mode: 0644
-    owner: root
-    group: root
-  tags:
-    - ignition

@@ -1,5 +1,0 @@
-# {{ ansible_managed }}
-
-{% for service in ignition_sevices %}
-enable {{ service }}.service
-{% endfor %}
