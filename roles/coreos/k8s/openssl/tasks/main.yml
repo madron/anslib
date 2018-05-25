@@ -24,24 +24,24 @@
   tags: k8s-openssl
 
 - name: Kubernetes API Server - key
-  command: openssl genrsa -out api_key.pem 2048
+  command: openssl genrsa -out apiserver-key.pem 2048
   args:
     chdir: '{{ k8s_certs_dir }}'
-    creates: 'api_key.pem'
+    creates: 'apiserver-key.pem'
   tags: k8s-openssl
 
 - name: Kubernetes API Server - csr
-  command: openssl req -new -key api_key.pem -out api.csr -subj "/CN=kube-apiserver" -config openssl.cnf
+  command: openssl req -new -key apiserver-key.pem -out apiserver.csr -subj "/CN=kube-apiserver" -config openssl.cnf
   args:
     chdir: '{{ k8s_certs_dir }}'
-    creates: 'api.csr'
+    creates: 'apiserver.csr'
   tags: k8s-openssl
 
 - name: Kubernetes API Server - cert
-  command: openssl x509 -req -in api.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out api_crt.pem -days 3650 -extensions v3_req -extfile openssl.cnf
+  command: openssl x509 -req -in apiserver.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out apiserver.pem -days 3650 -extensions v3_req -extfile openssl.cnf
   args:
     chdir: '{{ k8s_certs_dir }}'
-    creates: 'api_crt.pem'
+    creates: 'apiserver.pem'
   tags: k8s-openssl
 
 

@@ -1,5 +1,5 @@
 k8s_kubelet_version: v1.10.2_coreos.0
-k8s_certs_dir: './files/k8s-certs'
+k8s_certs_dir: 'k8s-certs'
 
 k8s_domain: example.com
 k8s_api_host: k8s-api.example.com
