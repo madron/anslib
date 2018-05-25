@@ -1,0 +1,43 @@
+- name: systemd config
+  set_fact:
+    systemd_configs: [
+      { path: /etc/flannel, file: options.env },
+      { path: /etc/systemd/system/flanneld.service.d, file: 40-ExecStartPre-symlink.conf },
+      { path: /etc/systemd/system/docker.service.d, file: 40-flannel.conf },
+    ]
+  tags:
+    - k8s-flannel
+
+
+- name: create directories
+  file:
+    path: '{{ item.path }}'
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  with_items: '{{ systemd_configs }}'
+  tags:
+    - k8s-flannel
+
+
+- name: systemd files
+  template:
+    src: '{{ item.file }}'
+    dest: '{{ item.path }}/{{ item.file }}'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  with_items: '{{ systemd_configs }}'
+  register: systemd
+  tags:
+    - k8s-flannel
+
+
+- name: systemd daemon-reload
+  systemd:
+    daemon_reload: yes
+  when: systemd.changed
+  tags:
+    - k8s-flannel
