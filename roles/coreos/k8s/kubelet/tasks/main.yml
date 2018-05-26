@@ -8,28 +8,26 @@
   tags:
     - k8s-kubelet
 
-- name: ssl keys
+- name: ssl ca cert
   copy:
-    src: '{{ k8s_certs_dir }}/{{ item }}'
-    dest: /etc/kubernetes/ssl/
-    owner: root
-    group: root
-    mode: 0600
-  with_items:
-    - apiserver-key.pem
-  tags:
-    - k8s-kubelet
-
-- name: ssl certs
-  copy:
-    src: '{{ k8s_certs_dir }}/{{ item }}'
-    dest: /etc/kubernetes/ssl/
+    src: '{{ k8s_certs_dir }}/ca.pem'
+    dest: /etc/kubernetes/ssl/ca.pem
     owner: root
     group: root
     mode: 0644
-  with_items:
-    - ca.pem
-    - apiserver.pem
+  tags:
+    - k8s-kubelet
+
+
+- name: /etc/kubernetes/kubeconfig.yml
+  template:
+    src: kubeconfig.yml
+    dest: /etc/kubernetes/kubeconfig.yml
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: config
   tags:
     - k8s-kubelet
 
@@ -52,7 +50,7 @@
     name: kubelet
     state: restarted
     daemon_reload: yes
-  when: systemd.changed
+  when: systemd.changed or config.changed
   tags:
     - k8s-kubelet
 
