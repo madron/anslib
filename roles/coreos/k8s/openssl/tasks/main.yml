@@ -1,3 +1,10 @@
+- name: set fact
+  set_fact:
+    worker_hosts: '{{ k8s_worker_hosts + k8s_master_hosts }}'
+  tags: k8s-openssl
+
+
+
 - name: Cluster Root CA - key
   command: openssl genrsa -out ca-key.pem 2048
   args:
@@ -75,7 +82,7 @@
     dest: '{{ k8s_certs_dir }}/{{ item }}-worker-openssl.cnf'
     mode: 0644
     backup: yes
-  with_items: '{{ k8s_worker_hosts }}'
+  with_items: '{{ worker_hosts }}'
   register: worker
   tags: k8s-openssl
 
@@ -84,7 +91,7 @@
   args:
     chdir: '{{ k8s_certs_dir }}'
     creates: '{{ item }}-worker-key.pem'
-  with_items: '{{ k8s_worker_hosts }}'
+  with_items: '{{ worker_hosts }}'
   tags: k8s-openssl
 
 - name: Worker - csr
@@ -92,7 +99,7 @@
   args:
     chdir: '{{ k8s_certs_dir }}'
     creates: '{{ item }}-worker.csr'
-  with_items: '{{ k8s_worker_hosts }}'
+  with_items: '{{ worker_hosts }}'
   tags: k8s-openssl
 
 - name: Worker - cert
@@ -100,5 +107,5 @@
   args:
     chdir: '{{ k8s_certs_dir }}'
     creates: '{{ item }}-worker.pem'
-  with_items: '{{ k8s_worker_hosts }}'
+  with_items: '{{ worker_hosts }}'
   tags: k8s-openssl
