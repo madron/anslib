@@ -1,3 +1,6 @@
 # List of etcd machines.
 # If you're running a cluster of 5 machines, list them all here.
 k8s_etcd_endpoints: []
+
+# Etcd protocol schema
+k8s_etcd_protocol: https
