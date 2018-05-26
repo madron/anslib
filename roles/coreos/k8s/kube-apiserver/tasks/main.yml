@@ -1,0 +1,48 @@
+- name: ssl keys
+  copy:
+    src: '{{ k8s_certs_dir }}/{{ item }}'
+    dest: /etc/kubernetes/ssl/
+    owner: root
+    group: root
+    mode: 0600
+  with_items:
+    - apiserver-key.pem
+  tags:
+    - k8s-kube-apiserver
+
+
+- name: ssl certs
+  copy:
+    src: '{{ k8s_certs_dir }}/{{ item }}'
+    dest: /etc/kubernetes/ssl/
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - ca.pem
+    - apiserver.pem
+  tags:
+    - k8s-kube-apiserver
+
+
+- name: create /etc/kubernetes/manifests directory
+  file:
+    path: /etc/kubernetes/manifests
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  tags:
+    - k8s-kube-apiserver
+
+
+- name: config /etc/kubernetes/manifests/kube-apiserver.yaml
+  template:
+    src: kube-apiserver.yaml
+    dest: /etc/kubernetes/manifests/kube-apiserver.yaml
+    mode: 0644
+    owner: root
+    group: root
+  register: config
+  tags:
+    - k8s-kube-apiserver
