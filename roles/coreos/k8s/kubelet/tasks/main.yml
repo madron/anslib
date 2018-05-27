@@ -8,6 +8,29 @@
   tags:
     - k8s-kubelet
 
+
+- name: ssl client key
+  copy:
+    src: '{{ k8s_certs_dir }}/{{ inventory_hostname }}-worker-key.pem'
+    dest: '/etc/kubernetes/ssl/{{ inventory_hostname }}-worker-key.pem'
+    owner: root
+    group: root
+    mode: 0600
+  tags:
+    - k8s-kubelet
+
+
+- name: ssl client cert
+  copy:
+    src: '{{ k8s_certs_dir }}/{{ inventory_hostname }}-worker.pem'
+    dest: '/etc/kubernetes/ssl/{{ inventory_hostname }}-worker.pem'
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - k8s-kubelet
+
+
 - name: ssl ca cert
   copy:
     src: '{{ k8s_certs_dir }}/ca.pem'
