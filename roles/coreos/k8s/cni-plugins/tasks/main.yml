@@ -1,0 +1,19 @@
+- name: create /opt/cni/bin directory
+  file:
+    path: /opt/cni/bin
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  tags:
+    - k8s
+    - k8s-cni-plugins
+
+
+- name: install binaries
+  shell: 'curl -L "https://github.com/containernetworking/plugins/releases/download/{{ k8s_cni_plugins_version }}/cni-plugins-amd64-{{ k8s_cni_plugins_version }}.tgz" | tar -C /opt/cni/bin -xz'
+  args:
+    creates: /opt/cni/bin/bridge
+  tags:
+    - k8s
+    - k8s-cni-plugins
