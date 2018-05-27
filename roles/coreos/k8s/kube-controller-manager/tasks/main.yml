@@ -1,0 +1,21 @@
+- name: create /etc/kubernetes/manifests directory
+  file:
+    path: /etc/kubernetes/manifests
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  tags:
+    - k8s-kube-controller-manager
+
+
+- name: config /etc/kubernetes/manifests/kube-controller-manager.yaml
+  template:
+    src: kube-controller-manager.yaml
+    dest: /etc/kubernetes/manifests/kube-controller-manager.yaml
+    mode: 0644
+    owner: root
+    group: root
+  register: config
+  tags:
+    - k8s-kube-controller-manager
