@@ -1,0 +1,6 @@
+s3sync_profiles: []
+
+# s3sync_profiles: [
+#   { name: default, aws_access_key_id: id, aws_secret_access_key: secret },
+#   { name: minio, aws_access_key_id: id, aws_secret_access_key: secret, region_name: us-east-1, endpoint_url: 'http://localhost' },
+# ]

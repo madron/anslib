@@ -1,0 +1,12 @@
+{% for profile in s3sync_profiles %}
+[profile {{ profile.name }}]
+aws_access_key_id={{ profile.aws_access_key_id }}
+aws_secret_access_key={{ profile.aws_secret_access_key }}
+{% if profile.region_name is defined %}
+region_name={{ profile.region_name }}
+{% endif %}
+{% if profile.endpoint_url is defined %}
+endpoint_url={{ profile.endpoint_url }}
+{% endif %}
+
+{% endfor %}

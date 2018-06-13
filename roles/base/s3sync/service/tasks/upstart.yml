@@ -1,0 +1,22 @@
+- name: upstart file
+  template:
+    src: upstart.conf
+    dest: '/etc/init/{{ service }}.conf'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: service_file
+
+
+- name: systemd service restarted
+  service:
+    name: '{{ service }}'
+    state: restarted
+  when: service_file.changed
+
+
+- name: systemd service started
+  service:
+    name: '{{ service }}'
+    state: started

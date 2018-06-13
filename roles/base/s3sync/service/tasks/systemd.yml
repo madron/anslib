@@ -1,0 +1,24 @@
+- name: systemd file
+  template:
+    src: systemd.service
+    dest: '/etc/systemd/system/{{ service }}.service'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: service_file
+
+
+- name: systemd service restarted
+  systemd:
+    name: '{{ service }}'
+    state: restarted
+    daemon_reload: yes
+  when: service_file.changed
+
+
+- name: systemd service started
+  service:
+    name: '{{ service }}'
+    state: started
+    enabled: yes

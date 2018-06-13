@@ -1,0 +1,16 @@
+- include_tasks: upstart.yml
+  vars:
+    service: s3sync
+  when: ansible_service_mgr == 'upstart'
+  tags:
+    - s3sync
+    - s3sync-service
+
+
+- include_tasks: systemd.yml
+  vars:
+    service: s3sync
+  when: ansible_service_mgr == 'systemd'
+  tags:
+    - s3sync
+    - s3sync-service

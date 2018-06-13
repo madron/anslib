@@ -1,0 +1,11 @@
+- name: config
+  template:
+    src: config
+    dest: /root/.aws/config
+    mode: 0600
+    owner: root
+    group: root
+  when: s3sync_profiles
+  tags:
+    - s3sync
+    - s3sync-config
