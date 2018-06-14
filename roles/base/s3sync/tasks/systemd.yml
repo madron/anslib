@@ -17,8 +17,7 @@
   when: service_file.changed
 
 
-- name: systemd service started
+- name: systemd service enabled
   service:
     name: '{{ service }}'
-    state: started
     enabled: yes

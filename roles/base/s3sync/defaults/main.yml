@@ -1,0 +1,19 @@
+s3sync_version: 0.9
+s3sync_architecture: x86_64
+s3sync_checksum: 'sha256:18ed48276c9f06781e3a13cc1fee1081b256f034f74bf79298ce9fad9be4731a'
+
+s3sync_profiles: []
+# s3sync_profiles: [
+#   { name: default, aws_access_key_id: id, aws_secret_access_key: secret },
+#   { name: minio, aws_access_key_id: id, aws_secret_access_key: secret, region_name: us-east-1, endpoint_url: 'http://localhost' },
+# ]
+
+s3sync_source: /
+s3sync_destination: /var/backups
+s3sync_includes: ['etc']
+s3sync_excludes: []
+s3sync_verbosity: 1
+s3sync_port: 9130
+s3sync_rescan_delay: 600
+
+s3sync_restore: ''

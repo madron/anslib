@@ -1,9 +1,0 @@
-s3sync_version: 0.9
-
-s3sync_source: /
-s3sync_destination: /var/backups
-s3sync_includes: ['etc']
-s3sync_excludes: []
-s3sync_verbosity: 1
-s3sync_port: 9130
-s3sync_rescan_delay: 600

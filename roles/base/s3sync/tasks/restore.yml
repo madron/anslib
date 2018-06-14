@@ -1,0 +1,8 @@
+- name: service stopped
+  service:
+    name: '{{ service }}'
+    state: stopped
+
+
+- name: restore command
+  command: '/usr/local/bin/s3sync-{{ s3sync_version }} --source {{ s3sync_source }} --destination {{ s3sync_destination }} --include{% for path in s3sync_includes %} {{ path }}{% endfor %}{% if s3sync_excludes %} --exclude{% for path in s3sync_excludes %} {{ path }}{% endfor %} {% endif %} --port {{ s3sync_port }} --restore'

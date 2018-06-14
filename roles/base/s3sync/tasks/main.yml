@@ -1,0 +1,113 @@
+- name: set facts
+  set_fact:
+    service: s3sync
+  tags:
+    - s3sync
+    - s3sync-service
+
+
+- name: download binary
+  get_url:
+    url: 'https://github.com/madron/s3sync/releases/download/{{ s3sync_version }}/s3sync_{{ s3sync_architecture }}'
+    dest: '/usr/local/bin/s3sync-{{ s3sync_version }}'
+    checksum: '{{ s3sync_checksum }}'
+    mode: 0755
+  tags:
+    - s3sync
+    - s3sync-binary
+
+
+- name: config dir
+  file:
+    path: /root/.aws
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - s3sync
+    - s3sync-binary
+
+
+- name: config
+  template:
+    src: config
+    dest: /root/.aws/config
+    mode: 0600
+    owner: root
+    group: root
+  register: config_file
+  when: s3sync_profiles
+  tags:
+    - s3sync
+    - s3sync-config
+    - s3sync-service
+
+
+- name: upstart file
+  template:
+    src: upstart.conf
+    dest: '/etc/init/{{ service }}.conf'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: service_file
+  when: ansible_service_mgr == 'upstart'
+  tags:
+    - s3sync
+    - s3sync-service
+
+
+- name: systemd file
+  template:
+    src: systemd.service
+    dest: '/etc/systemd/system/{{ service }}.service'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: service_file
+  when: ansible_service_mgr == 'systemd'
+  tags:
+    - s3sync
+    - s3sync-service
+
+
+- name: systemd daemon reload
+  systemd:
+    name: '{{ service }}'
+    daemon_reload: yes
+    enabled: yes
+  when: ansible_service_mgr == 'systemd' and service_file.changed
+  tags:
+    - s3sync
+    - s3sync-service
+
+
+- include_tasks: restore.yml
+  vars:
+    service: s3sync
+  when: s3sync_restore
+  tags:
+    - s3sync
+    - s3sync-restore
+
+
+- name: service restarted
+  service:
+    name: '{{ service }}'
+    state: restarted
+  when: config_file.changed or service_file.changed
+  tags:
+    - s3sync
+    - s3sync-service
+
+
+- name: service started
+  service:
+    name: '{{ service }}'
+    state: started
+  tags:
+    - s3sync
+    - s3sync-service
