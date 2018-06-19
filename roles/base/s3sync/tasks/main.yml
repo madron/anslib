@@ -12,6 +12,7 @@
     dest: '/usr/local/bin/s3sync-{{ s3sync_version }}'
     checksum: '{{ s3sync_checksum }}'
     mode: 0755
+    force: '{{ s3sync_force_download }}'
   tags:
     - s3sync
     - s3sync-binary
@@ -98,7 +99,7 @@
   service:
     name: '{{ service }}'
     state: restarted
-  when: config_file.changed or service_file.changed
+  when: config_file.changed or service_file.changed or s3sync_force_restart
   tags:
     - s3sync
     - s3sync-service
