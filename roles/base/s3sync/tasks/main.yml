@@ -53,7 +53,7 @@
     owner: root
     group: root
     backup: yes
-  register: service_file
+  register: upstart_file
   when: ansible_service_mgr == 'upstart'
   tags:
     - s3sync
@@ -68,7 +68,7 @@
     owner: root
     group: root
     backup: yes
-  register: service_file
+  register: systemd_file
   when: ansible_service_mgr == 'systemd'
   tags:
     - s3sync
@@ -80,7 +80,7 @@
     name: '{{ service }}'
     daemon_reload: yes
     enabled: yes
-  when: ansible_service_mgr == 'systemd' and service_file.changed
+  when: ansible_service_mgr == 'systemd' and systemd_file.changed
   tags:
     - s3sync
     - s3sync-service
@@ -95,11 +95,21 @@
     - s3sync-restore
 
 
-- name: service restarted
+- name: service restarted - upstart
   service:
     name: '{{ service }}'
     state: restarted
-  when: config_file.changed or service_file.changed or s3sync_force_restart
+  when: config_file.changed or upstart_file.changed or s3sync_force_restart
+  tags:
+    - s3sync
+    - s3sync-service
+
+
+- name: service restarted - systemd
+  service:
+    name: '{{ service }}'
+    state: restarted
+  when: config_file.changed or systemd_file.changed or s3sync_force_restart
   tags:
     - s3sync
     - s3sync-service
