@@ -129,3 +129,9 @@
     - s3sync
     - s3sync-service
     - s3sync-service-check
+
+
+- include_tasks: log.yml
+  tags:
+    - s3sync
+    - s3sync-service-log

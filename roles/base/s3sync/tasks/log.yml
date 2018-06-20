@@ -1,0 +1,17 @@
+- name: get log - upstart
+  command: 'head -n 20 /var/log/upstart/s3sync.log'
+  register: log_output
+  when: ansible_service_mgr == 'upstart'
+  changed_when: false
+
+
+- name: get log - systemd
+  command: 'journalctl -u s3sync -n 20'
+  register: log_output
+  when: ansible_service_mgr == 'systemd'
+  changed_when: false
+
+
+- name: show log
+  debug:
+    msg: "{{ log_output.stdout_lines }}"
