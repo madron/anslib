@@ -1,0 +1,19 @@
+- name: wait for service
+  wait_for:
+    port: '{{ s3sync_port }}'
+    connect_timeout: 1
+    timeout: 5
+
+
+- name: check service
+  uri:
+    url: 'http://localhost:{{ s3sync_port }}/metrics'
+    method: GET
+    status_code: 200
+    return_content: yes
+  register: check_service
+
+
+- name: service errors
+  debug:
+    msg: "{{ check_service.content.splitlines() | select('match', '^s3sync_errors') | list  }}"

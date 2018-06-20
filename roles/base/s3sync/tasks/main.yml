@@ -122,3 +122,10 @@
   tags:
     - s3sync
     - s3sync-service
+
+
+- include_tasks: check.yml
+  tags:
+    - s3sync
+    - s3sync-service
+    - s3sync-service-check
