@@ -5,6 +5,12 @@
   changed_when: false
 
 
+- name: show log - upstart
+  debug:
+    msg: "{{ log_output.stdout_lines }}"
+  when: ansible_service_mgr == 'upstart'
+
+
 - name: get log - systemd
   command: 'journalctl -u s3sync -n 20'
   register: log_output
@@ -12,6 +18,7 @@
   changed_when: false
 
 
-- name: show log
+- name: show log - systemd
   debug:
     msg: "{{ log_output.stdout_lines }}"
+  when: ansible_service_mgr == 'systemd'

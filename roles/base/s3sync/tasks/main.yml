@@ -99,7 +99,7 @@
   service:
     name: '{{ service }}'
     state: restarted
-  when: config_file.changed or upstart_file.changed or s3sync_force_restart
+  when: ansible_service_mgr == 'upstart' and (config_file.changed or upstart_file.changed or s3sync_force_restart)
   tags:
     - s3sync
     - s3sync-service
@@ -109,7 +109,7 @@
   service:
     name: '{{ service }}'
     state: restarted
-  when: config_file.changed or systemd_file.changed or s3sync_force_restart
+  when: ansible_service_mgr == 'systemd' and (config_file.changed or systemd_file.changed or s3sync_force_restart)
   tags:
     - s3sync
     - s3sync-service
