@@ -1,5 +1,5 @@
 - name: get log - upstart
-  command: 'head -n 20 /var/log/upstart/s3sync.log'
+  command: 'tail -n 20 /var/log/upstart/s3sync.log'
   register: log_output
   when: ansible_service_mgr == 'upstart'
   changed_when: false
