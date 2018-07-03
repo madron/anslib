@@ -16,9 +16,6 @@
     owner: root
     group: root
     mode: 0755
-  with_items:
-    - /opt/k8s/bin
-    - '/opt/cni/{{ k8s_cni_plugins_release }}'
   tags:
     - k8s
     - k8s-binaries
@@ -46,23 +43,3 @@
   tags:
     - k8s
     - k8s-binaries
-
-
-# - name: download nci plugins
-#   shell: 'curl -L "https://github.com/containernetworking/plugins/releases/download/{{ k8s_cni_plugins_release }}/cni-plugins-amd64-{{ k8s_cni_plugins_release }}.tgz" | tar -C /opt/cni/{{ k8s_cni_plugins_release }} -xz'
-#   args:
-#     creates: /opt/cni/{{ k8s_cni_plugins_release }}/bridge
-#   tags:
-#     - k8s
-#     - k8s-binaries
-
-
-# - name: nci plugins symlinks
-#   file:
-#     src: '/opt/cni/{{ k8s_cni_plugins_release }}'
-#     dest: '/opt/cni/bin'
-#     state: link
-#   with_items: '{{ tools }}'
-#   tags:
-#     - k8s
-#     - k8s-binaries
