@@ -11,7 +11,7 @@
 
 
 - name: install binaries
-  shell: 'curl -L "https://github.com/containernetworking/plugins/releases/download/{{ k8s_cni_plugins_version }}/cni-plugins-amd64-{{ k8s_cni_plugins_version }}.tgz" | tar -C /opt/cni/bin -xz'
+  shell: 'curl -L "https://github.com/containernetworking/plugins/releases/download/{{ k8s_cni_plugins_release }}/cni-plugins-amd64-{{ k8s_cni_plugins_release }}.tgz" | tar -C /opt/cni/bin -xz'
   args:
     creates: /opt/cni/bin/bridge
   tags:
