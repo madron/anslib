@@ -4,6 +4,7 @@
       - kubeadm
       - kubelet
       - kubectl
+      - kube-proxy
   tags:
     - k8s
     - k8s-binaries
