@@ -1,9 +1,11 @@
 - name: systemd config
   set_fact:
-    systemd_configs: [
-      { path: /etc/flannel, file: options.env },
-      { path: /etc/systemd/system/flanneld.service.d, file: 40-ExecStartPre-symlink.conf },
-      { path: /etc/systemd/system/docker.service.d, file: 40-flannel.conf },
+    flannel_configs: [
+      { path: /etc/flannel, name: options.env },
+      { path: /etc/systemd/system/flanneld.service.d, name: 40-ExecStartPre-symlink.conf },
+    ]
+    docker_configs: [
+      { path: /etc/systemd/system/docker.service.d, name: 40-flannel.conf },
     ]
   tags:
     - k8s-flannel
@@ -16,28 +18,54 @@
     owner: root
     group: root
     mode: 0755
-  with_items: '{{ systemd_configs }}'
+  with_items: '{{ flannel_configs + docker_configs }}'
   tags:
     - k8s-flannel
 
 
-- name: systemd files
+- name: flannel config files
   template:
-    src: '{{ item.file }}'
-    dest: '{{ item.path }}/{{ item.file }}'
+    src: '{{ item.name }}'
+    dest: '{{ item.path }}/{{ item.name }}'
     mode: 0644
     owner: root
     group: root
     backup: yes
-  with_items: '{{ systemd_configs }}'
-  register: systemd
+  with_items: '{{ flannel_configs }}'
+  register: flannel_config
   tags:
     - k8s-flannel
 
 
-- name: systemd daemon-reload
+- name: docker config files
+  template:
+    src: '{{ item.name }}'
+    dest: '{{ item.path }}/{{ item.name }}'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  with_items: '{{ docker_configs }}'
+  register: docker_config
+  tags:
+    - k8s-flannel
+
+
+- name: flanneld restart
   systemd:
+    name: flanneld
+    state: restarted
     daemon_reload: yes
-  when: systemd.changed
+  when: flannel_config.changed
+  tags:
+    - k8s-flannel
+
+
+- name: docker restart
+  systemd:
+    name: docker
+    state: restarted
+    daemon_reload: yes
+  when: docker_config.changed
   tags:
     - k8s-flannel

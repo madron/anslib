@@ -1,6 +1,6 @@
-# List of etcd machines.
-# If you're running a cluster of 5 machines, list them all here.
-k8s_etcd_endpoints: []
-
-# Etcd protocol schema
-k8s_etcd_protocol: https
+# The address of the master node.
+# In most cases this will be the publicly routable IP of the node.
+# Worker nodes must be able to reach the master node(s) via this address on port 443.
+# Additionally, external clients (such as an administrator using kubectl) will also need access,
+# since this will run the Kubernetes API endpoint.
+k8s_master_hosts: []
