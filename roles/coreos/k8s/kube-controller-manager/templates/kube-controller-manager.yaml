@@ -7,7 +7,7 @@ spec:
   hostNetwork: true
   containers:
   - name: kube-controller-manager
-    image: {{ k8s_hyperkube_image_url }}:{{ k8s_hyperkube_image_tag }}
+    image: {{ k8s_hyperkube_image_url }}:{{ k8s_release }}
     command:
     - /hyperkube
     - controller-manager
