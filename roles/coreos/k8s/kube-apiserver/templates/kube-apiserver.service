@@ -1,0 +1,29 @@
+[Unit]
+Description=Kubernetes API Server
+Documentation=https://kubernetes.io/docs/concepts/overview/components/#kube-apiserver https://kubernetes.io/docs/reference/generated/kube-apiserver/
+After=network.target
+
+[Service]
+EnvironmentFile=-/etc/kubernetes/config
+EnvironmentFile=-/etc/kubernetes/apiserver
+User=kube
+ExecStart=/opt/bin/kube-apiserver-{{ k8s_release }} \
+    --logtostderr=true \
+    --v=1 \
+    --etcd-servers={% for host in k8s_etcd_endpoints %}{{ k8s_etcd_protocol }}://{{ hostvars[host].ansible_host }}:2379{% if not loop.last %},{% endif %}{% endfor %} \
+    --allow-privileged=true \
+    --service-cluster-ip-range={{ k8s_service_ip_range }} \
+    --secure-port={{ k8s_api_port }} \
+    --advertise-address={{ ansible_host }} \
+    --tls-cert-file=/etc/kubernetes/ssl/apiserver.pem \
+    --tls-private-key-file=/etc/kubernetes/ssl/apiserver-key.pem \
+    --client-ca-file=/etc/kubernetes/ssl/ca.pem \
+    --service-account-key-file=/etc/kubernetes/ssl/apiserver-key.pem \
+    --anonymous-auth=false \
+    --enable-admission-plugins=NamespaceLifecycle,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota
+Restart=on-failure
+Type=notify
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

@@ -1,14 +1,29 @@
+- name: download
+  get_url:
+    url: 'https://storage.googleapis.com/kubernetes-release/release/{{ k8s_release }}/bin/linux/amd64/kube-apiserver'
+    dest: '/opt/bin/kube-apiserver-{{ k8s_release }}'
+    owner: root
+    group: root
+    mode: 0755
+  tags:
+    - k8s
+    - k8s-kube-apiserver
+    - k8s-kube-apiserver-download
+
+
 - name: ssl keys
   copy:
     src: '{{ k8s_certs_dir }}/{{ item }}'
     dest: /etc/kubernetes/ssl/
     owner: root
-    group: root
-    mode: 0600
+    group: kube
+    mode: 0640
   with_items:
     - apiserver-key.pem
   tags:
+    - k8s
     - k8s-kube-apiserver
+    - k8s-kube-apiserver-ssl
 
 
 - name: ssl certs
@@ -22,27 +37,44 @@
     - ca.pem
     - apiserver.pem
   tags:
+    - k8s
     - k8s-kube-apiserver
+    - k8s-kube-apiserver-ssl
 
 
-- name: create /etc/kubernetes/manifests directory
-  file:
-    path: /etc/kubernetes/manifests
-    state: directory
-    owner: root
-    group: root
-    mode: 0755
-  tags:
-    - k8s-kube-apiserver
-
-
-- name: config /etc/kubernetes/manifests/kube-apiserver.yaml
+- name: /etc/systemd/system/kube-apiserver.service
   template:
-    src: kube-apiserver.yaml
-    dest: /etc/kubernetes/manifests/kube-apiserver.yaml
+    src: kube-apiserver.service
+    dest: /etc/systemd/system/kube-apiserver.service
     mode: 0644
     owner: root
     group: root
-  register: config
+    backup: yes
+  register: systemd
   tags:
+    - k8s
     - k8s-kube-apiserver
+    - k8s-kube-apiserver-service
+
+
+- name: restart service
+  systemd:
+    name: kube-apiserver
+    state: restarted
+    daemon_reload: yes
+  when: systemd.changed
+  tags:
+    - k8s
+    - k8s-kube-apiserver
+    - k8s-kube-apiserver-service
+
+
+- name: start service
+  systemd:
+    name: kube-apiserver
+    enabled: yes
+    state: started
+  tags:
+    - k8s
+    - k8s-kube-apiserver
+    - k8s-kube-apiserver-service
