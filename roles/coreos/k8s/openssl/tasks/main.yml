@@ -26,7 +26,6 @@
     src: openssl.cnf
     dest: '{{ k8s_certs_dir }}/openssl.cnf'
     mode: 0644
-    backup: yes
   register: api
   tags: k8s-openssl
 
