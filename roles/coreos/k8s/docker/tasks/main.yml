@@ -1,0 +1,34 @@
+- name: docker drop-in directory
+  file:
+    path: /etc/systemd/system/docker.service.d
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - k8s
+    - k8s-docker
+
+
+- name: docker drop-in config
+  template:
+    src: k8s.conf
+    dest: /etc/systemd/system/docker.service.d/10-k8s.conf
+    mode: 0644
+    owner: root
+    group: root
+  register: config
+  tags:
+    - k8s
+    - k8s-docker
+
+
+- name: docker restart
+  systemd:
+    name: docker
+    state: restarted
+    daemon_reload: yes
+  when: config.changed
+  tags:
+    - k8s
+    - k8s-docker
