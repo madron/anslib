@@ -19,7 +19,8 @@
     group: kube
     mode: 0640
   with_items:
-    - apiserver-key.pem
+    - 'apiserver-{{ inventory_hostname }}.key'
+  register: keys
   tags:
     - k8s
     - k8s-kube-apiserver
@@ -34,8 +35,9 @@
     group: root
     mode: 0644
   with_items:
-    - ca.pem
-    - apiserver.pem
+    - 'ca.crt'
+    - 'apiserver-{{ inventory_hostname }}.crt'
+  register: certs
   tags:
     - k8s
     - k8s-kube-apiserver
@@ -57,7 +59,7 @@
     - k8s-kube-apiserver-service
 
 
-- name: restart service
+- name: restart service - systemd changed
   systemd:
     name: kube-apiserver
     state: restarted
@@ -67,6 +69,17 @@
     - k8s
     - k8s-kube-apiserver
     - k8s-kube-apiserver-service
+
+
+- name: restart service - certificates changed
+  systemd:
+    name: kube-apiserver
+    state: restarted
+  when: keys.changed or certs.changed
+  tags:
+    - k8s
+    - k8s-kube-apiserver
+    - k8s-kube-apiserver-ssl
 
 
 - name: start service
