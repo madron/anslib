@@ -5,10 +5,7 @@ After=network.target
 
 [Service]
 ExecStart=/opt/bin/kube-proxy-{{ k8s_release }} \
-    --logtostderr=true \
-    --v=1 \
-    --proxy-mode=iptables \
-    --kubeconfig=/etc/kubernetes/kube-proxy.kubeconfig
+    --config=/etc/kubernetes/kube-proxy.config.yml
 Restart=on-failure
 LimitNOFILE=65536
 

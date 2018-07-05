@@ -44,14 +44,28 @@
     - k8s-kube-proxy-service
 
 
-- name: /etc/kubernetes/kube-proxy.kubeconfig
+- name: /etc/kubernetes/kube-proxy.kubeconfig.yml
   template:
-    src: kube-proxy.kubeconfig
-    dest: /etc/kubernetes/kube-proxy.kubeconfig
+    src: kube-proxy.kubeconfig.yml
+    dest: /etc/kubernetes/kube-proxy.kubeconfig.yml
     mode: 0644
     owner: root
     group: root
   register: kubeconfig
+  tags:
+    - k8s
+    - k8s-kube-proxy
+    - k8s-kube-proxy-service
+
+
+- name: /etc/kubernetes/kube-proxy.config.yml
+  template:
+    src: kube-proxy.config.yml
+    dest: /etc/kubernetes/kube-proxy.config.yml
+    mode: 0644
+    owner: root
+    group: root
+  register: config
   tags:
     - k8s
     - k8s-kube-proxy
@@ -78,7 +92,7 @@
     name: kube-proxy
     state: restarted
     daemon_reload: yes
-  when: keys.changed or certs.changed or kubeconfig.changed or systemd.changed
+  when: keys.changed or certs.changed or kubeconfig.changed or config.changed or systemd.changed
   tags:
     - k8s
     - k8s-kube-proxy
