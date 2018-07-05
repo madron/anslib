@@ -1,0 +1,16 @@
+[Unit]
+Description=Kubernetes Kube-Proxy Server
+Documentation=https://kubernetes.io/docs/concepts/overview/components/#kube-proxy https://kubernetes.io/docs/reference/generated/kube-proxy/
+After=network.target
+
+[Service]
+ExecStart=/opt/bin/kube-proxy-{{ k8s_release }} \
+    --logtostderr=true \
+    --v=1 \
+    --proxy-mode=iptables \
+    --kubeconfig=/etc/kubernetes/kube-proxy.kubeconfig
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

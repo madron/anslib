@@ -1,21 +1,96 @@
-- name: create /etc/kubernetes/manifests directory
-  file:
-    path: /etc/kubernetes/manifests
-    state: directory
+- name: download
+  get_url:
+    url: 'https://storage.googleapis.com/kubernetes-release/release/{{ k8s_release }}/bin/linux/amd64/kube-proxy'
+    dest: '/opt/bin/kube-proxy-{{ k8s_release }}'
     owner: root
     group: root
     mode: 0755
   tags:
+    - k8s
     - k8s-kube-proxy
+    - k8s-kube-proxy-download
 
 
-- name: config /etc/kubernetes/manifests/kube-proxy.yaml
+- name: ssl keys
+  copy:
+    src: '{{ k8s_certs_dir }}/{{ item }}'
+    dest: /etc/kubernetes/ssl/
+    owner: root
+    group: root
+    mode: 0600
+  with_items:
+    - 'node-{{ inventory_hostname }}.key'
+  register: keys
+  tags:
+    - k8s
+    - k8s-kube-proxy
+    - k8s-kube-proxy-service
+
+
+- name: ssl certs
+  copy:
+    src: '{{ k8s_certs_dir }}/{{ item }}'
+    dest: /etc/kubernetes/ssl/
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - 'ca.crt'
+    - 'node-{{ inventory_hostname }}.crt'
+  register: certs
+  tags:
+    - k8s
+    - k8s-kube-proxy
+    - k8s-kube-proxy-service
+
+
+- name: /etc/kubernetes/kube-proxy.kubeconfig
   template:
-    src: kube-proxy.yaml
-    dest: /etc/kubernetes/manifests/kube-proxy.yaml
+    src: kube-proxy.kubeconfig
+    dest: /etc/kubernetes/kube-proxy.kubeconfig
     mode: 0644
     owner: root
     group: root
-  register: config
+  register: kubeconfig
   tags:
+    - k8s
     - k8s-kube-proxy
+    - k8s-kube-proxy-service
+
+
+- name: /etc/systemd/system/kube-proxy.service
+  template:
+    src: kube-proxy.service
+    dest: /etc/systemd/system/kube-proxy.service
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: systemd
+  tags:
+    - k8s
+    - k8s-kube-proxy
+    - k8s-kube-proxy-service
+
+
+- name: restart service
+  systemd:
+    name: kube-proxy
+    state: restarted
+    daemon_reload: yes
+  when: keys.changed or certs.changed or kubeconfig.changed or systemd.changed
+  tags:
+    - k8s
+    - k8s-kube-proxy
+    - k8s-kube-proxy-service
+
+
+- name: start service
+  systemd:
+    name: kube-proxy
+    enabled: yes
+    state: started
+  tags:
+    - k8s
+    - k8s-kube-proxy
+    - k8s-kube-proxy-service
