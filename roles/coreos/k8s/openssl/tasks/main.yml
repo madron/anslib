@@ -1,110 +1,118 @@
 - name: set fact
   set_fact:
-    worker_hosts: '{{ k8s_worker_hosts + k8s_master_hosts }}'
+    node_hosts: '{{ k8s_worker_hosts + k8s_master_hosts }}'
+  tags: k8s-openssl
+
+- name: create certs directory
+  file:
+    path: '{{ k8s_certs_dir }}'
+    state: directory
   tags: k8s-openssl
 
 
 
 - name: Cluster Root CA - key
-  command: openssl genrsa -out ca-key.pem 2048
+  command: openssl genrsa -out ca.key 2048
   args:
     chdir: '{{ k8s_certs_dir }}'
-    creates: 'ca-key.pem'
+    creates: 'ca.key'
   tags: k8s-openssl
 
 - name: Cluster Root CA - cert
-  command: openssl req -x509 -new -nodes -key ca-key.pem -days 10000 -out ca.pem -subj "/CN=kube-ca"
+  command: openssl req -x509 -new -nodes -key ca.key -days 3650 -out ca.crt -subj "/CN=kube-ca"
   args:
     chdir: '{{ k8s_certs_dir }}'
-    creates: 'ca.pem'
+    creates: 'ca.crt'
   tags: k8s-openssl
 
 
 
-- name: Kubernetes API Server - openssl.cnf
+- name: Kubernetes API Server - openssl configuration
   template:
-    src: openssl.cnf
-    dest: '{{ k8s_certs_dir }}/openssl.cnf'
+    src: apiserver.cnf
+    dest: '{{ k8s_certs_dir }}/apiserver-{{ item }}.cnf'
     mode: 0644
-  register: api
+  with_items: '{{ k8s_master_hosts }}'
   tags: k8s-openssl
 
 - name: Kubernetes API Server - key
-  command: openssl genrsa -out apiserver-key.pem 2048
+  command: openssl genrsa -out apiserver-{{ item }}.key 2048
   args:
     chdir: '{{ k8s_certs_dir }}'
-    creates: 'apiserver-key.pem'
+    creates: 'apiserver-{{ item }}.key'
+  with_items: '{{ k8s_master_hosts }}'
   tags: k8s-openssl
 
 - name: Kubernetes API Server - csr
-  command: openssl req -new -key apiserver-key.pem -out apiserver.csr -subj "/CN=kube-apiserver" -config openssl.cnf
+  command: openssl req -new -key apiserver-{{ item }}.key -out apiserver-{{ item }}.csr -subj "/CN=kube-apiserver" -config apiserver-{{ item }}.cnf
   args:
     chdir: '{{ k8s_certs_dir }}'
-    creates: 'apiserver.csr'
+    creates: 'apiserver-{{ item }}.csr'
+  with_items: '{{ k8s_master_hosts }}'
   tags: k8s-openssl
 
 - name: Kubernetes API Server - cert
-  command: openssl x509 -req -in apiserver.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out apiserver.pem -days 3650 -extensions v3_req -extfile openssl.cnf
+  command: openssl x509 -req -in apiserver-{{ item }}.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out apiserver-{{ item }}.crt -days 3650 -extensions v3_req -extfile apiserver-{{ item }}.cnf
   args:
     chdir: '{{ k8s_certs_dir }}'
-    creates: 'apiserver.pem'
+    creates: 'apiserver-{{ item }}.crt'
+  with_items: '{{ k8s_master_hosts }}'
   tags: k8s-openssl
 
 
 
 - name: Cluster Administrator - key
-  command: openssl genrsa -out admin-key.pem 2048
+  command: openssl genrsa -out admin.key 2048
   args:
     chdir: '{{ k8s_certs_dir }}'
-    creates: 'admin-key.pem'
+    creates: 'admin.key'
   tags: k8s-openssl
 
 - name: Cluster Administrator - csr
-  command: openssl req -new -key admin-key.pem -out admin.csr -subj "/CN=kube-admin"
+  command: openssl req -new -key admin.key -out admin.csr -subj "/CN=kube-admin"
   args:
     chdir: '{{ k8s_certs_dir }}'
     creates: 'admin.csr'
   tags: k8s-openssl
 
 - name: Cluster Administrator - cert
-  command: openssl x509 -req -in admin.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out admin.pem -days 3650
+  command: openssl x509 -req -in admin.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out admin.crt -days 3650
   args:
     chdir: '{{ k8s_certs_dir }}'
-    creates: 'admin.pem'
+    creates: 'admin.crt'
   tags: k8s-openssl
 
 
 
-- name: Worker - openssl.cnf
+- name: Node - openssl configuration
   template:
-    src: worker-openssl.cnf
-    dest: '{{ k8s_certs_dir }}/{{ item }}-worker-openssl.cnf'
+    src: node.cnf
+    dest: '{{ k8s_certs_dir }}/node-{{ item }}.cnf'
     mode: 0644
-    backup: yes
-  with_items: '{{ worker_hosts }}'
+  with_items: '{{ node_hosts }}'
   register: worker
   tags: k8s-openssl
 
-- name: Worker - key
-  command: 'openssl genrsa -out {{ item }}-worker-key.pem 2048'
+- name: Node - key
+  command: 'openssl genrsa -out node-{{ item }}.key 2048'
   args:
     chdir: '{{ k8s_certs_dir }}'
-    creates: '{{ item }}-worker-key.pem'
-  with_items: '{{ worker_hosts }}'
+    creates: 'node-{{ item }}.key'
+  with_items: '{{ node_hosts }}'
   tags: k8s-openssl
 
-- name: Worker - csr
-  command: 'openssl req -new -key {{ item }}-worker-key.pem -out {{ item }}-worker.csr -subj "/CN={{ item }}.{{ k8s_domain }}" -config {{ item }}-worker-openssl.cnf'
+- name: Node - csr
+  command: 'openssl req -new -key node-{{ item }}.key -out node-{{ item }}.csr -subj "/CN={{ item }}.{{ k8s_domain }}" -config node-{{ item }}.cnf'
   args:
     chdir: '{{ k8s_certs_dir }}'
-    creates: '{{ item }}-worker.csr'
-  with_items: '{{ worker_hosts }}'
+    creates: 'node-{{ item }}.csr'
+  with_items: '{{ node_hosts }}'
   tags: k8s-openssl
 
-- name: Worker - cert
-  command: 'openssl x509 -req -in {{ item }}-worker.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out {{ item }}-worker.pem -days 3650 -extensions v3_req -extfile {{ item }}-worker-openssl.cnf'
+- name: Node - cert
+  command: 'openssl x509 -req -in node-{{ item }}.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out node-{{ item }}.crt -days 3650 -extensions v3_req -extfile node-{{ item }}.cnf'
   args:
     chdir: '{{ k8s_certs_dir }}'
-    creates: '{{ item }}-worker.pem'
-  with_items: '{{ worker_hosts }}'
+    creates: 'node-{{ item }}.crt'
+  with_items: '{{ node_hosts }}'
   tags: k8s-openssl

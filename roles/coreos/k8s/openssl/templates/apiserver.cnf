@@ -11,9 +11,7 @@ DNS.1 = kubernetes
 DNS.2 = kubernetes.default
 DNS.3 = kubernetes.default.svc
 DNS.4 = kubernetes.default.svc.cluster.local
-DNS.5 = {{ k8s_api_host }}
+DNS.5 = {{ k8s_api_fqdn }}
+DNS.6 = {{ hostvars[item].inventory_hostname }}.{{ k8s_domain }}
 IP.1 = {{ k8s_service_ip }}
-{% for host in k8s_master_hosts %}
-DNS.{{ loop.index + 5 }} = {{ host }}.{{ k8s_domain }}
-IP.{{ loop.index + 1 }} = {{ hostvars[host].ansible_host }}
-{% endfor %}
+IP.2 = {{ hostvars[item].ansible_host }}

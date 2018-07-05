@@ -1,7 +1,7 @@
 k8s_certs_dir: './files/k8s-certs'
 
 k8s_domain: example.com
-k8s_api_host: k8s-api.example.com
+k8s_api_fqdn: k8s-api.example.com
 
 # Workers
 k8s_worker_hosts: []
