@@ -1,20 +1,14 @@
 [Unit]
-Description=Kubernetes Kubelet
+Description=Kubernetes Kubelet Server
+Documentation=https://kubernetes.io/docs/concepts/overview/components/#kubelet https://kubernetes.io/docs/reference/generated/kubelet/
+After=docker.service
+Requires=docker.service
 
 [Service]
-Restart=always
-RestartSec=10
-Environment=KUBELET_IMAGE_URL={{ k8s_hyperkube_image_url }}
-Environment=KUBELET_IMAGE_TAG={{ k8s_release }}
-Environment="RKT_RUN_ARGS=--uuid-file-save=/var/run/kubelet-pod.uuid \
-  --volume dns,kind=host,source=/etc/resolv.conf \
-  --mount volume=dns,target=/etc/resolv.conf"
-ExecStartPre=/usr/bin/mkdir -p /etc/kubernetes/manifests
-ExecStartPre=/usr/bin/mkdir -p /var/log/containers
-ExecStartPre=-/usr/bin/rkt rm --uuid-file=/var/run/kubelet-pod.uuid
-ExecStart=/usr/lib/coreos/kubelet-wrapper \
-  --pod-manifest-path=/etc/kubernetes/manifests \
-  --kubeconfig=/etc/kubernetes/kubeconfig.yml \
-  --allow-privileged \
-  --container-runtime=docker
-ExecStop=-/usr/bin/rkt stop --uuid-file=/var/run/kubelet-pod.uuid
+# WorkingDirectory=/var/lib/kubelet
+ExecStart=/opt/bin/kubelet-{{ k8s_release }} --kubeconfig=/etc/kubernetes/kubelet.kubeconfig.yml
+Restart=on-failure
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target

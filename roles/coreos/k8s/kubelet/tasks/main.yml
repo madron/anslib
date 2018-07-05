@@ -1,58 +1,61 @@
-- name: ssl dir
-  file:
-    path: /etc/kubernetes/ssl
-    state: directory
+- name: download
+  get_url:
+    url: 'https://storage.googleapis.com/kubernetes-release/release/{{ k8s_release }}/bin/linux/amd64/kubelet'
+    dest: '/opt/bin/kubelet-{{ k8s_release }}'
     owner: root
     group: root
     mode: 0755
   tags:
+    - k8s
     - k8s-kubelet
+    - k8s-kubelet-download
 
 
-- name: ssl client key
+- name: ssl keys
   copy:
-    src: '{{ k8s_certs_dir }}/{{ inventory_hostname }}-worker-key.pem'
-    dest: '/etc/kubernetes/ssl/{{ inventory_hostname }}-worker-key.pem'
+    src: '{{ k8s_certs_dir }}/{{ item }}'
+    dest: /etc/kubernetes/ssl/
     owner: root
     group: root
     mode: 0600
+  with_items:
+    - 'node-{{ inventory_hostname }}.key'
+  register: keys
   tags:
+    - k8s
     - k8s-kubelet
+    - k8s-kubelet-service
 
 
-- name: ssl client cert
+- name: ssl certs
   copy:
-    src: '{{ k8s_certs_dir }}/{{ inventory_hostname }}-worker.pem'
-    dest: '/etc/kubernetes/ssl/{{ inventory_hostname }}-worker.pem'
+    src: '{{ k8s_certs_dir }}/{{ item }}'
+    dest: /etc/kubernetes/ssl/
     owner: root
     group: root
     mode: 0644
+  with_items:
+    - 'ca.crt'
+    - 'node-{{ inventory_hostname }}.crt'
+  register: certs
   tags:
+    - k8s
     - k8s-kubelet
+    - k8s-kubelet-service
 
 
-- name: ssl ca cert
-  copy:
-    src: '{{ k8s_certs_dir }}/ca.pem'
-    dest: /etc/kubernetes/ssl/ca.pem
-    owner: root
-    group: root
-    mode: 0644
-  tags:
-    - k8s-kubelet
-
-
-- name: /etc/kubernetes/kubeconfig.yml
+- name: /etc/kubernetes/kubelet.kubeconfig.yml
   template:
-    src: kubeconfig.yml
-    dest: /etc/kubernetes/kubeconfig.yml
+    src: kubelet.kubeconfig.yml
+    dest: /etc/kubernetes/kubelet.kubeconfig.yml
     mode: 0644
     owner: root
     group: root
-    backup: yes
-  register: config
+  register: kubeconfig
   tags:
+    - k8s
     - k8s-kubelet
+    - k8s-kubelet-service
 
 
 - name: /etc/systemd/system/kubelet.service
@@ -65,7 +68,9 @@
     backup: yes
   register: systemd
   tags:
+    - k8s
     - k8s-kubelet
+    - k8s-kubelet-service
 
 
 - name: restart service
@@ -73,9 +78,11 @@
     name: kubelet
     state: restarted
     daemon_reload: yes
-  when: systemd.changed or config.changed
+  when: keys.changed or certs.changed or kubeconfig.changed or systemd.changed
   tags:
+    - k8s
     - k8s-kubelet
+    - k8s-kubelet-service
 
 
 - name: start service
@@ -84,4 +91,6 @@
     enabled: yes
     state: started
   tags:
+    - k8s
     - k8s-kubelet
+    - k8s-kubelet-service
