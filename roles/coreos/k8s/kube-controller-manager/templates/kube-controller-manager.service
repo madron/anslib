@@ -1,0 +1,24 @@
+[Unit]
+Description=Kubernetes Controller Manager
+Documentation=https://kubernetes.io/docs/concepts/overview/components/#kube-controller-manager https://kubernetes.io/docs/reference/generated/kube-controller-manager/
+After=kube-apiserver.target
+
+[Service]
+User=kube
+ExecStart=/opt/bin/kube-controller-manager-{{ k8s_release }} \
+    --logtostderr=true \
+    --v=1 \
+    --cluster-name={{ k8s_cluster_name }} \
+    --leader-elect=true \
+    --root-ca-file=/etc/kubernetes/ssl/ca.crt \
+    --tls-cert-file=/etc/kubernetes/ssl/apiserver-{{ inventory_hostname }}.crt \
+    --tls-private-key-file=/etc/kubernetes/ssl/apiserver-{{ inventory_hostname }}.key \
+    --service-account-private-key-file=/etc/kubernetes/ssl/apiserver-{{ inventory_hostname }}.key \
+    --cluster-signing-cert-file=/etc/kubernetes/ssl/ca.crt \
+    --cluster-signing-key-file=/etc/kubernetes/ssl/ca.key \
+    --master=https://{{ k8s_api_ip }}:{{ k8s_api_port }}
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
