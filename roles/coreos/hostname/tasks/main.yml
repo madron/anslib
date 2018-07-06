@@ -5,13 +5,24 @@
     mode: 0644
     owner: root
     group: root
-  register: hostname
+  register: hostname_file
   tags:
-    - coreos-hostname
+    - hostname
 
 
 - name: hostnamectl set-hostname
-  command: 'hostnamectl set-hostname {{ coreos_hostname | default(inventory_hostname) }}'
-  when: hostname.changed
+  command: 'hostnamectl set-hostname {{ hostname | default(inventory_hostname) }}'
+  when: hostname_file.changed
   tags:
-    - coreos-hostname
+    - hostname
+
+
+- name: /etc/hosts
+  template:
+    src: hosts
+    dest: /etc/hosts
+    mode: 0644
+    owner: root
+    group: root
+  tags:
+    - hostname

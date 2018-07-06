@@ -1,0 +1,10 @@
+# {{ ansible_managed }}
+
+# IPv4 and IPv6 localhost aliases
+127.0.0.1       localhost   {{ hostname|default(inventory_hostname) }}   {% if hostname_domain %}{{ hostname|default(inventory_hostname) }}.{{ hostname_domain }}{% endif %}
+
+::1             localhost   {{ hostname|default(inventory_hostname) }}   {% if hostname_domain %}{{ hostname|default(inventory_hostname) }}.{{ hostname_domain }}{% endif %}
+
+{% for host in hostname_additional_hosts %}
+{{ host }}
+{% endfor %}

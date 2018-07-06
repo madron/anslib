@@ -1,1 +1,1 @@
-{{ coreos_hostname | default(inventory_hostname) }}
+{{ hostname | default(inventory_hostname) }}
