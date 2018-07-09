@@ -1,0 +1,35 @@
+- name: /etc/systemd/system/kubelet.service.d directory
+  file:
+    path: /etc/systemd/system/kubelet.service.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+
+- name: /etc/kubernetes/kubeadm.kubeconfig.yml
+  template:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+    mode: 0644
+    owner: root
+    group: root
+  with_items:
+    - { src: kubelet.service, dest: /etc/systemd/system/kubelet.service }
+    - { src: 10-kubeadm.conf, dest: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf }
+  register: systemd_files
+
+
+- name: restart service
+  systemd:
+    name: kubelet
+    state: restarted
+    daemon_reload: yes
+  when: systemd_files.changed
+
+
+- name: start service
+  systemd:
+    name: kubelet
+    enabled: yes
+    state: started

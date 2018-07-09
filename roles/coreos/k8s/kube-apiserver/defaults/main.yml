@@ -1,5 +1,8 @@
 k8s_certs_dir: 'k8s-certs'
 
+k8s_release: v1.11.0
+k8s_cni_release: v0.7.1
+
 k8s_domain: example.com
 k8s_api_fqdn: k8s-api.example.com
 k8s_api_ip: 127.0.0.1
