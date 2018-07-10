@@ -1,0 +1,25 @@
+[ CA_default ]
+default_md = sha256
+
+[ req ]
+req_extensions = v3_req
+distinguished_name = req_distinguished_name
+
+[ req_distinguished_name ]
+
+[ v3_req ]
+basicConstraints = CA:FALSE
+keyUsage = critical, Digital Signature, Key Encipherment
+{% if extended_key_usage|default('') %}
+extendedKeyUsage = {{ extended_key_usage }}
+{% endif %}
+{% if alt_dns|default([]) or alt_ip|default([]) %}
+subjectAltName = @alt_names
+[alt_names]
+{% for value in alt_dns|default([]) %}
+DNS.{{ loop.index }} = {{ value }}
+{% endfor %}
+{% for value in alt_ip|default([]) %}
+IP.{{ loop.index }} = {{ value }}
+{% endfor %}
+{% endif %}
