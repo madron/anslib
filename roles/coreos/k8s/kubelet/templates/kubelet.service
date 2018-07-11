@@ -1,14 +1,19 @@
 [Unit]
-Description=Kubernetes Kubelet Server
-Documentation=https://kubernetes.io/docs/concepts/overview/components/#kubelet https://kubernetes.io/docs/reference/generated/kubelet/
-After=docker.service
-Requires=docker.service
+Description=kubelet: The Kubernetes Node Agent
+Documentation=http://kubernetes.io/docs/
 
 [Service]
-# WorkingDirectory=/var/lib/kubelet
-ExecStart=/opt/bin/kubelet-{{ k8s_release }} --kubeconfig=/etc/kubernetes/kubelet.kubeconfig.yml
-Restart=on-failure
-KillMode=process
+ExecStart=/opt/bin/kubelet \
+    --kubeconfig=/etc/kubernetes/kubelet-kubeconfig.yml \
+    --config=/etc/kubernetes/kubelet-config.yml \
+    --cgroup-driver=cgroupfs \
+    --cni-bin-dir=/opt/cni/bin \
+    --cni-conf-dir=/etc/cni/net.d \
+    --network-plugin=cni \
+    --resolv-conf=/run/systemd/resolve/resolv.conf
+Restart=always
+StartLimitInterval=0
+RestartSec=10
 
 [Install]
 WantedBy=multi-user.target
