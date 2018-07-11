@@ -6,10 +6,18 @@
     dir: '{{ k8s_pki_dir }}'
 
 
+- name: service account ca
+  include_tasks: ca.yml
+  vars:
+    name: sa
+    subject: '/CN=system:kube-controller-manager'
+    dir: '{{ k8s_pki_dir }}'
+
+
 - name: apiserver
   include_tasks: cert.yml
   vars:
-    name: apiserver-{{ item }}
+    name: 'apiserver-{{ item }}'
     subject: '/CN=kube-apiserver'
     dir: '{{ k8s_pki_dir }}'
     ca_name: '{{ k8s_pki_dir }}/ca'
@@ -26,15 +34,39 @@
   with_items: '{{ k8s_master_hosts }}'
 
 
-- name: service account key
-  command: 'openssl ecparam -name secp521r1 -genkey -noout -out sa.key'
-  args:
-    chdir: '{{ k8s_pki_dir }}'
-    creates: 'sa.key'
+- name: apiserver-etcd-client
+  include_tasks: cert.yml
+  vars:
+    name: 'apiserver-etcd-client'
+    subject: '/O=system:masters, CN=kube-apiserver-etcd-client'
+    dir: '{{ k8s_pki_dir }}'
+    ca_name: '{{ k8s_pki_dir }}/etcd/ca'
+    extended_key_usage: 'TLS Web Client Authentication'
 
 
-- name: service account public certificate
-  command: 'openssl ec -in sa.key -outform PEM -pubout -out sa.pub'
-  args:
-    chdir: '{{ k8s_pki_dir }}'
-    creates: 'sa.pub'
+- name: apiserver-kubelet-client
+  include_tasks: cert.yml
+  vars:
+    name: 'apiserver-kubelet-client'
+    subject: '/O=system:masters, CN=kube-apiserver-kubelet-client'
+    dir: '{{ k8s_pki_dir }}'
+    ca_name: '{{ k8s_pki_dir }}/ca'
+    extended_key_usage: 'TLS Web Client Authentication'
+
+
+- name: front proxy ca
+  include_tasks: ca.yml
+  vars:
+    name: front-proxy-ca
+    subject: '/CN=kubernetes'
+    dir: '{{ k8s_pki_dir }}'
+
+
+- name: front-proxy-client
+  include_tasks: cert.yml
+  vars:
+    name: 'front-proxy-client'
+    subject: '/CN=front-proxy-client'
+    dir: '{{ k8s_pki_dir }}'
+    ca_name: '{{ k8s_pki_dir }}/front-proxy-ca'
+    extended_key_usage: 'TLS Web Client Authentication'
