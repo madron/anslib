@@ -24,3 +24,17 @@
       - '{{ k8s_service_ip }}'
       - '{{ hostvars[item].ansible_host }}'
   with_items: '{{ k8s_master_hosts }}'
+
+
+- name: service account key
+  command: 'openssl ecparam -name secp521r1 -genkey -noout -out sa.key'
+  args:
+    chdir: '{{ k8s_pki_dir }}'
+    creates: 'sa.key'
+
+
+- name: service account public certificate
+  command: 'openssl ec -in sa.key -outform PEM -pubout -out sa.pub'
+  args:
+    chdir: '{{ k8s_pki_dir }}'
+    creates: 'sa.pub'
