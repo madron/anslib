@@ -28,6 +28,7 @@
       - 'kubernetes.default.svc'
       - 'kubernetes.default.svc.cluster.local'
       - '{{ k8s_api_fqdn }}'
+      - '{{ item }}.{{ k8s_domain }}'
     alt_ip:
       - '{{ k8s_service_ip }}'
       - '{{ hostvars[item].ansible_host }}'
