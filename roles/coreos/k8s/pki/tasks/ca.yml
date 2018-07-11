@@ -11,7 +11,7 @@
     mode: 0644
 
 - name: ca certificate
-  command: 'openssl req -x509 -new -nodes -config {{ name }}.cnf -subj "/CN={{ cn }}" -extensions v3_ca -days 36500 -key {{ name }}.key -out {{ name }}.crt'
+  command: 'openssl req -x509 -new -nodes -config {{ name }}.cnf -subj "{{ subject }}" -extensions v3_ca -days 36500 -key {{ name }}.key -out {{ name }}.crt'
   args:
     chdir: '{{ dir }}'
     creates: '{{ name }}.crt'

@@ -11,7 +11,7 @@
     mode: 0644
 
 - name: certificate signing request
-  command: 'openssl req -new -nodes -subj "/CN={{ cn }}" -config {{ name }}.cnf -key {{ name }}.key -out {{ name }}.csr'
+  command: 'openssl req -new -nodes -subj "{{ subject }}" -config {{ name }}.cnf -key {{ name }}.key -out {{ name }}.csr'
   args:
     chdir: '{{ dir }}'
     creates: '{{ name }}.crt'

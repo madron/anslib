@@ -2,7 +2,7 @@
   include_tasks: ca.yml
   vars:
     name: ca
-    cn: kubernetes
+    subject: '/CN=kubernetes'
     dir: '{{ k8s_pki_dir }}'
 
 
@@ -10,7 +10,7 @@
   include_tasks: cert.yml
   vars:
     name: apiserver-{{ item }}
-    cn: kube-apiserver
+    subject: '/CN=kube-apiserver'
     dir: '{{ k8s_pki_dir }}'
     ca_name: '{{ k8s_pki_dir }}/ca'
     extended_key_usage: 'TLS Web Server Authentication'
