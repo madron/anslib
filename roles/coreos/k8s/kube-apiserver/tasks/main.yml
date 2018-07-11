@@ -1,3 +1,17 @@
+- name: required directories
+  file:
+    path: '{{ item }}'
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  with_items:
+    - /etc/kubernetes/manifests
+    - /etc/kubernetes/pki/etcd
+  tags:
+    - k8s
+
+
 - name: certificates
   copy:
     src: '{{ k8s_pki_dir }}/{{ item.src }}'
