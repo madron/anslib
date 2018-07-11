@@ -9,17 +9,17 @@
     - k8s-pki-etcd
 
 
-- name: cluster
-  include_tasks: cluster.yml
-  tags:
-    - k8s
-    - k8s-pki
-    - k8s-pki-cluster
-
-
 - name: etcd
   include_tasks: etcd.yml
   tags:
     - k8s
     - k8s-pki
     - k8s-pki-etcd
+
+
+- name: cluster
+  include_tasks: cluster.yml
+  tags:
+    - k8s
+    - k8s-pki
+    - k8s-pki-cluster
