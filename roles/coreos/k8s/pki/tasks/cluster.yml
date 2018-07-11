@@ -1,0 +1,26 @@
+- name: root ca
+  include_tasks: ca.yml
+  vars:
+    name: ca
+    cn: kubernetes
+    dir: '{{ k8s_pki_dir }}'
+
+
+- name: apiserver
+  include_tasks: cert.yml
+  vars:
+    name: apiserver-{{ item }}
+    cn: kube-apiserver
+    dir: '{{ k8s_pki_dir }}'
+    ca_name: '{{ k8s_pki_dir }}/ca'
+    extended_key_usage: 'TLS Web Server Authentication'
+    alt_dns:
+      - 'kubernetes'
+      - 'kubernetes.default'
+      - 'kubernetes.default.svc'
+      - 'kubernetes.default.svc.cluster.local'
+      - '{{ k8s_api_fqdn }}'
+    alt_ip:
+      - '{{ k8s_service_ip }}'
+      - '{{ hostvars[item].ansible_host }}'
+  with_items: '{{ k8s_master_hosts }}'

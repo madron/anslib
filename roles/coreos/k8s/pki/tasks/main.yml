@@ -5,53 +5,21 @@
   tags:
     - k8s
     - k8s-pki
+    - k8s-pki-cluster
+    - k8s-pki-etcd
 
 
-- name: Cluster root CA
-  include_tasks: ca.yml
-  vars:
-    name: ca
-    cn: kubernetes
-    dir: '{{ k8s_pki_dir }}'
+- name: cluster
+  include_tasks: cluster.yml
   tags:
     - k8s
     - k8s-pki
-    - k8s-pki-cluster-ca
+    - k8s-pki-cluster
 
 
-- name: Etcd root CA
-  include_tasks: ca.yml
-  vars:
-    name: ca
-    cn: kubernetes
-    dir: '{{ k8s_pki_dir }}/etcd'
+- name: etcd
+  include_tasks: etcd.yml
   tags:
     - k8s
     - k8s-pki
-    - k8s-pki-etcd-ca
-
-
-- name: apiserver
-  include_tasks: cert.yml
-  vars:
-    name: apiserver-{{ item }}
-    cn: kube-apiserver
-    dir: '{{ k8s_pki_dir }}'
-    ca_name: '{{ k8s_pki_dir }}/ca'
-    extended_key_usage: 'TLS Web Server Authentication'
-    alt_dns:
-      - 'kubernetes'
-      - 'kubernetes.default'
-      - 'kubernetes.default.svc'
-      - 'kubernetes.default.svc.cluster.local'
-      - '{{ k8s_api_fqdn }}'
-    alt_ip:
-      - '{{ k8s_service_ip }}'
-      - '{{ hostvars[item].ansible_host }}'
-  with_items: '{{ k8s_master_hosts }}'
-  tags:
-    - k8s
-    - k8s-pki
-    - k8s-pki-apiserver
-
-
+    - k8s-pki-etcd

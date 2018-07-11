@@ -1,0 +1,6 @@
+- name: root ca
+  include_tasks: ca.yml
+  vars:
+    name: ca
+    cn: kubernetes
+    dir: '{{ k8s_pki_dir }}/etcd'
