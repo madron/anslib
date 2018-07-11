@@ -1,0 +1,4 @@
+- include_tasks: cni.yml
+  tags:
+    - k8s
+    - k8s-cni

@@ -1,0 +1,48 @@
+- name: required directories
+  file:
+    path: '{{ item }}'
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  with_items:
+    - '/etc/cni/net.d'
+    - '/opt/kubernetes/cni-{{ k8s_cni_release }}'
+
+- name: binary list
+  set_fact:
+    binary_list:
+       - bridge
+       - dhcp
+       - flannel
+       - host-device
+       - host-local
+       - ipvlan
+       - loopback
+       - macvlan
+       - portmap
+       - ptp
+       - sample
+       - tuning
+       - vlan
+
+- name: download
+  get_url:
+    url: 'https://github.com/containernetworking/plugins/releases/download/{{ k8s_cni_release }}/cni-plugins-amd64-{{ k8s_cni_release }}.tgz'
+    dest: '/opt/kubernetes/cni-{{ k8s_cni_release }}/cni-plugins.tgz'
+
+- name: unarchive
+  unarchive:
+    src: '/opt/kubernetes/cni-{{ k8s_cni_release }}/cni-plugins.tgz'
+    dest: /opt/kubernetes/cni-{{ k8s_cni_release }}
+    remote_src: True
+    creates: /opt/kubernetes/cni-{{ k8s_cni_release }}/bridge
+
+- name: symlink
+  file:
+    src: '/opt/kubernetes/cni-{{ k8s_cni_release }}/{{ item }}'
+    dest: '/opt/bin/{{ item }}'
+    state: link
+    owner: root
+    group: root
+  with_items: '{{ binary_list }}'
