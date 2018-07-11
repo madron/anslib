@@ -44,9 +44,8 @@
 - name: healthcheck-client
   include_tasks: cert.yml
   vars:
-    name: 'healthcheck-client-{{ item }}'
-    subject: '/O=system:masters, CN=kube-etcd-healthcheck-client-{{ item }}'
+    name: 'healthcheck-client'
+    subject: '/O=system:masters, CN=kube-etcd-healthcheck-client'
     dir: '{{ k8s_pki_dir }}/etcd'
     ca_name: '{{ k8s_pki_dir }}/etcd/ca'
     extended_key_usage: 'TLS Web Client Authentication'
-  with_items: '{{ k8s_master_hosts }}'
