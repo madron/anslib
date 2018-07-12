@@ -47,6 +47,13 @@
 #
 # Service
 #
+- name: fake variables
+  set_fact:
+    binary: { changed: false }
+  tags:
+    - k8s-kubelet-service
+
+
 - name: master variables
   set_fact:
     pki_files:
