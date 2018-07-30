@@ -87,6 +87,7 @@
   tags:
     - nginx
     - nginx-config
+    - nginx-config-cert
 
 
 - name: certificate key
@@ -97,6 +98,36 @@
     owner: root
     group: root
   with_items: '{{ nginx_certificates }}'
+  notify: reload nginx
+  tags:
+    - nginx
+    - nginx-config
+    - nginx-config-cert
+
+
+- name: client certificates
+  copy:
+    src: '{{ inventory_dir }}/../files/nginx_certificates/{{ item }}/client.crt'
+    dest: '{{ nginx_certificates_directory }}/{{ item }}.client.crt'
+    mode: 0644
+    owner: root
+    group: root
+  with_items: '{{ nginx_client_certificates }}'
+  notify: reload nginx
+  tags:
+    - nginx
+    - nginx-config
+    - nginx-config-cert
+
+
+- name: client certificates ca
+  copy:
+    src: '{{ inventory_dir }}/../files/nginx_certificates/{{ item }}/ca.crt'
+    dest: '{{ nginx_certificates_directory }}/{{ item }}.ca.crt'
+    mode: 0644
+    owner: root
+    group: root
+  with_items: '{{ nginx_client_certificates }}'
   notify: reload nginx
   tags:
     - nginx
@@ -144,6 +175,21 @@
     - nginx
     - nginx-config
     - nginx-redirects
+
+
+- name: custom sites
+  copy:
+    src: '{{ item.file }}'
+    dest: '/etc/nginx/sites-enabled/{{ item.name }}.conf'
+    mode: 0644
+    owner: root
+    group: root
+  with_items: '{{ nginx_sites }}'
+  notify: reload nginx
+  tags:
+    - nginx
+    - nginx-config
+    - nginx-config-sites
 
 
 - name: start server
