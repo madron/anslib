@@ -1,0 +1,42 @@
+- name: binary list
+  set_fact:
+    binary_list:
+       - bridge
+       - dhcp
+       - flannel
+       - host-device
+       - host-local
+       - ipvlan
+       - loopback
+       - macvlan
+       - portmap
+       - ptp
+       - sample
+       - tuning
+       - vlan
+
+- name: /opt/kubernetes directory
+  file:
+    path: /opt/kubernetes
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+
+- name: download
+  unarchive:
+    src: 'https://github.com/containernetworking/plugins/releases/download/{{ k8s_cni_release }}/cni-plugins-amd64-{{ k8s_cni_release }}.tgz'
+    dest: /opt/kubernetes/cni-{{ k8s_cni_release }}
+    remote_src: yes
+
+
+- name: symlink
+  file:
+    src: '/opt/kubernetes/cni-{{ k8s_cni_release }}/{{ item }}'
+    dest: '/opt/bin/{{ item }}'
+    state: link
+    owner: root
+    group: root
+  with_items: '{{ binary_list }}'
+  register: binary
