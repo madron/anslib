@@ -1,24 +1,3 @@
-- name: install true
-  set_fact:
-    install: true
-  tags: coreos-python
-
-
-- name: check for installed python (in opt/bin)
-  raw: "[ -f /opt/bin/python ] && echo 'installed' || echo 'missing'"
-  changed_when: false
-  register: py_check
-  tags: coreos-python
-
-
-- name: install false
-  set_fact:
-    install: false
-  when: py_check.stdout_lines[0] == "installed"
-  tags: coreos-python
-
-
-- name: install pypy2
-  script: bootstrap.sh
-  when: install
+- name: install python
+  coreos_python:
   tags: coreos-python
