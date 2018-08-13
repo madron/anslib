@@ -63,14 +63,6 @@
     - k8s-kubeadm-common-cni
 
 
-- include_tasks: kubelet.yml
-  tags:
-    - k8s
-    - k8s-kubeadm
-    - k8s-kubeadm-common
-    - k8s-kubeadm-common-kubelet
-
-
 - include_tasks: docker.yml
   tags:
     - k8s
