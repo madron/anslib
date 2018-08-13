@@ -84,7 +84,7 @@
 
 - name: wait for service
   wait_for:
-    port: '{{ port }}'
+    port: '{{ cadvisor_port }}'
     delay: 20
   when: restart.changed or start.changed
   tags:
@@ -96,7 +96,7 @@
     url: '{{ item }}'
     timeout: 5
   with_items:
-    - 'http://localhost:{{ port }}/metrics'
+    - 'http://localhost:{{ cadvisor_port }}/metrics'
   tags:
     - cadvisor
     - cadvisor-check

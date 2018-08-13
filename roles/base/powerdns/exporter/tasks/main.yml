@@ -78,8 +78,8 @@
     url: '{{ item }}'
     timeout: 1
   with_items:
-    - 'http://localhost:{{ port }}/'
-    - 'http://localhost:{{ port }}/metrics'
+    - 'http://localhost:{{ powerdns_exporter_port }}/'
+    - 'http://localhost:{{ powerdns_exporter_port }}/metrics'
   tags:
     - powerdns
     - powerdns-exporter

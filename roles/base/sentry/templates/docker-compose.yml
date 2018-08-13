@@ -33,7 +33,7 @@ services:
 
   celery_beat:
     container_name: {{ service }}_celery_beat
-    image: sentry:{{ version }}
+    image: sentry:{{ sentry_version }}
     restart: always
     environment:
       - SENTRY_REDIS_HOST=redis
@@ -47,7 +47,7 @@ services:
       - private
 
   celery_worker:
-    image: sentry:{{ version }}
+    image: sentry:{{ sentry_version }}
     restart: always
     environment:
       - SENTRY_REDIS_HOST=redis
@@ -62,7 +62,7 @@ services:
 
   server:
     container_name: {{ service }}_server
-    image: sentry:{{ version }}
+    image: sentry:{{ sentry_version }}
     restart: always
     volumes:
       - server:/var/lib/sentry/files
@@ -91,7 +91,7 @@ services:
       - postgres
       - smtp
     ports:
-      - "{{ port }}:9000"
+      - "{{ sentry_port }}:9000"
     networks:
       - private
 

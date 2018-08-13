@@ -1,7 +1,7 @@
-version: v0.23.2
+cadvisor_version: v0.23.2
 
 network_mode: default
 command_line_parameters: ''
-port: 8080
+cadvisor_port: 8080
 
 docker_image_download: false

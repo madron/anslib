@@ -88,7 +88,7 @@
 
 - name: wait for service
   wait_for:
-    port: '{{ port }}'
+    port: '{{ sentry_port }}'
     delay: 10
   when: start.changed or restart.changed
   tags:
@@ -100,7 +100,7 @@
     url: '{{ item }}'
     timeout: 1
   with_items:
-    - 'http://localhost:{{ port }}/auth/login/'
+    - 'http://localhost:{{ sentry_port }}/auth/login/'
   tags:
     - sentry
     - sentry-check

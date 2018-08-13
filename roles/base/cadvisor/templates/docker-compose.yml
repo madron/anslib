@@ -3,7 +3,7 @@ version: '2'
 services:
   server:
     container_name: {{ project }}
-    image: google/cadvisor:{{ version }}
+    image: google/cadvisor:{{ cadvisor_version }}
     network_mode: {{ network_mode }}
     restart: always
     volumes:
@@ -13,9 +13,9 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
 {% if network_mode == 'default' %}
     ports:
-      - "{{ port }}:8080"
+      - "{{ cadvisor_port }}:8080"
     command: '{{ command_line_parameters }}'
 {% endif %}
 {% if network_mode == 'host' %}
-    command: '-port {{ port }} {{ command_line_parameters }}'
+    command: '-port {{ cadvisor_port }} {{ command_line_parameters }}'
 {% endif %}

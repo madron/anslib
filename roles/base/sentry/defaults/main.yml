@@ -1,10 +1,10 @@
-version: 8.15
+sentry_version: 8.15
 
 # docker run --rm sentry config generate-secret-key
 # docker run -it --rm -e SENTRY_SECRET_KEY='<secret-key>' --link sentry_postgres:postgres --link sentry_redis:redis sentry upgrade
 secret_key: ''
 
-port: 80
+sentry_port: 80
 
 docker_image_download: false
 

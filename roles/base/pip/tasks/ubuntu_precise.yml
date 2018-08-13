@@ -19,6 +19,11 @@
     owner: root
     group: root
 
+- name: remove old files
+  file:
+    path: /usr/bin/pip
+    state: absent
+
 - name: symlink to /usr/bin/pip
   file:
     src: /usr/local/bin/pip

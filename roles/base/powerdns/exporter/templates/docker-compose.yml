@@ -3,7 +3,7 @@ version: '2'
 services:
   server:
     container_name: {{ project }}
-    image: janeczku/powerdns-exporter:{{ version }}
+    image: janeczku/powerdns-exporter:{{ powerdns_exporter_version }}
     restart: always
     network_mode: host
-    command: -listen-address=":{{ port }}" -api-url="{{ api_url }}" -api-key="{{ api_key }}"
+    command: -listen-address=":{{ powerdns_exporter_port }}" -api-url="{{ api_url }}" -api-key="{{ api_key }}"

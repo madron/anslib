@@ -14,7 +14,7 @@
   openvswitch_bridge:
     bridge: '{{ item }}'
     state: present
-  with_items: bridges
+  with_items: openswitch_bridges
   tags:
     - openvswitch
 
@@ -24,6 +24,6 @@
     bridge: '{{ item.bridge }}'
     port: '{{ item.port }}'
     state: present
-  with_items: ports
+  with_items: openswitch_ports
   tags:
     - openvswitch

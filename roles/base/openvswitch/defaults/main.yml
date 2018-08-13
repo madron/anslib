@@ -1,8 +1,8 @@
-bridges: []
+openswitch_bridges: []
 
 # bridges: [br0]
 
-ports: []
+openswitch_ports: []
 
 # ports:
 #   - { bridge: br0, port: eth1 }
