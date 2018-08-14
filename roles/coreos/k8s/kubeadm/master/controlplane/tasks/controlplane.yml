@@ -26,6 +26,7 @@
     group: root
     mode: 0700
 
+
 - name: .kube/config
   file:
     src: /etc/kubernetes/admin.conf
@@ -33,3 +34,8 @@
     state: link
     owner: root
     group: root
+
+
+- name: install weave net
+  debug:
+    msg: 'kubectl apply -f https://cloud.weave.works/k8s/net?k8s-version={{ k8s_release }}'
