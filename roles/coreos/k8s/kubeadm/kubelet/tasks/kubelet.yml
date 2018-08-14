@@ -25,7 +25,7 @@
     name: kubelet
     state: restarted
     daemon_reload: yes
-  when: systemd_files.changed
+  when: systemd_files.changed or k8s_kubelet_restart
 
 
 - name: start service

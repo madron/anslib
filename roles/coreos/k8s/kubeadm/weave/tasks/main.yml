@@ -1,7 +1,4 @@
-- sysctl:
-    name: net.bridge.bridge-nf-call-iptables
-    value: 1
-    state: present
+- include_tasks: weave.yml
   tags:
     - k8s
     - k8s-kubeadm
