@@ -1,0 +1,4 @@
+- name: etcd local
+  command: /opt/bin/kubeadm alpha phase etcd local --config /etc/kubernetes/kubeadm-config.yaml
+  args:
+    creates: /etc/kubernetes/manifests/etcd.yaml
