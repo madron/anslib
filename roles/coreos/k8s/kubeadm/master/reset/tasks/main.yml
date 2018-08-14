@@ -1,0 +1,7 @@
+- include_tasks: reset.yml
+  tags:
+    - k8s
+    - k8s-kubeadm
+    - k8s-kubeadm-master
+    - k8s-kubeadm-master-reset
+  when: k8s_reset
