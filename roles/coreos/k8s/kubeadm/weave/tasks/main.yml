@@ -1,0 +1,8 @@
+- sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: 1
+    state: present
+  tags:
+    - k8s
+    - k8s-kubeadm
+    - k8s-kubeadm-weave
