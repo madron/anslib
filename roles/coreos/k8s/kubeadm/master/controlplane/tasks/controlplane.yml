@@ -1,0 +1,31 @@
+- name: kubeconfig all
+  command: /opt/bin/kubeadm alpha phase kubeconfig all --config /etc/kubernetes/kubeadm-config.yaml
+  args:
+    creates: /etc/kubernetes/controller-manager.conf
+
+
+- name: controlplane all
+  command: /opt/bin/kubeadm alpha phase controlplane all --config /etc/kubernetes/kubeadm-config.yaml
+  args:
+    creates: /etc/kubernetes/manifests/kube-apiserver.yaml
+
+
+- name: kubeconfig all
+  command: /opt/bin/kubeadm alpha phase mark-master --config /etc/kubernetes/kubeadm-config.yaml
+
+
+- name: .kube directory
+  file:
+    path: /root/.kube
+    state: directory
+    owner: root
+    group: root
+    mode: 0700
+
+- name: .kube/config
+  file:
+    src: /etc/kubernetes/admin.conf
+    dest: /root/.kube/config
+    state: link
+    owner: root
+    group: root
