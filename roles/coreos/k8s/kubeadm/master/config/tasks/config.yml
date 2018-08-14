@@ -5,10 +5,6 @@
     owner: root
     group: root
     mode: 0755
-  tags:
-    - k8s
-    - k8s-kubeadm
-    - k8s-kubeadm-master
 
 
 - name: /etc/kubernetes/kubeadm-config.yaml
@@ -18,7 +14,3 @@
     mode: 0644
     owner: root
     group: root
-  tags:
-    - k8s
-    - k8s-kubeadm
-    - k8s-kubeadm-master

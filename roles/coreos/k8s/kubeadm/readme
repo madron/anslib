@@ -1,1 +1,19 @@
-kubeadm init --ignore-preflight-errors=FileExisting-crictl --config /etc/kubernetes/kubeadm-config.yaml
+# https://kubernetes.io/docs/setup/independent/high-availability/
+# https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-init/
+
+# Install kubeadm binaries and config in one master server
+# -t k8s-kubeadm-common-download,k8s-kubeadm-master-config
+
+# Login into master server and create certificates:
+kubeadm alpha phase certs ca --config /etc/kubernetes/kubeadm-config.yaml
+kubeadm alpha phase certs sa --config /etc/kubernetes/kubeadm-config.yaml
+kubeadm alpha phase certs front-proxy-ca --config /etc/kubernetes/kubeadm-config.yaml
+kubeadm alpha phase certs etcd-ca --config /etc/kubernetes/kubeadm-config.yaml
+kubeadm alpha phase kubeconfig admin --config /etc/kubernetes/kubeadm-config.yaml
+
+# Copy previous file into {{ k8s_config_dir }}
+scp    -P 3022 root@<host>:/etc/kubernetes/admin.conf   files/k8s-config/<cluster_name>/
+scp -r -P 3022 root@<host>:/etc/kubernetes/pki          files/k8s-config/<cluster_name>/
+
+
+kubeadm init --ignore-preflight-errors=FileExisting-crictl
