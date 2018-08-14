@@ -10,8 +10,12 @@
     creates: /etc/kubernetes/manifests/kube-apiserver.yaml
 
 
-- name: kubeconfig all
+- name: mark-master
   command: /opt/bin/kubeadm alpha phase mark-master --config /etc/kubernetes/kubeadm-config.yaml
+
+
+- name: addon kube-proxy
+  command: /opt/bin/kubeadm alpha phase addon kube-proxy --config /etc/kubernetes/kubeadm-config.yaml
 
 
 - name: .kube directory
