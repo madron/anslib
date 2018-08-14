@@ -14,6 +14,3 @@ kubeadm alpha phase kubeconfig admin --config /etc/kubernetes/kubeadm-config.yam
 # Copy previous file into {{ k8s_config_dir }}
 scp    -P 3022 root@<host>:/etc/kubernetes/admin.conf   files/k8s-config/<cluster_name>/
 scp -r -P 3022 root@<host>:/etc/kubernetes/pki          files/k8s-config/<cluster_name>/
-
-
-kubeadm init --ignore-preflight-errors=FileExisting-crictl

@@ -5,8 +5,8 @@ clusterName: {{ k8s_cluster_name }}
 apiServerCertSANs:
 - "{{ k8s_balancer_fqdn }}"
 api:
-    bindPort: {{ k8s_balancer_port }}
-    controlPlaneEndpoint: "{{ k8s_balancer_fqdn }}"
+    bindPort: {{ k8s_api_port }}
+    controlPlaneEndpoint: "{{ k8s_balancer_fqdn }}:{{ k8s_balancer_port }}"
 etcd:
   endpoints:
     - http://127.0.0.1:2379
