@@ -5,7 +5,6 @@ clusterName: {{ k8s_cluster_name }}
 apiServerCertSANs:
 - "{{ k8s_balancer_fqdn }}"
 api:
-    bindPort: {{ k8s_api_port }}
     controlPlaneEndpoint: "{{ k8s_balancer_fqdn }}:{{ k8s_balancer_port }}"
 etcd:
   endpoints:
@@ -16,10 +15,17 @@ etcd:
       advertise-client-urls: "https://{{ ansible_host }}:2379"
       listen-peer-urls: "https://{{ ansible_host }}:2380"
       initial-advertise-peer-urls: "https://{{ ansible_host }}:2380"
-      initial-cluster: "{% for host in k8s_master_hosts %}{{ hostvars[host]['inventory_hostname'] }}=https://{{ hostvars[host]['ansible_host'] }}:2380{% if not loop.last%},{% endif %}{% endfor %}"
+      initial-cluster: "{% for host in k8s_master_hosts[0:k8s_master_order] %}{{ hostvars[host]['inventory_hostname'] }}=https://{{ hostvars[host]['ansible_host'] }}:2380{% if not loop.last%},{% endif %}{% endfor %}"
+{% if not k8s_master_order == 1 %}
+      initial-cluster-state: existing
+{% endif %}
     serverCertSANs:
       - {{ inventory_hostname }}.{{ k8s_domain }}
       - {{ ansible_host }}
     peerCertSANs:
       - {{ inventory_hostname }}.{{ k8s_domain }}
       - {{ ansible_host }}
+{% if k8s_cidr %}
+networking:
+    podSubnet: "{{ k8s_cidr }}"
+{% endif %}
