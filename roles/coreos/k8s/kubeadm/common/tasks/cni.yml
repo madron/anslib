@@ -15,9 +15,9 @@
        - tuning
        - vlan
 
-- name: /opt/kubernetes directory
+- name: '/opt/kubernetes/cni{{ k8s_cni_release }} directory'
   file:
-    path: /opt/kubernetes
+    path: '/opt/kubernetes/cni-{{ k8s_cni_release }}'
     state: directory
     owner: root
     group: root
