@@ -1,22 +1,11 @@
-- sysctl:
-    name: net.bridge.bridge-nf-call-iptables
-    value: 1
+- name: add br_netfilter kernel module
+  modprobe:
+    name: br_netfilter
     state: present
 
 
-# - name: /etc/cni/net.d directory
-#   file:
-#     path: /etc/cni/net.d
-#     state: directory
-#     mode: 0755
-#     owner: root
-#     group: root
-
-
-# - name: /etc/cni/net.d/10-weave.conf
-#   template:
-#     src: 10-weave.conf
-#     dest: /etc/cni/net.d/10-weave.conf
-#     mode: 0644
-#     owner: root
-#     group: root
+- name: net.bridge.bridge-nf-call-iptables
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: 1
+    state: present
