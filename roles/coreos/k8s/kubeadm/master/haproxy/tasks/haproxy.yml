@@ -1,3 +1,12 @@
+- name: /etc/kubernetes/manifests directory
+  file:
+    path: /etc/kubernetes/manifests
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+
 - name: haproxy config
   template:
     src: haproxy.cfg
