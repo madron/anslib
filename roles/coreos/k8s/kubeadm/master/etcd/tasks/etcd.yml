@@ -1,3 +1,10 @@
+- name: add member to etcd cluster
+  command: "/opt/bin/kubectl exec -n kube-system etcd-{{ hostvars[k8s_master_hosts[0]]['inventory_hostname'] }} -- etcdctl --ca-file /etc/kubernetes/pki/etcd/ca.crt --cert-file /etc/kubernetes/pki/etcd/peer.crt --key-file /etc/kubernetes/pki/etcd/peer.key --endpoints=https://{{ hostvars[k8s_master_hosts[0]]['ansible_host'] }}:2379 member add {{ inventory_hostname }} https://{{ ansible_host }}:2380"
+  delegate_to: '{{ k8s_master_hosts[0] }}'
+  register: add_member
+  failed_when: add_member.rc > 1
+
+
 - name: etcd local
   command: /opt/bin/kubeadm alpha phase etcd local --config /etc/kubernetes/kubeadm-config.yaml
   args:
