@@ -1,0 +1,9 @@
+- name: init
+  command: /opt/bin/kubeadm init --config /etc/kubernetes/kubeadm-config.yaml --ignore-preflight-errors=FileExisting-crictl --ignore-preflight-errors=KubeletVersion
+  args:
+    creates: /etc/kubernetes/manifests/kube-apiserver.yaml
+
+
+- name: install weave net
+  debug:
+    msg: 'kubectl apply -f https://cloud.weave.works/k8s/net?k8s-version={{ k8s_release }}'
