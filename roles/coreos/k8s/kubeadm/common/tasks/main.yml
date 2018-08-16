@@ -55,7 +55,7 @@
     - k8s-kubeadm-common-download
 
 
-- include_tasks: cni.yml
+- import_tasks: cni.yml
   tags:
     - k8s
     - k8s-kubeadm
@@ -63,7 +63,7 @@
     - k8s-kubeadm-common-cni
 
 
-- include_tasks: docker.yml
+- import_tasks: docker.yml
   tags:
     - k8s
     - k8s-kubeadm

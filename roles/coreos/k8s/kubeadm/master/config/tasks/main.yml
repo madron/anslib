@@ -1,4 +1,4 @@
-- include_tasks: config.yml
+- import_tasks: config.yml
   tags:
     - k8s
     - k8s-kubeadm

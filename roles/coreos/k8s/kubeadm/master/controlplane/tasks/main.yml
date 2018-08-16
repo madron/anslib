@@ -1,4 +1,4 @@
-- include_tasks: controlplane.yml
+- import_tasks: controlplane.yml
   tags:
     - k8s
     - k8s-kubeadm

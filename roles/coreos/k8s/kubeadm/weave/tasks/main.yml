@@ -1,4 +1,4 @@
-- include_tasks: weave.yml
+- import_tasks: weave.yml
   tags:
     - k8s
     - k8s-kubeadm

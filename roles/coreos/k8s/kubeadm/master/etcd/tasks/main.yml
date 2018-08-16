@@ -1,4 +1,4 @@
-- include_tasks: etcd.yml
+- import_tasks: etcd.yml
   tags:
     - k8s
     - k8s-kubeadm

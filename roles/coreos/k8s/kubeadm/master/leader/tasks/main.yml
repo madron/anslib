@@ -1,4 +1,4 @@
-- include_tasks: leader.yml
+- import_tasks: leader.yml
   tags:
     - k8s
     - k8s-kubeadm
