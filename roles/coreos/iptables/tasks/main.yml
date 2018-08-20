@@ -43,6 +43,18 @@
     - iptables
 
 
+- name: /opt/bin/reset_iptables
+  template:
+    src: reset_iptables
+    dest: /opt/bin/reset_iptables
+    mode: 0755
+    owner: root
+    group: root
+  register: rules
+  tags:
+    - iptables
+
+
 - name: /etc/systemd/system/iptables.rules
   template:
     src: iptables.rules
