@@ -79,3 +79,11 @@
   tags:
     - iptables
     - iptables-rules
+
+
+- name: reset rules
+  command: /opt/bin/reset_iptables
+  when: iptables_reset
+  tags:
+    - iptables
+    - iptables-reset

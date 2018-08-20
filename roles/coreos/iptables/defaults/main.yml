@@ -1,4 +1,5 @@
-iptables_force_reload: no
+iptables_force_reload: false
+iptables_reset: false
 
 iptables_input_policy: ACCEPT
 iptables_output_policy: ACCEPT
