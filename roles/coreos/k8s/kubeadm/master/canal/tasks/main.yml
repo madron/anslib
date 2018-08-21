@@ -1,0 +1,6 @@
+- import_tasks: canal.yml
+  tags:
+    - k8s
+    - k8s-kubeadm
+    - k8s-kubeadm-master
+    - k8s-kubeadm-master-canal

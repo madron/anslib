@@ -1,0 +1,16 @@
+- name: /etc/kubernetes/canal-rbac-kdd.yaml
+  template:
+    src: canal-rbac-kdd.yaml
+    dest: /etc/kubernetes/canal-rbac-kdd.yaml
+    mode: 0644
+    owner: root
+    group: root
+
+
+- name: /etc/kubernetes/canal.yaml
+  template:
+    src: canal.yaml
+    dest: /etc/kubernetes/canal.yaml
+    mode: 0644
+    owner: root
+    group: root
