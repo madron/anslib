@@ -1,10 +1,13 @@
-- name: /etc/systemd/system/kubelet.service.d directory
+- name: create directories
   file:
-    path: /etc/systemd/system/kubelet.service.d
+    path: '{{ item }}'
     state: directory
     owner: root
     group: root
     mode: 0755
+  with_items:
+    - /etc/systemd/system/kubelet.service.d
+    - /etc/kubernetes/manifests
 
 
 - name: kubelet service
