@@ -25,7 +25,7 @@ etcd:
     peerCertSANs:
       - {{ inventory_hostname }}.{{ k8s_domain }}
       - {{ ansible_host }}
-{% if k8s_cidr %}
+{% if k8s_pod_cidr %}
 networking:
-    podSubnet: "{{ k8s_cidr }}"
+    podSubnet: "{{ k8s_pod_cidr }}"
 {% endif %}
