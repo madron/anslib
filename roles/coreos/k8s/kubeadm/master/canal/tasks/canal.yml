@@ -14,3 +14,10 @@
     mode: 0644
     owner: root
     group: root
+
+
+- name: install canal plugin
+  debug:
+    msg:
+      - 'kubectl apply -f /etc/kubernetes/canal-rbac-kdd.yaml'
+      - 'kubectl apply -f /etc/kubernetes/canal.yaml'
