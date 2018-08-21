@@ -1,23 +1,5 @@
-- name: /etc/kubernetes/canal-rbac-kdd.yaml
-  template:
-    src: canal-rbac-kdd.yaml
-    dest: /etc/kubernetes/canal-rbac-kdd.yaml
-    mode: 0644
-    owner: root
-    group: root
-
-
-- name: /etc/kubernetes/canal.yaml
-  template:
-    src: canal.yaml
-    dest: /etc/kubernetes/canal.yaml
-    mode: 0644
-    owner: root
-    group: root
-
-
 - name: install canal plugin
   debug:
     msg:
-      - 'kubectl apply -f /etc/kubernetes/canal-rbac-kdd.yaml'
-      - 'kubectl apply -f /etc/kubernetes/canal.yaml'
+      - 'kubectl apply -f https://docs.projectcalico.org/v3.2/getting-started/kubernetes/installation/hosted/canal/rbac.yaml'
+      - 'kubectl apply -f https://docs.projectcalico.org/v3.2/getting-started/kubernetes/installation/hosted/canal/canal.yaml'
