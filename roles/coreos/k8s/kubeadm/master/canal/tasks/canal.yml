@@ -1,5 +1,13 @@
+- name: /opt/kubernetes/canal-install.sh
+  template:
+    src: canal-install.sh
+    dest: /opt/kubernetes/canal-install.sh
+    mode: 0755
+    owner: root
+    group: root
+
+
 - name: install canal plugin
-  debug:
-    msg:
-      - 'kubectl apply -f https://docs.projectcalico.org/v3.2/getting-started/kubernetes/installation/hosted/canal/rbac.yaml'
-      - 'kubectl apply -f https://docs.projectcalico.org/v3.2/getting-started/kubernetes/installation/hosted/canal/canal.yaml'
+  command: /opt/kubernetes/canal-install.sh
+  args:
+    creates: /etc/kubernetes/network-plugin-installed
