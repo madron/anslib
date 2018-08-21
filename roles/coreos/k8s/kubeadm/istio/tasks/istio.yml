@@ -1,0 +1,20 @@
+- name: '/opt/kubernetes/istio-{{ k8s_istio_release }} directory'
+  file:
+    path: '/opt/kubernetes/istio-{{ k8s_istio_release }}'
+    state: directory
+
+
+- name: download
+  unarchive:
+    src: 'https://github.com/istio/istio/releases/download/{{ k8s_istio_release }}/istio-{{ k8s_istio_release }}-linux.tar.gz'
+    dest: /opt/kubernetes/istio-{{ k8s_istio_release }}
+    remote_src: yes
+
+
+- name: symlink to /opt/bin/istioctl
+  file:
+    src: '/opt/kubernetes/istio-{{ k8s_istio_release }}/istio-{{ k8s_istio_release }}/bin/istioctl'
+    dest: '/opt/bin/istioctl'
+    state: link
+    owner: root
+    group: root
