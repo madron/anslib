@@ -1,5 +1,0 @@
-k8s_pki_dir: './files/k8s-pki'
-
-k8s_domain: example.com
-k8s_api_fqdn: k8s-api.example.com
-k8s_service_ip: 127.0.0.1

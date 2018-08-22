@@ -1,7 +1,0 @@
-k8s_release: v1.11.0
-k8s_pki_dir: './files/k8s-pki'
-
-k8s_role: worker
-
-k8s_api_fqdn: k8s-api.example.com
-k8s_api_port: 6443

@@ -1,6 +1,0 @@
-# The address of the master node.
-# In most cases this will be the publicly routable IP of the node.
-# Worker nodes must be able to reach the master node(s) via this address on port 443.
-# Additionally, external clients (such as an administrator using kubectl) will also need access,
-# since this will run the Kubernetes API endpoint.
-k8s_master_hosts: []

@@ -1,6 +1,0 @@
-k8s_master_hosts: []
-
-k8s_release: v1.11.0
-
-k8s_service_ip_range: 10.96.0.0/12
-k8s_api_port: 6443
