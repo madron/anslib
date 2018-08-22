@@ -1,0 +1,4 @@
+- import_tasks: calico.yml
+  tags:
+    - k8s
+    - k8s-calico

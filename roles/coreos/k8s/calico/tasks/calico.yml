@@ -1,0 +1,11 @@
+- name: add br_netfilter kernel module
+  modprobe:
+    name: br_netfilter
+    state: present
+
+
+# - name: net.bridge.bridge-nf-call-iptables
+#   sysctl:
+#     name: net.bridge.bridge-nf-call-iptables
+#     value: 1
+#     state: present
