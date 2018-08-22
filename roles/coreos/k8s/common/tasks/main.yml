@@ -1,54 +1,8 @@
-- name: binary list
-  set_fact:
-    binary_list:
-      - kubeadm
-      - kubelet
-      - kubectl
+- import_tasks: binaries.yml
   tags:
     - k8s
     - k8s-common
-    - k8s-common-download
-
-- name: /opt/kubernetes directory
-  file:
-    path: /opt/kubernetes
-    state: directory
-    owner: root
-    group: root
-    mode: 0755
-  tags:
-    - k8s
-    - k8s-common
-    - k8s-common-download
-
-- name: download
-  get_url:
-    url: 'https://storage.googleapis.com/kubernetes-release/release/{{ k8s_release }}/bin/linux/amd64/{{ item }}'
-    dest: '/opt/kubernetes/{{ item }}-{{ k8s_release }}'
-    owner: root
-    group: root
-    mode: 0755
-  with_items: '{{ binary_list }}'
-  register: download
-  tags:
-    - k8s
-    - k8s-common
-    - k8s-common-download
-
-
-- name: symlink
-  file:
-    src: '/opt/kubernetes/{{ item }}-{{ k8s_release }}'
-    dest: '/opt/bin/{{ item }}'
-    state: link
-    owner: root
-    group: root
-  with_items: '{{ binary_list }}'
-  register: download
-  tags:
-    - k8s
-    - k8s-common
-    - k8s-common-download
+    - k8s-common-binaries
 
 
 - import_tasks: cni.yml
