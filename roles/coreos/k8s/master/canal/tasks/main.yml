@@ -1,0 +1,5 @@
+- import_tasks: canal.yml
+  tags:
+    - k8s
+    - k8s-master
+    - k8s-master-canal

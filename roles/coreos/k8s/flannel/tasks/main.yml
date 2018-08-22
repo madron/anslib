@@ -1,0 +1,4 @@
+- import_tasks: flannel.yml
+  tags:
+    - k8s
+    - k8s-flannel

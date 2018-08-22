@@ -1,2 +1,0 @@
-- name: reset
-  command: /opt/bin/kubeadm reset -f

@@ -1,0 +1,5 @@
+- import_tasks: reset.yml
+  tags:
+    - k8s
+    - k8s-reset
+  when: k8s_reset

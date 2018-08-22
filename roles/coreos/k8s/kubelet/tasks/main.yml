@@ -1,0 +1,4 @@
+- import_tasks: kubelet.yml
+  tags:
+    - k8s
+    - k8s-kubelet

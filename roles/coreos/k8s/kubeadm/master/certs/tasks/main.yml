@@ -1,6 +1,0 @@
-- import_tasks: certs.yml
-  tags:
-    - k8s
-    - k8s-kubeadm
-    - k8s-kubeadm-master
-    - k8s-kubeadm-master-certs

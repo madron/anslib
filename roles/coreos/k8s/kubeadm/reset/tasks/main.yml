@@ -1,6 +1,0 @@
-- import_tasks: reset.yml
-  tags:
-    - k8s
-    - k8s-kubeadm
-    - k8s-kubeadm-reset
-  when: k8s_reset

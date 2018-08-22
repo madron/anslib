@@ -1,5 +1,0 @@
-- import_tasks: istio.yml
-  tags:
-    - k8s
-    - k8s-kubeadm
-    - k8s-kubeadm-istio

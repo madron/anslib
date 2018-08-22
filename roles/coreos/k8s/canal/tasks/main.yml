@@ -1,0 +1,4 @@
+- import_tasks: canal.yml
+  tags:
+    - k8s
+    - k8s-canal

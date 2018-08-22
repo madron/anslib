@@ -1,0 +1,12 @@
+- name: reset
+  command: /opt/bin/kubeadm reset -f
+
+
+- name: remove /etc/kubernetes directory
+  file:
+    path: /etc/kubernetes
+    state: absent
+
+
+- name: reset iptables
+  command: /opt/bin/reset_iptables
