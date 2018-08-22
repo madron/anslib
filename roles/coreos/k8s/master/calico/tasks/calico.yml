@@ -9,7 +9,7 @@
 
 - name: config
   template:
-    src: rbac-kdd.yaml
+    src: '{{ item }}'
     dest: '/etc/kubernetes/calico/{{ item }}'
     mode: 0644
     owner: root
