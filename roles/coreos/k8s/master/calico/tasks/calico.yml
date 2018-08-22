@@ -1,0 +1,28 @@
+- name: create directory
+  file:
+    path: /etc/kubernetes/calico
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+
+
+- name: config
+  template:
+    src: rbac-kdd.yaml
+    dest: '/etc/kubernetes/calico/{{ item }}'
+    mode: 0644
+    owner: root
+    group: root
+  register: config
+  with_items:
+    - rbac-kdd.yaml
+    - calico.yaml
+
+
+- name: install
+  command: '{{ item }}'
+  when: config.changed
+  with_items:
+    - '/opt/bin/kubectl apply -f /etc/kubernetes/calico/rbac-kdd.yaml'
+    - '/opt/bin/kubectl apply -f /etc/kubernetes/calico/calico.yaml'
