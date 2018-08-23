@@ -1,0 +1,47 @@
+- name: required variables
+  set_fact:
+    service: haproxy
+
+
+- name: /etc/kubernetes directory
+  file:
+    path: /etc/kubernetes
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+
+- name: haproxy config
+  template:
+    src: haproxy.cfg
+    dest: /etc/kubernetes/haproxy.cfg
+    mode: 0644
+    owner: root
+    group: root
+  register: config
+
+
+- name: service file
+  template:
+    src: service
+    dest: '/etc/systemd/system/{{ service }}.service'
+    mode: 0644
+    owner: root
+    group: root
+  register: service_file
+
+
+- name: restart service
+  systemd:
+    name: '{{ service }}'
+    state: restarted
+    daemon_reload: true
+  when: service_file.changed or config.changed
+
+
+- name: start service
+  systemd:
+    name: '{{ service }}'
+    state: started
+    enabled: true
