@@ -44,3 +44,10 @@
     group: root
   with_items: '{{ binary_list }}'
   register: binary
+
+
+- name: net.bridge.bridge-nf-call-iptables
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: 1
+    state: present
