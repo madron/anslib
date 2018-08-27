@@ -1,0 +1,19 @@
+- name: create secret
+  command: '/opt/bin/kubectl create secret -n kube-system generic weave-passwd --from-literal weave-passwd={{ k8s_weave_password }}'
+  args:
+    creates: /etc/kubernetes/cni-weave.yml
+
+
+- name: config
+  template:
+    src: weave.yml
+    dest: '/etc/kubernetes/cni-weave.yml'
+    mode: 0644
+    owner: root
+    group: root
+  register: config
+
+
+- name: install
+  command: '/opt/bin/kubectl apply -f /etc/kubernetes/cni-weave.yml'
+  when: config.changed
