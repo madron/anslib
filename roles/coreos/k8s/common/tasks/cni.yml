@@ -9,11 +9,11 @@
        - ptp
        - sample
        - vlan
-      #  - flannel
-      #  - host-local
-      #  - loopback
-      #  - portmap
-      #  - tuning
+       - flannel
+       - host-local
+       - loopback
+       - portmap
+       - tuning
 
 
 - name: '/opt/kubernetes/cni-{{ k8s_cni_release }} directory'
