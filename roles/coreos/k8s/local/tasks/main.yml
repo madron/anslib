@@ -1,0 +1,5 @@
+- import_tasks: kubectl.yml
+  tags:
+    - k8s
+    - k8s-local
+    - k8s-local-kubectl

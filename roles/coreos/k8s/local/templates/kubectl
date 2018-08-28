@@ -1,0 +1,2 @@
+#!/bin/sh
+exec kubectl --kubeconfig ~/dev/kubernetes/files/k8s-config/mtprod/admin.conf $*

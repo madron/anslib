@@ -1,0 +1,6 @@
+- name: '/usr/local/bin/{{ k8s_cluster_name }}-kubectl'
+  template:
+    src: kubectl
+    dest: '/usr/local/bin/{{ k8s_cluster_name }}-kubectl'
+    mode: 0755
+  become: yes
