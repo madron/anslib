@@ -1,2 +1,2 @@
 #!/bin/sh
-exec kubectl --kubeconfig ~/dev/kubernetes/files/k8s-config/mtprod/admin.conf $*
+exec kubectl --kubeconfig {{ playbook_dir }}/{{ k8s_config_dir }}/admin.conf $*
