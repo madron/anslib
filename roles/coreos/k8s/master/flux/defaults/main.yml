@@ -1,0 +1,3 @@
+k8s_flux_git_url: flux@git.example.come:repo-name/path
+k8s_flux_git_branch: master
+k8s_flux_git_poll_interval: 300s

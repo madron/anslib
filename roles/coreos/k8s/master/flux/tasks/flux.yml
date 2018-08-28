@@ -1,0 +1,28 @@
+- name: create directory
+  file:
+    path: /etc/kubernetes/flux
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+
+
+- name: config
+  template:
+    src: '{{ item }}'
+    dest: '/etc/kubernetes/flux/{{ item }}'
+    mode: 0644
+    owner: root
+    group: root
+  with_items:
+    - flux-account.yaml
+    - flux-deployment.yaml
+    - flux-secret.yaml
+    - memcache-dep.yaml
+    - memcache-svc.yaml
+  register: config
+
+
+- name: install
+  command: '/opt/bin/kubectl apply -f /etc/kubernetes/flux'
+  when: config.changed

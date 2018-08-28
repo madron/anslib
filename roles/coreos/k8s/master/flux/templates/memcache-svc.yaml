@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flux-memcached
+  namespace: default
+spec:
+  # The memcache client uses DNS to get a list of memcached servers and then
+  # uses a consistent hash of the key to determine which server to pick.
+  clusterIP: None
+  ports:
+    - name: flux-memcached
+      port: 11211
+  selector:
+    name: flux-memcached
