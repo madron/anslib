@@ -1,0 +1,10 @@
+- name: authorized_keys file
+  template:
+    src: authorized_keys
+    dest: '{{ authorized_keys_home }}/.ssh/authorized_keys'
+    backup: yes
+    mode: 0600
+    owner: '{{ authorized_keys_user }}'
+    group: '{{ authorized_keys_group }}'
+  tags:
+    - authorized-keys

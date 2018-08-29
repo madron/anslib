@@ -1,0 +1,5 @@
+{% for key in authorized_keys %}
+{% for value in ssh_public_keys[key] %}
+{{ value }}
+{% endfor %}
+{% endfor %}
