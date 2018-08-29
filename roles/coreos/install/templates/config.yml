@@ -8,7 +8,6 @@ passwd:
 {% endfor %}
 {% endfor %}
 
-{% if coreos_ssh_port is defined %}
 systemd:
   units:
     - name: sshd.socket
@@ -17,5 +16,4 @@ systemd:
         contents: |
           [Socket]
           ListenStream=
-          ListenStream=3022
-{% endif %}
+          ListenStream={{ sshd_port }}

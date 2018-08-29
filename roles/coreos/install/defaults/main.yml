@@ -1,3 +1,3 @@
 coreos_install_traspiler_version: v0.8.0
 
-# coreos_ssh_port: 3022
+sshd_port: 22
