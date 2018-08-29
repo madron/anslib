@@ -1,0 +1,32 @@
+- name: create /etc/systemd/system/sshd.socket.d directory
+  file:
+    path: /etc/systemd/system/sshd.socket.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+
+- name: sshd port dropin
+  template:
+    src: 10-sshd-port.conf
+    dest: /etc/systemd/system/sshd.socket.d/10-sshd-port.conf
+    mode: 0644
+    owner: root
+    group: root
+  register: ssh_port
+
+
+- name: restart service
+  systemd:
+    name: sshd
+    state: restarted
+    daemon_reload: yes
+  when: ssh_port.changed
+
+
+- name: start service
+  systemd:
+    name: sshd
+    enabled: yes
+    state: started
