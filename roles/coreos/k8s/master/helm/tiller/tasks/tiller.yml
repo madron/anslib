@@ -1,0 +1,25 @@
+- name: create directory
+  file:
+    path: /etc/kubernetes/helm
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+
+
+- name: config
+  template:
+    src: '{{ item }}'
+    dest: '/etc/kubernetes/helm/{{ item }}'
+    mode: 0644
+    owner: root
+    group: root
+  with_items:
+    - rbac-config.yaml
+    - tiller.yaml
+  register: config
+
+
+- name: install
+  command: '/opt/bin/kubectl apply -f /etc/kubernetes/helm'
+  when: config.changed
