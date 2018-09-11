@@ -1,0 +1,23 @@
+- name: /opt/kubernetes directory
+  file:
+    path: '/opt/kubernetes/helm-{{ k8s_helm_release }}'
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+
+- name: download
+  unarchive:
+    src: 'https://storage.googleapis.com/kubernetes-helm/helm-{{ k8s_helm_release }}-linux-amd64.tar.gz'
+    dest: '/opt/kubernetes/helm-{{ k8s_helm_release }}'
+    remote_src: yes
+
+
+- name: symlink
+  file:
+    src: '/opt/kubernetes/helm-{{ k8s_helm_release }}/linux-amd64/helm'
+    dest: '/opt/bin/helm'
+    state: link
+    owner: root
+    group: root

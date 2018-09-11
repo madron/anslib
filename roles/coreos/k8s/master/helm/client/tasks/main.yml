@@ -1,0 +1,6 @@
+- import_tasks: client.yml
+  tags:
+    - k8s
+    - k8s-master
+    - k8s-master-helm
+    - k8s-master-helm-client
