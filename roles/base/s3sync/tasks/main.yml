@@ -4,6 +4,7 @@
   tags:
     - s3sync
     - s3sync-service
+    - s3sync-restore
 
 
 - name: download binary
@@ -16,6 +17,7 @@
   tags:
     - s3sync
     - s3sync-binary
+    - s3sync-restore
 
 
 - name: config dir
@@ -81,6 +83,19 @@
     daemon_reload: yes
     enabled: yes
   when: ansible_service_mgr == 'systemd' and systemd_file.changed
+  tags:
+    - s3sync
+    - s3sync-service
+
+
+- name: cron file
+  template:
+    src: cron
+    dest: '/etc/cron.daily/{{ service }}'
+    mode: 0755
+    owner: root
+    group: root
+    backup: yes
   tags:
     - s3sync
     - s3sync-service

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# Restart s3sync service
+/usr/sbin/service s3sync restart;
