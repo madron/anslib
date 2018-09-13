@@ -1,0 +1,6 @@
+- name: '/usr/local/bin/h{{ k8s_cluster_name }}-helm'
+  template:
+    src: helm
+    dest: '/usr/local/bin/h{{ k8s_cluster_name }}-helm'
+    mode: 0755
+  become: yes

@@ -3,3 +3,9 @@
     - k8s
     - k8s-local
     - k8s-local-kubectl
+
+- import_tasks: helm.yml
+  tags:
+    - k8s
+    - k8s-local
+    - k8s-local-helm
