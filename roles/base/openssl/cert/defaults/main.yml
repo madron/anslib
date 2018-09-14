@@ -1,0 +1,7 @@
+# openssl_dir: '/path/to/dest'
+# openssl_subject: '/CN=myname'
+
+openssl_prefix: ''
+openssl_alt_dns: []
+openssl_alt_ip: []
+openssl_extended_key_usage: ''

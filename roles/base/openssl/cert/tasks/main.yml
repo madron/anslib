@@ -1,0 +1,11 @@
+- name: cert
+  include_tasks: cert.yml
+  vars:
+    name: '{{ openssl_prefix }}cert'
+    subject: '{{ openssl_cert_subject }}'
+    dir: '{{ openssl_dir }}'
+    ca_name: '{{ openssl_prefix }}ca'
+    extended_key_usage: '{{ openssl_extended_key_usage }}'
+  tags:
+    - openssl
+    - openssl-cert

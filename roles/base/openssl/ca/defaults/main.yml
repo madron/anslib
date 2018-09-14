@@ -1,0 +1,4 @@
+# openssl_dir: '/path/to/dest'
+# openssl_subject: '/CN=myname'
+
+openssl_prefix: ''
