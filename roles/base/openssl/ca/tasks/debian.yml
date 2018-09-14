@@ -1,8 +1,0 @@
-- name: required packages
-  apt:
-    name: '{{ item }}'
-    state: latest
-  with_items:
-    - openssl
-  tags:
-    - openssl-ca
