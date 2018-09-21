@@ -36,7 +36,7 @@
 
 - name: download
   get_url:
-    url: 'https://github.com/prometheus/node_exporter/releases/download/{{ prometheus_node_version }}/{{ prometheus_node_tar_file }}'
+    url: 'https://github.com/prometheus/node_exporter/releases/download/v{{ prometheus_node_version }}/{{ prometheus_node_tar_file }}'
     dest: '{{ prometheus_node_tar_path }}'
     sha256sum: '{{ prometheus_node_sha256sum }}'
     mode: 0644
@@ -48,20 +48,10 @@
     - prometheus-node-config
 
 
-- name: untar if changed
-  command: 'tar -x -z -f {{ prometheus_node_tar_path }}'
+- name: untar
+  command: 'tar -x -z -f {{ prometheus_node_tar_path }} --strip-components 1'
   args:
     chdir: /usr/local/sbin/
-  when: download.changed
-  tags:
-    - prometheus-node
-
-
-- name: untar if missing
-  command: 'tar -x -z -f {{ prometheus_node_tar_path }}'
-  args:
-    chdir: /usr/local/sbin/
-    creates: /usr/local/sbin/node_exporter
   tags:
     - prometheus-node
 
