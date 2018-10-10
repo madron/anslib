@@ -15,3 +15,7 @@ PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 47 {{ "%2d"|format(common_crontab_hour) }}  *   *   7  root  test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.weekly )
 52 {{ "%2d"|format(common_crontab_hour) }}  1   *   *  root  test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.monthly )
 #
+
+{% for rule in common_crontab_custom_rules %}
+{{ rule }}
+{% endfor %}
