@@ -1,6 +1,6 @@
 k8s_master_hosts: []
 
-k8s_release: v1.11.2
+k8s_release: v1.12.2
 
 k8s_balancer_fqdn: k8s-api.example.com
 k8s_balancer_port: 7443
