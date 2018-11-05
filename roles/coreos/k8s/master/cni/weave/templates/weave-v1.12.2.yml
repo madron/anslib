@@ -9,8 +9,8 @@ items:
         cloud.weave.works/launcher-info: |-
           {
             "original-request": {
-              "url": "/k8s/v1.10/net.yaml?k8s-version=v1.11.2",
-              "date": "Mon Aug 27 2018 10:48:56 GMT+0000 (UTC)"
+              "url": "/k8s/v1.10/net.yaml?k8s-version=v1.12.2",
+              "date": "Mon Nov 05 2018 14:49:49 GMT+0000 (UTC)"
             },
             "email-address": "support@weave.works"
           }
@@ -25,8 +25,8 @@ items:
         cloud.weave.works/launcher-info: |-
           {
             "original-request": {
-              "url": "/k8s/v1.10/net.yaml?k8s-version=v1.11.2",
-              "date": "Mon Aug 27 2018 10:48:56 GMT+0000 (UTC)"
+              "url": "/k8s/v1.10/net.yaml?k8s-version=v1.12.2",
+              "date": "Mon Nov 05 2018 14:49:49 GMT+0000 (UTC)"
             },
             "email-address": "support@weave.works"
           }
@@ -66,8 +66,8 @@ items:
         cloud.weave.works/launcher-info: |-
           {
             "original-request": {
-              "url": "/k8s/v1.10/net.yaml?k8s-version=v1.11.2",
-              "date": "Mon Aug 27 2018 10:48:56 GMT+0000 (UTC)"
+              "url": "/k8s/v1.10/net.yaml?k8s-version=v1.12.2",
+              "date": "Mon Nov 05 2018 14:49:49 GMT+0000 (UTC)"
             },
             "email-address": "support@weave.works"
           }
@@ -89,8 +89,8 @@ items:
         cloud.weave.works/launcher-info: |-
           {
             "original-request": {
-              "url": "/k8s/v1.10/net.yaml?k8s-version=v1.11.2",
-              "date": "Mon Aug 27 2018 10:48:56 GMT+0000 (UTC)"
+              "url": "/k8s/v1.10/net.yaml?k8s-version=v1.12.2",
+              "date": "Mon Nov 05 2018 14:49:49 GMT+0000 (UTC)"
             },
             "email-address": "support@weave.works"
           }
@@ -121,8 +121,8 @@ items:
         cloud.weave.works/launcher-info: |-
           {
             "original-request": {
-              "url": "/k8s/v1.10/net.yaml?k8s-version=v1.11.2",
-              "date": "Mon Aug 27 2018 10:48:56 GMT+0000 (UTC)"
+              "url": "/k8s/v1.10/net.yaml?k8s-version=v1.12.2",
+              "date": "Mon Nov 05 2018 14:49:49 GMT+0000 (UTC)"
             },
             "email-address": "support@weave.works"
           }
@@ -145,8 +145,8 @@ items:
         cloud.weave.works/launcher-info: |-
           {
             "original-request": {
-              "url": "/k8s/v1.10/net.yaml?k8s-version=v1.11.2",
-              "date": "Mon Aug 27 2018 10:48:56 GMT+0000 (UTC)"
+              "url": "/k8s/v1.10/net.yaml?k8s-version=v1.12.2",
+              "date": "Mon Nov 05 2018 14:49:49 GMT+0000 (UTC)"
             },
             "email-address": "support@weave.works"
           }
@@ -164,8 +164,6 @@ items:
             - name: weave
               command:
                 - /home/weave/launch.sh
-              args:
-              - --no-masq-local
               env:
                 - name: HOSTNAME
                   valueFrom:
@@ -177,13 +175,12 @@ items:
                     secretKeyRef:
                       name: weave-passwd
                       key: weave-passwd
-              image: 'docker.io/weaveworks/weave-kube:2.4.0'
-              livenessProbe:
+              image: 'docker.io/weaveworks/weave-kube:2.4.1'
+              readinessProbe:
                 httpGet:
                   host: 127.0.0.1
                   path: /status
                   port: 6784
-                initialDelaySeconds: 30
               resources:
                 requests:
                   cpu: 10m
@@ -205,14 +202,13 @@ items:
                 - name: xtables-lock
                   mountPath: /run/xtables.lock
             - name: weave-npc
-              args: []
               env:
                 - name: HOSTNAME
                   valueFrom:
                     fieldRef:
                       apiVersion: v1
                       fieldPath: spec.nodeName
-              image: 'docker.io/weaveworks/weave-npc:2.4.0'
+              image: 'docker.io/weaveworks/weave-npc:2.4.1'
               resources:
                 requests:
                   cpu: 10m

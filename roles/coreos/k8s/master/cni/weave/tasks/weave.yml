@@ -6,7 +6,7 @@
 
 - name: config
   template:
-    src: weave.yml
+    src: 'weave-{{ k8s_release }}.yml'
     dest: '/etc/kubernetes/cni-weave.yml'
     mode: 0644
     owner: root
