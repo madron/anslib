@@ -1,0 +1,33 @@
+- import_tasks: binaries.yml
+  tags:
+    - k8s
+    - k8s-common
+    - k8s-common-binaries
+
+
+- import_tasks: swapoff.yml
+  tags:
+    - k8s
+    - k8s-common
+    - k8s-common-binaries
+
+
+# - import_tasks: cni.yml
+#   tags:
+#     - k8s
+#     - k8s-common
+#     - k8s-common-binaries
+
+
+# - import_tasks: kernel.yml
+#   tags:
+#     - k8s
+#     - k8s-common
+#     - k8s-common-binaries
+
+
+# - import_tasks: docker.yml
+#   tags:
+#     - k8s
+#     - k8s-common
+#     - k8s-common-binaries

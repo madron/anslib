@@ -1,0 +1,4 @@
+- name: init
+  command: 'kubeadm init'
+  args:
+    creates: /etc/kubernetes/admin.conf

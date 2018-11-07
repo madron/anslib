@@ -1,0 +1,19 @@
+- name: repository key
+  apt_key:
+    url: 'https://packages.cloud.google.com/apt/doc/apt-key.gpg'
+    state: present
+
+
+- name: repository
+  apt_repository:
+    repo: 'deb https://apt.kubernetes.io/ kubernetes-xenial main'
+    state: present
+
+
+- name: packages
+  apt:
+    name: '{{ item }}={{ k8s_release_package }}'
+  with_items:
+      - kubeadm
+      - kubelet
+      - kubectl

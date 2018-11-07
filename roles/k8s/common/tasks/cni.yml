@@ -1,0 +1,59 @@
+- name: binary list
+  set_fact:
+    binary_list:
+       - bridge
+       - dhcp
+       - host-device
+       - ipvlan
+       - macvlan
+       - ptp
+       - sample
+       - vlan
+       - flannel
+       - host-local
+       - loopback
+       - portmap
+       - tuning
+
+
+- name: '/opt/kubernetes/cni-{{ k8s_cni_release }} directory'
+  file:
+    path: '/opt/kubernetes/cni-{{ k8s_cni_release }}'
+    state: directory
+
+
+- name: /opt/cni/bin directory
+  file:
+    path: /opt/cni/bin
+    state: directory
+
+
+- name: download
+  unarchive:
+    src: 'https://github.com/containernetworking/plugins/releases/download/{{ k8s_cni_release }}/cni-plugins-amd64-{{ k8s_cni_release }}.tgz'
+    dest: /opt/kubernetes/cni-{{ k8s_cni_release }}
+    remote_src: yes
+
+
+- name: symlink to /opt/cni/bin
+  file:
+    src: '/opt/kubernetes/cni-{{ k8s_cni_release }}/{{ item }}'
+    dest: '/opt/cni/bin/{{ item }}'
+    state: link
+    owner: root
+    group: root
+  with_items: '{{ binary_list }}'
+  register: binary
+
+
+- name: br_netfilter kernel module
+  modprobe:
+    name: br_netfilter
+    state: present
+
+
+- name: net.bridge.bridge-nf-call-iptables
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: 1
+    state: present
