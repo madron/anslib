@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    scheduler.alpha.kubernetes.io/critical-pod: ""
+  creationTimestamp: null
+  labels:
+    component: haproxy
+    tier: control-plane
+  name: haproxy
+  namespace: kube-system
+spec:
+  containers:
+  - name: haproxy
+    image: haproxy:1.8.13-alpine
+    imagePullPolicy: IfNotPresent
+    ports:
+    - name: https
+      containerPort: {{ k8s_balancer_port }}
+    - name: healthz
+      containerPort: 1936
+    - name: stat
+      containerPort: 1937
+    livenessProbe:
+      httpGet:
+        path: /healthz
+        port: 1936
+        scheme: HTTP
+      initialDelaySeconds: 10
+      timeoutSeconds: 5
+    readinessProbe:
+      httpGet:
+        path: /healthz
+        port: 1936
+        scheme: HTTP
+      initialDelaySeconds: 10
+      timeoutSeconds: 5
+    resources: {}
+    volumeMounts:
+    - name: haproxy-config
+      mountPath: /usr/local/etc/haproxy/haproxy.cfg
+      readOnly: true
+  hostNetwork: true
+  priorityClassName: system-cluster-critical
+  volumes:
+  - name: haproxy-config
+    hostPath:
+      path: /etc/kubernetes/haproxy.cfg
+      type: File
+status: {}

@@ -1,0 +1,25 @@
+- name: /etc/kubernetes/manifests directory
+  file:
+    path: /etc/kubernetes/manifests
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+
+- name: haproxy config
+  template:
+    src: haproxy.cfg
+    dest: /etc/kubernetes/haproxy.cfg
+    mode: 0644
+    owner: root
+    group: root
+
+
+- name: haproxy pod manifest
+  template:
+    src: haproxy.yml
+    dest: /etc/kubernetes/manifests/haproxy.yml
+    mode: 0644
+    owner: root
+    group: root

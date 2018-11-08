@@ -1,0 +1,5 @@
+- import_tasks: metallb.yml
+  tags:
+    - k8s
+    - k8s-leader
+    - k8s-leader-metallb

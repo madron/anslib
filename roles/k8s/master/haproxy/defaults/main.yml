@@ -1,0 +1,4 @@
+k8s_master_hosts: []
+
+k8s_balancer_port: 7443
+k8s_api_port: 6443

@@ -1,0 +1,5 @@
+- import_tasks: haproxy.yml
+  tags:
+    - k8s
+    - k8s-master
+    - k8s-master-haproxy

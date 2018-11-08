@@ -1,3 +1,11 @@
+- name: package list
+  set_fact:
+    package_list:
+      - kubeadm
+      - kubelet
+      - kubectl
+
+
 - name: repository key
   apt_key:
     url: 'https://packages.cloud.google.com/apt/doc/apt-key.gpg'
@@ -10,13 +18,10 @@
     state: present
 
 
-- name: packages
+- name: install packages
   apt:
     name: '{{ item }}={{ k8s_release_package }}'
-  with_items:
-      - kubeadm
-      - kubelet
-      - kubectl
+  with_items: '{{ package_list }}'
 
 
 - name: held packages
@@ -26,5 +31,6 @@
 
 
 - name: version hold
-  command: 'apt-mark hold {{ package_name }}'
-  when: package_name not in held_packages.stdout
+  command: 'apt-mark hold {{ item }}'
+  when: item not in held_packages.stdout
+  with_items: '{{ package_list }}'

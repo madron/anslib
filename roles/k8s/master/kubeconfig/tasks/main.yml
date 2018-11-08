@@ -1,16 +1,5 @@
-- name: .kube directory
-  file:
-    path: /root/.kube
-    state: directory
-    owner: root
-    group: root
-    mode: 0700
-
-
-- name: .kube/config
-  file:
-    src: /etc/kubernetes/admin.conf
-    dest: /root/.kube/config
-    state: link
-    owner: root
-    group: root
+- import_tasks: kubeconfig.yml
+  tags:
+    - k8s
+    - k8s-master
+    - k8s-master-kubeconfig

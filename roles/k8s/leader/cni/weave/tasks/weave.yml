@@ -1,8 +1,3 @@
-- assert:
-    that:
-      - "k8s_release == 'v1.12.2'"
-
-
 - name: create secret
   command: 'kubectl create secret -n kube-system generic weave-passwd --from-literal weave-passwd={{ k8s_weave_password }}'
   args:
