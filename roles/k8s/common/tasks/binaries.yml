@@ -17,3 +17,14 @@
       - kubeadm
       - kubelet
       - kubectl
+
+
+- name: held packages
+  command: apt-mark showhold
+  register: held_packages
+  changed_when: false
+
+
+- name: version hold
+  command: 'apt-mark hold {{ package_name }}'
+  when: package_name not in held_packages.stdout
