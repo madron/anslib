@@ -1,0 +1,6 @@
+- import_tasks: debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - k8s
+    - k8s-docker
+    - k8s-docker-engine
