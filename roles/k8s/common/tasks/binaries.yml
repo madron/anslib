@@ -6,6 +6,15 @@
       - kubectl
 
 
+- name: create /etc/kubernetes/manifests directory
+  file:
+    path: /etc/kubernetes/manifests
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+
+
 - name: repository key
   apt_key:
     url: 'https://packages.cloud.google.com/apt/doc/apt-key.gpg'
