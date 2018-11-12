@@ -14,5 +14,14 @@
 #     state: absent
 
 
-# - name: reset iptables
-#   command: /opt/bin/reset_iptables
+- name: reset_iptables command
+  template:
+    src: reset_iptables
+    dest: /usr/local/bin/reset_iptables
+    mode: 0755
+    owner: root
+    group: root
+
+
+- name: reset iptables
+  command: /usr/local/bin/reset_iptables
