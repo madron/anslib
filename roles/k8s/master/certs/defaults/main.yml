@@ -1,2 +1,2 @@
-k8s_kubeadm: /usr/bin/kubeadm
+k8s_bin_dir: /usr/bin
 k8s_config_dir: files/k8s-config/kubernetes

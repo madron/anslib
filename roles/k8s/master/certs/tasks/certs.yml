@@ -27,6 +27,6 @@
 
 
 - name: certificates
-  command: '{{ k8s_kubeadm }} alpha phase certs all --config /etc/kubernetes/kubeadm-config.yaml'
+  command: '{{ k8s_bin_dir }}/kubeadm alpha phase certs all --config /etc/kubernetes/kubeadm-config.yaml'
   args:
     creates: /etc/kubernetes/pki/apiserver.crt

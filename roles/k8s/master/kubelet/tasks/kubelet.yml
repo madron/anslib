@@ -1,19 +1,19 @@
 - name: kubelet config write-to-disk
-  command: /opt/bin/kubeadm alpha phase kubelet config write-to-disk --config /etc/kubernetes/kubeadm-config.yaml
+  command: '{{ k8s_bin_dir }}/kubeadm alpha phase kubelet config write-to-disk --config /etc/kubernetes/kubeadm-config.yaml'
   args:
     creates: /var/lib/kubelet/config.yaml
   register: config
 
 
 - name: kubelet write-env-file
-  command: /opt/bin/kubeadm alpha phase kubelet write-env-file --config /etc/kubernetes/kubeadm-config.yaml
+  command: '{{ k8s_bin_dir }}/kubeadm alpha phase kubelet write-env-file --config /etc/kubernetes/kubeadm-config.yaml'
   args:
     creates: /var/lib/kubelet/kubeadm-flags.env
   register: env
 
 
 - name: kubeconfig kubelet
-  command: /opt/bin/kubeadm alpha phase kubeconfig kubelet --config /etc/kubernetes/kubeadm-config.yaml
+  command: '{{ k8s_bin_dir }}/kubeadm alpha phase kubeconfig kubelet --config /etc/kubernetes/kubeadm-config.yaml'
   args:
     creates: /etc/kubernetes/kubelet.conf
   register: kubeconfig

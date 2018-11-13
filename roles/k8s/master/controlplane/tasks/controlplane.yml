@@ -1,0 +1,14 @@
+- name: kubeconfig all
+  command: '{{ k8s_bin_dir }}/kubeadm alpha phase kubeconfig all --config /etc/kubernetes/kubeadm-config.yaml'
+  args:
+    creates: /etc/kubernetes/controller-manager.conf
+
+
+- name: controlplane all
+  command: '{{ k8s_bin_dir }}/kubeadm alpha phase controlplane all --config /etc/kubernetes/kubeadm-config.yaml'
+  args:
+    creates: /etc/kubernetes/manifests/kube-apiserver.yaml
+
+
+- name: mark-master
+  command: '{{ k8s_bin_dir }}/kubeadm alpha phase mark-master --config /etc/kubernetes/kubeadm-config.yaml'

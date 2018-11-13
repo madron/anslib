@@ -1,3 +1,15 @@
+- name: reset_iptables command
+  template:
+    src: reset_iptables
+    dest: '{{ k8s_bin_dir }}/reset_iptables'
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - k8s
+    - k8s-reset
+
+
 - import_tasks: reset.yml
   tags:
     - k8s

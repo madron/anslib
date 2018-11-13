@@ -1,5 +1,5 @@
 - name: create secret
-  command: 'kubectl create secret -n kube-system generic weave-passwd --from-literal weave-passwd={{ k8s_weave_password }}'
+  command: '{{ k8s_bin_dir }}/kubectl create secret -n kube-system generic weave-passwd --from-literal weave-passwd={{ k8s_weave_password }}'
   args:
     creates: /etc/kubernetes/cni-weave.yml
 
@@ -15,5 +15,5 @@
 
 
 - name: install
-  command: 'kubectl apply -f /etc/kubernetes/cni-weave.yml'
+  command: '{{ k8s_bin_dir }}/kubectl apply -f /etc/kubernetes/cni-weave.yml'
   when: config.changed
