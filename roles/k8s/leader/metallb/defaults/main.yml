@@ -1,1 +1,2 @@
 k8s_metallb_release: v0.7.3
+k8s_bin_dir: /usr/bin

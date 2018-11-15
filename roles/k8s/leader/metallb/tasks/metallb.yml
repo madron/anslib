@@ -18,5 +18,5 @@
 
 
 - name: install
-  command: 'kubectl apply -f /etc/kubernetes/metallb/metallb.yaml'
+  command: '{{ k8s_bin_dir }}/kubectl apply -f /etc/kubernetes/metallb/metallb.yaml'
   when: config.changed
