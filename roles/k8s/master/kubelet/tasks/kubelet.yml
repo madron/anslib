@@ -13,7 +13,7 @@
 
 
 - name: kubeconfig kubelet
-  command: '{{ k8s_bin_dir }}/kubeadm init phase kubeconfig kubelet --config /etc/kubernetes/kubeadm-config.yaml'
+  command: '{{ k8s_bin_dir }}/kubeadm init phase kubelet-start --config /etc/kubernetes/kubeadm-config.yaml'
   args:
     creates: /etc/kubernetes/kubelet.conf
   register: kubeconfig
