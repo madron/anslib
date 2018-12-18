@@ -5,10 +5,10 @@
 
 
 - name: controlplane all
-  command: '{{ k8s_bin_dir }}/kubeadm init phase controlplane all --config /etc/kubernetes/kubeadm-config.yaml'
+  command: '{{ k8s_bin_dir }}/kubeadm init phase control-plane all --config /etc/kubernetes/kubeadm-config.yaml'
   args:
     creates: /etc/kubernetes/manifests/kube-apiserver.yaml
 
 
 - name: mark-master
-  command: '{{ k8s_bin_dir }}/kubeadm init phase mark-master --config /etc/kubernetes/kubeadm-config.yaml'
+  command: '{{ k8s_bin_dir }}/kubeadm init phase mark-control-plane --config /etc/kubernetes/kubeadm-config.yaml'
