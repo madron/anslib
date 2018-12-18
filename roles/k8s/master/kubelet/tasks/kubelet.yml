@@ -1,19 +1,12 @@
-- name: kubelet config write-to-disk
-  command: '{{ k8s_bin_dir }}/kubeadm init phase kubelet config write-to-disk --config /etc/kubernetes/kubeadm-config.yaml'
-  args:
-    creates: /var/lib/kubelet/config.yaml
-  register: config
-
-
-- name: kubelet write-env-file
-  command: '{{ k8s_bin_dir }}/kubeadm init phase kubelet write-env-file --config /etc/kubernetes/kubeadm-config.yaml'
+- name: kubelet init start
+  command: '{{ k8s_bin_dir }}/kubeadm init phase kubelet-start --config /etc/kubernetes/kubeadm-config.yaml'
   args:
     creates: /var/lib/kubelet/kubeadm-flags.env
-  register: env
+  register: start
 
 
 - name: kubeconfig kubelet
-  command: '{{ k8s_bin_dir }}/kubeadm init phase kubelet-start --config /etc/kubernetes/kubeadm-config.yaml'
+  command: '{{ k8s_bin_dir }}/kubeadm init phase kubeconfig kubelet --config /etc/kubernetes/kubeadm-config.yaml'
   args:
     creates: /etc/kubernetes/kubelet.conf
   register: kubeconfig
@@ -23,4 +16,4 @@
   systemd:
     name: kubelet
     state: restarted
-  when: config.changed or env.changed or kubeconfig.changed
+  when: start.changed or kubeconfig.changed
