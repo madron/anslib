@@ -1,0 +1,13 @@
+- name: node-label.sh
+  template:
+    src: node-label.sh
+    dest: /etc/kubernetes/node-label.sh
+    mode: 0755
+    owner: root
+    group: root
+  register: config
+
+
+- name: run node-label script
+  command: /etc/kubernetes/node-label.sh
+  when: config.changed
