@@ -2,8 +2,7 @@
   set_fact:
     apt_repository: 'deb [arch=amd64] https://download.docker.com/linux/{{ ansible_lsb.id|lower() }} {{ ansible_lsb.codename }} stable'
     package_name: docker-ce
-    package_version: '{{ k8s_docker_engine_version }}~ce~3-0~{{ ansible_lsb.id|lower() }}'
-
+    package_version: '{{ docker_engine_version }}~ce~3-0~{{ ansible_lsb.id|lower() }}'
 
 - name: required packages
   apt:
@@ -30,7 +29,7 @@
   apt:
     name: '{{ package_name }}={{ package_version }}'
     state: present
-    update_cache: '{{ k8s_docker_engine_update_cache }}'
+    update_cache: '{{ docker_engine_update_cache }}'
 
 
 - name: held packages

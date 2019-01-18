@@ -1,3 +1,3 @@
-k8s_docker_engine_version: 18.06.1
+docker_engine_version: 18.06.1
 
-k8s_docker_engine_update_cache: false
+docker_engine_update_cache: false

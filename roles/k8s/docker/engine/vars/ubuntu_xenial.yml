@@ -1,5 +1,0 @@
-docker_engine_packages:
-  - linux-image-extra-virtual
-  - python-pip
-  - apparmor
-  - curl

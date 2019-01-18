@@ -22,12 +22,6 @@
     state: directory
 
 
-- name: /opt/cni/bin directory
-  file:
-    path: /opt/cni/bin
-    state: directory
-
-
 - name: download
   unarchive:
     src: 'https://github.com/containernetworking/plugins/releases/download/{{ k8s_cni_release }}/cni-plugins-amd64-{{ k8s_cni_release }}.tgz'
@@ -35,10 +29,10 @@
     remote_src: yes
 
 
-- name: symlink to /opt/cni/bin
+- name: symlink to /usr/local/bin
   file:
     src: '/opt/kubernetes/cni-{{ k8s_cni_release }}/{{ item }}'
-    dest: '/opt/cni/bin/{{ item }}'
+    dest: '/usr/local/bin/{{ item }}'
     state: link
     owner: root
     group: root

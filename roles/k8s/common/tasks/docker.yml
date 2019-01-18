@@ -7,10 +7,10 @@
     group: root
 
 
-- name: docker drop-in config
+- name: docker daemon config
   template:
-    src: k8s.conf
-    dest: /etc/systemd/system/docker.service.d/10-k8s.conf
+    src: daemon.json
+    dest: /etc/docker/daemon.json
     mode: 0644
     owner: root
     group: root
