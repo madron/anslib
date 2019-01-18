@@ -62,6 +62,3 @@ iptables_ipset: {}
 iptables_packages:
   - iptables
   - ipset
-
-iptables_remove_packages:
-  - shorewall

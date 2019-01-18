@@ -1,0 +1,85 @@
+- name: set variables
+  set_fact:
+    iptables_input_rules_list:
+      - '{{ iptables_input_rules_0 }}'
+      - '{{ iptables_input_rules_1 }}'
+      - '{{ iptables_input_rules_2 }}'
+      - '{{ iptables_input_rules_3 }}'
+      - '{{ iptables_input_rules_4 }}'
+      - '{{ iptables_input_rules_5 }}'
+      - '{{ iptables_input_rules_6 }}'
+      - '{{ iptables_input_rules_7 }}'
+      - '{{ iptables_input_rules_8 }}'
+      - '{{ iptables_input_rules_9 }}'
+      - '{{ iptables_input_rules }}'
+    iptables_output_rules_list:
+      - '{{ iptables_output_rules_0 }}'
+      - '{{ iptables_output_rules_1 }}'
+      - '{{ iptables_output_rules_2 }}'
+      - '{{ iptables_output_rules_3 }}'
+      - '{{ iptables_output_rules_4 }}'
+      - '{{ iptables_output_rules_5 }}'
+      - '{{ iptables_output_rules_6 }}'
+      - '{{ iptables_output_rules_7 }}'
+      - '{{ iptables_output_rules_8 }}'
+      - '{{ iptables_output_rules_9 }}'
+      - '{{ iptables_output_rules }}'
+
+
+- name: /var/lib/ansible/iptables/rules
+  template:
+    src: rules
+    dest: /var/lib/ansible/iptables/rules
+    mode: 0755
+    owner: root
+    group: root
+    backup: yes
+  register: rules
+
+
+- name: reload rules
+  command: /var/lib/ansible/iptables/rules
+  when: rules.changed or iptables_force_reload
+
+
+- name: /etc/network/if-pre-up.d/000iptables-rules
+  template:
+    src: rules
+    dest: /etc/network/if-pre-up.d/000iptables-rules
+    mode: 0755
+    owner: root
+    group: root
+    backup: no
+
+
+- name: /etc/init/iptables-docker.conf
+  template:
+    src: upstart-iptables-docker.conf
+    dest: /etc/init/iptables-docker.conf
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: upstart
+  when: iptables_docker_filter
+
+
+- name: remove /etc/init/iptables-docker.conf
+  file:
+    path: /etc/init/iptables-docker.conf
+    state: absent
+  when: not iptables_docker_filter
+
+
+- name: service iptables-docker restarted
+  service:
+    name: iptables-docker
+    state: restarted
+  when: iptables_docker_filter and (upstart.changed or iptables_force_reload)
+
+
+- name: service iptables-docker started
+  service:
+    name: iptables-docker
+    state: started
+  when: iptables_docker_filter

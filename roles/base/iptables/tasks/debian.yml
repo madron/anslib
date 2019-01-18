@@ -5,11 +5,3 @@
   with_items: '{{ iptables_packages }}'
   tags:
     - iptables
-
-- name: remove packages
-  apt:
-    name: '{{ item }}'
-    state: absent
-  with_items: '{{ iptables_remove_packages }}'
-  tags:
-    - iptables
