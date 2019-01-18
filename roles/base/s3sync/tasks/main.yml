@@ -5,6 +5,7 @@
     - s3sync
     - s3sync-service
     - s3sync-restore
+    - s3sync-download
 
 
 - name: download binary
@@ -18,6 +19,7 @@
     - s3sync
     - s3sync-binary
     - s3sync-restore
+    - s3sync-download
 
 
 - name: config dir
@@ -104,17 +106,18 @@
 - include_tasks: restore.yml
   vars:
     service: s3sync
-  when: s3sync_restore
+  when: s3sync_restore or s3sync_download
   tags:
     - s3sync
     - s3sync-restore
+    - s3sync-download
 
 
 - name: service restarted - upstart
   service:
     name: '{{ service }}'
     state: restarted
-  when: ansible_service_mgr == 'upstart' and (config_file.changed or upstart_file.changed or s3sync_force_restart)
+  when: ansible_service_mgr == 'upstart' and (config_file.changed or upstart_file.changed or s3sync_force_restart) and s3sync_download == false
   tags:
     - s3sync
     - s3sync-service
@@ -124,7 +127,7 @@
   service:
     name: '{{ service }}'
     state: restarted
-  when: ansible_service_mgr == 'systemd' and (config_file.changed or systemd_file.changed or s3sync_force_restart)
+  when: ansible_service_mgr == 'systemd' and (config_file.changed or systemd_file.changed or s3sync_force_restart) and s3sync_download == false
   tags:
     - s3sync
     - s3sync-service
@@ -134,12 +137,14 @@
   service:
     name: '{{ service }}'
     state: started
+  when: s3sync_download == false
   tags:
     - s3sync
     - s3sync-service
 
 
 - include_tasks: check.yml
+  when: s3sync_download == false
   tags:
     - s3sync
     - s3sync-service
@@ -147,6 +152,7 @@
 
 
 - include_tasks: log.yml
+  when: s3sync_download == false
   tags:
     - s3sync
     - s3sync-service-log

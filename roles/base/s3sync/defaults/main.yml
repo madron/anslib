@@ -19,3 +19,5 @@ s3sync_rescan_delay: 600
 s3sync_restore: ''
 s3sync_force_restart: ''
 s3sync_force_download: 'no'
+
+s3sync_download: false
