@@ -2,17 +2,15 @@
   command: '{{ k8s_bin_dir }}/kubeadm reset -f'
 
 
-- name: remove /etc/kubernetes directory
+- name: remove files and directories
   file:
-    path: /etc/kubernetes
+    path: '{{ item }}'
     state: absent
-
-
-- name: remove /etc/systemd/system/iptables.rules
-  file:
-    path: /etc/systemd/system/iptables.rules
-    state: absent
-
+  with_items:
+    - /etc/kubernetes
+    - /etc/systemd/system/iptables.rules
+    - /var/lib/kubelet
+    - /var/lib/weave
 
 - name: reset iptables
   command: '{{ k8s_bin_dir }}/reset_iptables'
