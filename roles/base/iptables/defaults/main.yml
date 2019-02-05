@@ -59,6 +59,8 @@ iptables_ipset: {}
 #       - 172.16.0.0/12
 #       - 192.168.0.0/16
 
+iptables_chains: []
+
 iptables_packages:
   - iptables
   - ipset
