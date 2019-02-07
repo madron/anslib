@@ -1,0 +1,6 @@
+- name: /usr/local/bin/fluxctl
+  template:
+    src: fluxctl
+    dest: /usr/local/bin/fluxctl
+    mode: 0755
+  become: yes

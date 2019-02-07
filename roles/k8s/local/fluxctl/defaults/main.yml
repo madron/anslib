@@ -1,0 +1,3 @@
+k8s_cluster_name: kubernetes
+k8s_config_dir: files/k8s-config/kubernetes
+k8s_local_fluxctl_version: 1.9.0
