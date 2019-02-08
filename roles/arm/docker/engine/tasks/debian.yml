@@ -1,0 +1,43 @@
+- name: set facts
+  set_fact:
+    apt_repository: 'deb [arch=armhf] https://download.docker.com/linux/{{ ansible_lsb.id|lower() }} {{ ansible_lsb.codename }} stable'
+    package_name: docker-ce
+    package_version: '5:{{ docker_engine_version }}~3-0~{{ ansible_lsb.id|lower() }}-{{ ansible_lsb.codename }}'
+
+- name: required packages
+  apt:
+    name: '{{ item }}'
+    state: present
+  with_items:
+    - apt-transport-https
+
+
+- name: repository key
+  apt_key:
+    url: 'https://download.docker.com/linux/ubuntu/gpg'
+    id: '0EBFCD88'
+    state: present
+
+
+- name: repository
+  apt_repository:
+    repo: '{{ apt_repository }}'
+    state: present
+
+
+- name: docker-engine package
+  apt:
+    name: '{{ package_name }}={{ package_version }}'
+    state: present
+    update_cache: '{{ docker_engine_update_cache }}'
+
+
+- name: held packages
+  command: apt-mark showhold
+  register: held_packages
+  changed_when: false
+
+
+- name: version hold
+  command: 'apt-mark hold {{ package_name }}'
+  when: package_name not in held_packages.stdout
