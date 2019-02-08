@@ -1,9 +1,3 @@
-- name: os specific variables
-  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
-  tags:
-    - apt-packages
-
-
 - name: required packages
   apt:
     name: '{{ apt_packages }}'
