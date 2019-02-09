@@ -11,4 +11,9 @@
 
 - name: dphys-swapfile swapoff
   command: dphys-swapfile swapoff
-  when: ansible_lsb.id|lower() == 'raspberry'
+  when: ansible_lsb.id == 'Raspbian'
+
+
+- name: update-rc.d dphys-swapfile remove
+  command: update-rc.d dphys-swapfile remove
+  when: ansible_lsb.id == 'Raspbian'
