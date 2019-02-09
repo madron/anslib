@@ -1,7 +1,9 @@
 kind: ClusterConfiguration
 apiVersion: "kubeadm.k8s.io/v1beta1"
 kubernetesVersion: stable
+{% if k8s_balancer_fqdn %}
 controlPlaneEndpoint: "{{ k8s_balancer_fqdn }}:{{ k8s_balancer_port }}"
+{% endif %}
 etcd:
   local:
     extraArgs:
@@ -14,10 +16,8 @@ etcd:
       initial-cluster-state: existing
 {% endif %}
     serverCertSANs:
-      - {{ inventory_hostname }}.{{ k8s_domain }}
       - {{ ansible_host }}
     peerCertSANs:
-      - {{ inventory_hostname }}.{{ k8s_domain }}
       - {{ ansible_host }}
 {% if k8s_pod_cidr %}
 networking:
