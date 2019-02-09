@@ -7,3 +7,8 @@
 - name: Disable swap
   command: swapoff -a
   when: ansible_swaptotal_mb > 0
+
+
+- name: dphys-swapfile swapoff
+  command: dphys-swapfile swapoff
+  when: ansible_lsb.id|lower() == 'raspberry'
