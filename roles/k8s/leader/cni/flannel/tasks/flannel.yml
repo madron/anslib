@@ -1,0 +1,13 @@
+- name: config
+  template:
+    src: kube-flannel.yml
+    dest: '/etc/kubernetes/cni-flannel.yml'
+    mode: 0644
+    owner: root
+    group: root
+  register: config
+
+
+- name: install
+  command: '{{ k8s_bin_dir }}/kubectl apply -f /etc/kubernetes/cni-flannel.yml'
+  when: config.changed
