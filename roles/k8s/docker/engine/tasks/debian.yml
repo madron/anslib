@@ -2,7 +2,6 @@
   set_fact:
     apt_repository: 'deb [arch=amd64] https://download.docker.com/linux/{{ ansible_lsb.id|lower() }} {{ ansible_lsb.codename }} stable'
     package_name: docker-ce
-    package_version: '{{ docker_engine_version }}~ce~3-0~{{ ansible_lsb.id|lower() }}'
 
 - name: required packages
   apt:
@@ -27,8 +26,9 @@
 
 - name: docker-engine package
   apt:
-    name: '{{ package_name }}={{ package_version }}'
+    name: '{{ package_name }}={{ docker_engine_version }}'
     state: present
+    force: '{{ docker_engine_force_update }}'
     update_cache: '{{ docker_engine_update_cache }}'
 
 
