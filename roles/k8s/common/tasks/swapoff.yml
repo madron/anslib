@@ -1,11 +1,12 @@
 - name: Remove swapfile from /etc/fstab
   mount:
-    path: none
+    path: swap
     fstype: swap
     state: absent
 
+
 - name: Disable swap
-  command: swapoff -a
+  command: /sbin/swapoff --all
   when: ansible_swaptotal_mb > 0
 
 
@@ -17,3 +18,22 @@
 - name: update-rc.d dphys-swapfile remove
   command: update-rc.d dphys-swapfile remove
   when: ansible_lsb.id == 'Raspbian'
+
+
+- name: /etc/systemd/system/swapoff.service
+  template:
+    src: swapoff.service
+    dest: /etc/systemd/system/swapoff.service
+    mode: 0644
+    owner: root
+    group: root
+  register: systemd
+
+
+- name: reload rules
+  systemd:
+    name: swapoff
+    enabled: yes
+    state: started
+    daemon_reload: yes
+  when: systemd.changed

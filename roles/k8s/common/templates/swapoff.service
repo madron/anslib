@@ -1,0 +1,15 @@
+[Unit]
+Description=Disable swap
+DefaultDependencies=no
+After=systemd-sysctl.service
+Before=sysinit.target
+
+[Service]
+Type=oneshot
+ExecStart=/sbin/swapoff --all
+ExecReload=/sbin/swapoff --all
+ExecStop=/sbin/swapoff --all
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
