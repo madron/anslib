@@ -5,9 +5,7 @@
     mode: 0755
     owner: root
     group: root
-  register: config
 
 
 - name: run node-label script
   command: /etc/kubernetes/node-label.sh
-  when: config.changed

@@ -1,3 +1,10 @@
+- name: gather facts
+  setup:
+  tags:
+    - k8s
+    - k8s-common
+
+
 - import_tasks: swapoff.yml
   tags:
     - k8s
