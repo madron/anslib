@@ -27,6 +27,16 @@
       - '{{ iptables_output_rules }}'
 
 
+- name: remove old version
+  file:
+    path:
+    state: absent
+  with_items:
+    - /etc/network/if-pre-up.d/000iptables-rules
+    - /var/lib/ansible/iptables/rules
+    - /etc/init/iptables-docker.conf
+
+
 - name: /etc/systemd/system/iptables.service
   template:
     src: iptables.service
