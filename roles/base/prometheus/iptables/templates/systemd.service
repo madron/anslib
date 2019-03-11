@@ -1,6 +1,7 @@
 [Unit]
 Description=Prometheus iptables-exporter
-After=network.target
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 Restart=always
