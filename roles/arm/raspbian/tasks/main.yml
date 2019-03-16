@@ -34,6 +34,6 @@
   user:
     name: pi
     state: absent
-  when: '{{ raspbian_remove_pi_user }}'
+  when: raspbian_remove_pi_user
   tags:
     - raspbian
