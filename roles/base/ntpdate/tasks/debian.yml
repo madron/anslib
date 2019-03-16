@@ -1,7 +1,6 @@
 - name: required packages
-  apt: >
-    pkg={{ item }}
-    state=latest
-  with_items: '{{ ntpdate_packages }}'
+  apt:
+    pkg: '{{ ntpdate_packages }}'
+    state: present
   tags:
     - ntpdate
