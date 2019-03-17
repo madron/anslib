@@ -1,0 +1,14 @@
+[Unit]
+Description=Ntpdate
+DefaultDependencies=no
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/etc/cron.hourly/ntpdate
+ExecReload=/etc/cron.hourly/ntpdate
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

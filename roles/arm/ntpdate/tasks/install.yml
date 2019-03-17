@@ -1,0 +1,35 @@
+- name: required packages
+  apt:
+    pkg: '{{ ntpdate_packages }}'
+    state: present
+
+
+- name: /etc/cron.hourly/ntpdate
+  template:
+    src: ntpdate.j2
+    dest: /etc/cron.hourly/ntpdate
+    mode: 0755
+    owner: root
+    group: root
+  register: cron
+
+
+- name: /etc/systemd/system/ntpdate.service
+  template:
+    src: ntpdate.service
+    dest: /etc/systemd/system/ntpdate.service
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: systemd
+
+
+- name: reload service
+  systemd:
+    name: ntpdate
+    masked: no
+    enabled: yes
+    state: reloaded
+    daemon_reload: yes
+  when: systemd.changed or cron.changed
