@@ -1,0 +1,35 @@
+- name: set variables
+  set_fact:
+    service: '{{ mosquitto_service }}'
+    include:
+      changed: false
+
+
+- name: config files
+  template:
+    src: '{{ mosquitto_templates_prefix }}{{ item }}'
+    dest: '/etc/container/{{ service }}/{{ item }}'
+    mode: 0644
+    owner: root
+    group: root
+  register: config
+  with_items:
+    - mosquitto.conf
+    - acl.conf
+    - user.passwd
+
+
+- name: include files
+  copy:
+    src: '{{ mosquitto_include_path }}'
+    dest: '/etc/container/{{ service }}/include/'
+    mode: 0644
+    owner: root
+    group: root
+  register: include
+  when: mosquitto_include_path is defined
+
+
+- name: restart service
+  command: 'docker restart {{ service }}'
+  when: config.changed or include.changed

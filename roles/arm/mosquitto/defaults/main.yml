@@ -1,0 +1,6 @@
+mosquitto_version: 1.5.8
+
+mosquitto_service: mosquitto
+
+mosquitto_templates_prefix: 'config/'
+# mosquitto_include_path: ''

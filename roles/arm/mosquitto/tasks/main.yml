@@ -1,0 +1,10 @@
+- import_tasks: install.yml
+  tags:
+    - mosquitto
+    - mosquitto-install
+
+
+- import_tasks: config.yml
+  tags:
+    - mosquitto
+    - mosquitto-config

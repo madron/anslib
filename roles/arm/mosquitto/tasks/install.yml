@@ -1,0 +1,71 @@
+- name: set variables
+  set_fact:
+    service: '{{ mosquitto_service }}'
+
+
+- name: create config directory
+  file:
+    path: '/etc/container/{{ service }}/include'
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+
+
+- name: create data directory
+  file:
+    path: '/var/lib/container/{{ service }}'
+    state: directory
+    mode: 0755
+    owner: nobody
+    group: nogroup
+
+
+- name: config files
+  template:
+    src: '{{ mosquitto_templates_prefix }}{{ item }}'
+    dest: '/etc/container/{{ service }}/{{ item }}'
+    mode: 0644
+    owner: root
+    group: root
+  register: config
+  with_items:
+    - mosquitto.conf
+    - acl.conf
+    - user.passwd
+
+
+- name: docker-compose file
+  template:
+    src: docker-compose.yml
+    dest: /etc/container/{{ service }}/docker-compose.yml
+    mode: 0644
+    owner: root
+    group: root
+  register: compose
+
+
+- name: systemd service file
+  template:
+    src: systemd.service
+    dest: '/etc/systemd/system/{{ service }}.service'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  register: systemd
+
+
+- name: restart service
+  systemd:
+    name: '{{ service }}'
+    daemon_reload: yes
+    state: restarted
+  when: systemd.changed or compose.changed or config.changed
+
+
+- name: enable service
+  systemd:
+    name: '{{ service }}'
+    enabled: yes
+    state: started
