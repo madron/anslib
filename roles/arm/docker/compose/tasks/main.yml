@@ -1,0 +1,17 @@
+- name: Install pip
+  apt:
+    name: python-pip
+    state: present
+  tags:
+    - docker
+    - docker-compose
+
+
+- name: Install docker-compose
+  pip:
+    name: docker-compose
+    version: '{{ docker_compose_version }}'
+    state: present
+  tags:
+    - docker
+    - docker-compose
