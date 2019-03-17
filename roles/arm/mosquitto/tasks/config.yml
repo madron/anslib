@@ -19,17 +19,6 @@
     - user.passwd
 
 
-- name: include files
-  copy:
-    src: '{{ mosquitto_include_path }}'
-    dest: '/etc/container/{{ service }}/include/'
-    mode: 0644
-    owner: root
-    group: root
-  register: include
-  when: mosquitto_include_path is defined
-
-
 - name: restart service
   command: 'docker restart {{ service }}'
-  when: config.changed or include.changed
+  when: config.changed

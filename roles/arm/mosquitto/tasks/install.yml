@@ -5,7 +5,7 @@
 
 - name: create config directory
   file:
-    path: '/etc/container/{{ service }}/include'
+    path: '/etc/container/{{ service }}'
     state: directory
     mode: 0755
     owner: root
@@ -59,13 +59,7 @@
 - name: restart service
   systemd:
     name: '{{ service }}'
+    enabled: yes
     daemon_reload: yes
     state: restarted
   when: systemd.changed or compose.changed or config.changed
-
-
-- name: enable service
-  systemd:
-    name: '{{ service }}'
-    enabled: yes
-    state: started
