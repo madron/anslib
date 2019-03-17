@@ -23,7 +23,7 @@
 
 - name: config files
   template:
-    src: '{{ mosquitto_templates_prefix }}{{ item }}'
+    src: '{{ mosquitto_templates_prefix }}/{{ item }}'
     dest: '/etc/container/{{ service }}/{{ item }}'
     mode: 0644
     owner: root
