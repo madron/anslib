@@ -2,7 +2,7 @@ version: '2'
 
 services:
   server:
-    image: 'eclipse-mosquitto:{{ mosquitto_version }}'
+    image: {{ image }}
     container_name: {{ service }}
     network_mode: host
     user: nobody
