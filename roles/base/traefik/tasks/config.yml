@@ -1,0 +1,7 @@
+- name: config files
+  copy:
+    src: '{{ traefik_config_dir }}/'
+    dest: '/etc/container/{{ service }}/include'
+    mode: 0644
+    owner: root
+    group: root

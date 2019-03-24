@@ -1,12 +1,6 @@
-stack: traefik
-version: latest
-replicas: 1
-constraints: []
+traefik_version: latest
 
-traefik_options: "--web --web.metrics.prometheus --docker --docker.swarmmode --docker.watch --logLevel=INFO --accessLogsFile=/tmp/access.log"
+traefik_templates_prefix: ''
+traefik_external_networks: []
 
-traefik_global_networks:
-  - global_proxy
-  - global_monitor
-
-traefik_restart: false
+# traefik_config_dir: ''

@@ -1,0 +1,67 @@
+- name: set variables
+  set_fact:
+    service: traefik
+
+
+- name: create external network
+  docker_network:
+    name: '{{ item }}'
+  when: traefik_external_networks
+  with_items: '{{ traefik_external_networks }}'
+
+
+- name: create config directory
+  file:
+    path: '/etc/container/{{ service }}/include'
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+
+
+- name: create data directory
+  file:
+    path: '/var/lib/container/{{ service }}'
+    state: directory
+    mode: 0755
+    owner: nobody
+    group: nogroup
+
+
+- name: config file
+  template:
+    src: '{{ traefik_templates_prefix }}traefik.toml'
+    dest: '/etc/container/{{ service }}/traefik.toml'
+    mode: 0644
+    owner: root
+    group: root
+  register: config
+
+
+- name: docker-compose file
+  template:
+    src: docker-compose.yml
+    dest: /etc/container/{{ service }}/docker-compose.yml
+    mode: 0644
+    owner: root
+    group: root
+  register: compose
+
+
+- name: systemd service file
+  template:
+    src: systemd.service
+    dest: '/etc/systemd/system/{{ service }}.service'
+    mode: 0644
+    owner: root
+    group: root
+  register: systemd
+
+
+- name: restart service
+  systemd:
+    name: '{{ service }}'
+    enabled: yes
+    daemon_reload: yes
+    state: restarted
+  when: systemd.changed or compose.changed or config.changed

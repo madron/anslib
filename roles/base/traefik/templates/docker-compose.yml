@@ -1,35 +1,31 @@
-version: '3.1'
+version: '2'
+
 
 services:
-  proxy:
-    image: traefik:{{ version }}
+  server:
+    image: traefik:{{ traefik_version }}
+    container_name: {{ service }}
+    network_mode: default
+    user: nobody
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /dev/null:/traefik.toml
-    command: {{ traefik_options }}
-{% if traefik_global_networks %}
+      - /etc/container/{{ service }}:/etc/traefik:ro
+      - /var/lib/container/{{ service }}:/certs:rw
+    ports:
+      - "80:1080/tcp"
+      - "443:1443/tcp"
+{% if traefik_external_networks %}
     networks:
-{% for network in traefik_global_networks %}
+{% for network in traefik_external_networks %}
       - {{ network }}
 {% endfor %}
 {% endif %}
-    deploy:
-      replicas: {{ replicas }}
-      placement:
-        constraints:
-{% for constraint in traefik_constraints %}
-          - {{ constraint }}
-{% endfor %}
-{% if publish_host %}
-      labels:
-        - "traefik.port=8080"
-        - "traefik.docker.network=global_proxy"
-        - "traefik.frontend.rule=Host:{{ publish_host }}"
-{% endif %}
+    command: -c /etc/traefik/traefik.toml
 
 
+{% if traefik_external_networks %}
 networks:
-{% for network in traefik_global_networks %}
+{% for network in traefik_external_networks %}
   {{ network }}:
     external: true
 {% endfor %}
+{% endif %}
