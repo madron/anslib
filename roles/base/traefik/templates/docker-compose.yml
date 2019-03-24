@@ -20,7 +20,9 @@ services:
       - {{ network }}
 {% endfor %}
 {% endif %}
-    command: -c /etc/traefik/traefik.toml
+{% if traefik_command %}
+    command: {{ traefik_command }}
+{% endif %}
 
 
 {% if traefik_external_networks %}
