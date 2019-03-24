@@ -3,4 +3,8 @@ traefik_version: latest
 traefik_templates_prefix: ''
 traefik_external_networks: []
 
+traefik_ports:
+  - "80:1080/tcp"
+  - "443:1443/tcp"
+
 # traefik_config_dir: ''

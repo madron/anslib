@@ -11,8 +11,9 @@ services:
       - /etc/container/{{ service }}:/etc/traefik:ro
       - /var/lib/container/{{ service }}:/certs:rw
     ports:
-      - "80:1080/tcp"
-      - "443:1443/tcp"
+{% for port in traefik_ports %}
+      - "{{ port }}"
+{% endfor %}
 {% if traefik_external_networks %}
     networks:
 {% for network in traefik_external_networks %}
