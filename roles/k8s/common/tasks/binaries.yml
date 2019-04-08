@@ -32,6 +32,7 @@
   apt:
     name: '{{ item }}={{ k8s_release_package }}'
     force: yes
+    update_cache: '{{ apt_update_cache }}'
   with_items: '{{ package_list }}'
 
 
