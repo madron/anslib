@@ -104,6 +104,14 @@
     - prometheus-node-config
 
 
+- name: systemctl daemon enable
+  command: systemctl enable {{ prometheus_node_service }}
+  when: ansible_service_mgr == 'systemd' and service.changed
+  tags:
+    - prometheus-node
+    - prometheus-node-config
+
+
 - name: service restarted
   service:
     name: '{{ prometheus_node_service }}'
