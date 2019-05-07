@@ -26,12 +26,14 @@
   apt_repository:
     repo: 'deb https://apt.kubernetes.io/ kubernetes-xenial main'
     state: present
+    update_cache: yes
 
 
 - name: install packages
   apt:
     name: '{{ item }}={{ k8s_release_package }}'
     force: yes
+    update_cache: '{{ update_cache }}'
   with_items: '{{ package_list }}'
 
 
