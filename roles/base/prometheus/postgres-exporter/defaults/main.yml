@@ -1,0 +1,7 @@
+postgres_exporter_role: master
+postgres_exporter_port: 5432
+postgres_exporter_user: postgres
+postgres_exporter_pass: postgres
+postgres_exporter_image: 'wrouesnel/postgres_exporter'
+postgres_exporter_container: 'postgres-exporter'
+postgres_exporter_group: mtk
