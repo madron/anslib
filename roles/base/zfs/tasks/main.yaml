@@ -1,0 +1,18 @@
+- import_tasks: install.yml
+  tags:
+    - zfs
+    - zfs-install
+
+
+- debug:
+    msg: '{{ zfs_pools }}'
+  tags:
+    - zfs
+    - zfs-pool
+
+
+- include_tasks: pool.yml
+  pool: '{{ zfs_pools }}'
+  tags:
+    - zfs
+    - zfs-pool

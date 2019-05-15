@@ -1,0 +1,10 @@
+- name: debug
+  debug:
+    msg: 'zpool create -m {{ item.mountpoint }} {{ item.name }} {% for device in item.devices %}{{ device }} {% endfor %}'
+
+
+- name: create pool
+  command: 'zpool create -m {{ item.mountpoint }} {{ item.name }} {% for device in item.devices %}{{ device }} {% endfor %}'
+  args:
+    creates: '{{ item.mountpoint }}'
+  when: '{{ item.devices }}'
