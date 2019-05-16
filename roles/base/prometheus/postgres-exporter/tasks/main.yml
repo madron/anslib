@@ -1,0 +1,87 @@
+#
+# Pull image
+#
+- name: docker image postgres exporter
+  command: 'docker pull {{ postgres_exporter_image }}'
+  tags:
+    - postgres-exporter
+
+#
+# Directories
+#
+- name: create directories
+  file:
+    path: '/etc/container/{{ postgres_exporter_container }}'
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  tags:
+    - postgres-exporter
+
+- name: custom queries
+  template:
+    src: queries.yaml
+    dest: /etc/container/{{ postgres_exporter_container }}/queries.yaml
+    mode: 0644
+    owner: root
+    group: root
+  register: custom_queries
+  tags:
+    - postgres-exporter
+
+#
+# Postgres Exporter
+#
+- name: upstart postgres exporter file
+  template:
+    src: upstart-postgres-exporter.conf
+    dest: '/etc/init/{{ postgres_exporter_container }}.conf'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  when: ansible_service_mgr == 'upstart'
+  register: postgres_exporter_service_upstart
+  tags:
+    - postgres-exporter
+
+
+- name: systemd postgres exporter file
+  template:
+    src: systemd-postgres-exporter.service
+    dest: '/etc/systemd/system/{{ postgres_exporter_container }}.service'
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  when: ansible_service_mgr == 'systemd'
+  register: postgres_exporter_service_systemd
+  tags:
+    - postgres-exporter
+
+
+- name: systemctl postgres exporter daemon-reload
+  command: systemctl daemon-reload
+  when: postgres_exporter_service_systemd.changed
+  tags:
+    - postgres-exporter
+
+
+- name: service postgres exporter restarted
+  service:
+    name: '{{ postgres_exporter_container }}'
+    enabled: yes
+    state: restarted
+  when: postgres_exporter_service_upstart.changed or postgres_exporter_service_systemd.changed or custom_queries.changed
+  tags:
+    - postgres-exporter
+
+
+- name: service postgres exporter started
+  service:
+    name: '{{ postgres_exporter_container }}'
+    enabled: yes
+    state: started
+  tags:
+    - postgres-exporter

@@ -69,6 +69,14 @@
     - prometheus-postgres-config
 
 
+- name: systemctl daemon enable
+  command: systemctl enable {{ prometheus_postgres_service }}
+  when: ansible_service_mgr == 'systemd' and service_mgr.changed
+  tags:
+    - prometheus-postgres
+    - prometheus-postgres-config
+
+
 - name: service restarted
   service:
     name: '{{ prometheus_postgres_service }}'

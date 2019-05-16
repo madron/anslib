@@ -1,0 +1,24 @@
+# {{ ansible_managed }}
+
+pg_postmaster:
+  query: "SELECT pg_postmaster_start_time as start_time_seconds from pg_postmaster_start_time()"
+  metrics:
+    - start_time_seconds:
+        usage: "GAUGE"
+        description: "Time at which postmaster started"
+
+{% if postgres_exporter_role == 'slave' %}
+pg_replication:
+  query: "SELECT EXTRACT(EPOCH FROM (now() - pg_last_xact_replay_timestamp()))::INT as lag"
+  metrics:
+    - lag:
+        usage: "GAUGE"
+        description: "Replication lag behind master in seconds"
+        
+pg_stat_wal_receiver_seconds:
+  query: "SELECT EXTRACT(EPOCH FROM ((now()) - (select last_msg_receipt_time from pg_stat_wal_receiver)))::INT as delay"
+  metrics:
+    - delay:
+        usage: "GAUGE"
+        description: "Last correct msg receipt delay"
+{% endif %}

@@ -26,7 +26,7 @@
   apt_repository:
     repo: 'deb https://apt.kubernetes.io/ kubernetes-xenial main'
     state: present
-    update_cache: yes
+
 
 
 - name: install packages

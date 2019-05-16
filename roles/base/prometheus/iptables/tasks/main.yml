@@ -65,6 +65,14 @@
     - prometheus-iptables-config
 
 
+- name: systemctl daemon enable
+  command: systemctl enable {{ prometheus_iptables_service }}
+  when: ansible_service_mgr == 'systemd' and service_mgr.changed
+  tags:
+    - prometheus-iptables
+    - prometheus-iptables-config
+
+
 - name: service restarted
   service:
     name: '{{ prometheus_iptables_service }}'

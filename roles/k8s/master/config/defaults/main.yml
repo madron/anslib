@@ -10,3 +10,9 @@ k8s_pod_cidr: ''
 # k8s_pod_cidr: '192.168.0.0/16'  # This CIDR is a Calico default. Substitute or remove for your CNI provider.
 
 k8s_master_order: 1
+
+k8s_master_api_server_args: {}
+# k8s_master_api_server_args: {
+#   advertise-address: 192.168.0.103,
+#   min-request-timeout: 1800,
+# }
