@@ -4,15 +4,11 @@
     - zfs-install
 
 
-- debug:
-    msg: '{{ zfs_pools }}'
-  tags:
-    - zfs
-    - zfs-pool
-
-
 - include_tasks: pool.yml
-  pool: '{{ zfs_pools }}'
+  loop: '{{ zfs_pools }}'
+  loop_control:
+    loop_var: pool
+  when: pool.devices
   tags:
     - zfs
     - zfs-pool

@@ -1,10 +1,16 @@
-- name: debug
-  debug:
-    msg: 'zpool create -m {{ item.mountpoint }} {{ item.name }} {% for device in item.devices %}{{ device }} {% endfor %}'
+- name: pool check
+  command: 'zpool list {{ pool.name }}'
+  register: pool_check
+  failed_when: ( pool_check.rc not in [ 0, 1 ] )
+  changed_when: false
+  tags:
+    - zfs
+    - zfs-pool
 
 
 - name: create pool
-  command: 'zpool create -m {{ item.mountpoint }} {{ item.name }} {% for device in item.devices %}{{ device }} {% endfor %}'
-  args:
-    creates: '{{ item.mountpoint }}'
-  when: '{{ item.devices }}'
+  command: 'zpool create {% if zfs_force %}-f{% endif %} -m {{ pool.mountpoint }} {{ pool.name }} {% for device in pool.devices %}{{ device }} {% endfor %}'
+  when: pool_check.rc == 1
+  tags:
+    - zfs
+    - zfs-pool
