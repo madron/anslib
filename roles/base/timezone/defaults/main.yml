@@ -1,12 +1,5 @@
-timezone_area: 'Etc'
-timezone_zone: 'UTC'
+timezone: 'Etc/UTC'
 
 # Examples
-
-# 'America/Los_Angeles'
-# timezone_area: 'America'
-# timezone_zone: 'Los_Angeles'
-
-# 'Europe/Rome'
-# timezone_area: 'Europe'
-# timezone_zone: 'Rome'
+# timezone: 'America/Los_Angeles'
+# timezone: 'Europe/Rome'
