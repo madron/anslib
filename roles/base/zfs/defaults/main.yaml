@@ -2,5 +2,6 @@ zfs_pools: []
 # zfs_pools:
 #   - { name: mypool, mountpoint: /mnt/mypool, devices: [/dev/sdb, /dev/sdc]}
 
+zfs_kernel_module: true
 zfs_force: false
 update_cache: false
