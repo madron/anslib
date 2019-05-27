@@ -47,3 +47,21 @@
   command: 'apt-mark hold {{ item }}'
   when: item not in held_packages.stdout
   with_items: '{{ package_list }}'
+
+
+- name: /etc/default/kubelet
+  template:
+    src: default-kubelet
+    dest: /etc/default/kubelet
+    mode: 0644
+    owner: root
+    group: root
+  register: kubelet_config
+
+
+- name: restart kubelet
+  systemd:
+    name: kubelet
+    state: restarted
+    daemon_reload: yes
+  when: kubelet_config.changed
