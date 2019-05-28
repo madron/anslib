@@ -1,0 +1,1 @@
+KUBELET_EXTRA_ARGS={% if k8s_cluster_dns is defined %}--cluster-dns={{ k8s_cluster_dns }}{% endif %}

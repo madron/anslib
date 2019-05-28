@@ -3,7 +3,9 @@
     name: zfsutils-linux
     update_cache: '{{ update_cache }}'
 
+
 - name: Add zfs kernel module
   modprobe:
     name: zfs
     state: present
+  when: zfs_kernel_module
