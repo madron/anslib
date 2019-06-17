@@ -1,0 +1,35 @@
+- name: add users
+  user:
+    name: '{{ item }}'
+    shell: /bin/bash
+    group: '{{ admin_users_group }}'
+  with_items: '{{ admin_users }}'
+
+
+- name: create ssh directory
+  file:
+    path: '/home/{{ item }}/.ssh'
+    state: directory
+    mode: 0755
+    owner: "{{ item }}"
+    group: "{{ admin_users_group }}"
+  with_items: '{{ admin_users }}'
+
+
+- name: authorized_keys
+  template:
+    src: authorized_keys
+    dest: '/home/{{ item }}/.ssh/authorized_keys'
+    mode: 0600
+    owner: "{{ item }}"
+    group: "{{ admin_users_group }}"
+  with_items: '{{ admin_users }}'
+
+
+- name: remove users
+  user:
+    name: "{{ item }}"
+    group: "{{ admin_users_group }}"
+    state: absent
+    remove: yes
+  with_items: '{{ admin_users_dismissed + admin_users_disabled }}'

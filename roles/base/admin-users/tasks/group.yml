@@ -1,0 +1,13 @@
+- name: create admin group
+  group:
+    name: '{{ admin_users_group }}'
+    state: present
+
+
+- name: give admin group passwordless sudo
+  template:
+    src: sudoers_file
+    dest: '/etc/sudoers.d/{{ admin_users_group }}'
+    mode: 0440
+    owner: root
+    group: root
