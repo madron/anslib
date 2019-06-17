@@ -1,10 +1,13 @@
 - name: package list
   set_fact:
-    k8s_release_package: "{{ k8s_release|replace('v', '''') }}-00"
     package_list:
       - kubeadm
       - kubelet
       - kubectl
+    package_list_version:
+      - "kubeadm={{ k8s_release|replace('v', '''') }}-00"
+      - "kubelet={{ k8s_release|replace('v', '''') }}-00"
+      - "kubectl={{ k8s_release|replace('v', '''') }}-00"
 
 
 - name: create /etc/kubernetes/manifests directory
@@ -31,10 +34,9 @@
 
 - name: install packages
   apt:
-    name: '{{ item }}={{ k8s_release_package }}'
+    name: '{{ package_list_version }}'
     force: yes
     update_cache: '{{ update_cache }}'
-  with_items: '{{ package_list }}'
 
 
 - name: held packages
