@@ -1,0 +1,14 @@
+- name: disable password authentication
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PasswordAuthentication*'
+    line: 'PasswordAuthentication no'
+  when: '{{ sshd_disable_password_authentication }}'
+  register: password_authentication
+
+
+- name: restart sshd
+  systemd:
+    name: ssh
+    state: restarted
+  when: sshd_disable_password_authentication and password_authentication.changed

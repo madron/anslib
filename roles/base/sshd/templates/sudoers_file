@@ -1,0 +1,1 @@
+%{{ admin_users_group }} ALL=(ALL) NOPASSWD: ALL
