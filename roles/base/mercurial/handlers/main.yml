@@ -1,2 +1,3 @@
 - name: refresh_mercurial_auth
-  command: sudo -u hg /usr/share/mercurial-server/refresh-auth
+  become_user: hg
+  command: /usr/share/mercurial-server/refresh-auth

@@ -1,11 +1,9 @@
-- name: os specific variables
-  include_vars: "{{ ansible_lsb.id|lower() }}_{{ ansible_lsb.codename }}.yml"
-  tags:
-    - mercurial
 
-
-- include_tasks: packages_debian.yml
-  when: ansible_os_family == 'Debian'
+- name: required package
+  apt:
+    name: '{{ item }}'
+    state: latest
+  with_items: '{{ mercurial_packages }}'
   tags:
     - mercurial
 
