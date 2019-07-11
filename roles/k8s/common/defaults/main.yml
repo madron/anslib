@@ -4,3 +4,5 @@ k8s_cni_arch: amd64
 # k8s_cluster_dns: '169.254.20.10'
 
 update_cache: no
+
+k8s_common_cni_net_ipv4_neigh_default_gc_thresh1: 128

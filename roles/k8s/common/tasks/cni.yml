@@ -1,7 +1,7 @@
 - name: arm64
   set_fact:
     k8s_cni_arch: arm64
-  when: ansible_architecture == 'armv7l'
+  when: ansible_architecture|default('x86_64') == 'armv7l'
 
 
 - name: binary list
@@ -64,3 +64,14 @@
     name: net.ipv4.ip_forward
     value: 1
     state: present
+
+
+- name: net.ipv4.neigh.default.gc_thresh
+  sysctl:
+    name: '{{ item.name }}'
+    value: '{{ item.value }}'
+    state: present
+  with_items:
+    - { name: net.ipv4.neigh.default.gc_thresh1, value: '{{ k8s_common_cni_net_ipv4_neigh_default_gc_thresh1 }}' }
+    - { name: net.ipv4.neigh.default.gc_thresh2, value: '{{ k8s_common_cni_net_ipv4_neigh_default_gc_thresh1 * 4 }}' }
+    - { name: net.ipv4.neigh.default.gc_thresh3, value: '{{ k8s_common_cni_net_ipv4_neigh_default_gc_thresh1 * 8 }}' }
