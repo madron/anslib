@@ -4,3 +4,12 @@
     state: present
   tags:
     - apt-packages
+
+
+- name: purge packages
+  apt:
+    name: '{{ apt_packages_purge }}'
+    state: absent
+    purge: yes
+  tags:
+    - apt-packages
