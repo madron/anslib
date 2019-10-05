@@ -33,7 +33,7 @@
 - name: set version greater then 1.12.4
   set_fact:
     docker_engine_package_version: '{{ docker_engine_version }}-0~{{ docker_engine_distribution }}-{{ ansible_lsb.codename }}'
-  when: docker_engine_version | version_compare('1.12.4', '>=', strict=True)
+  when: docker_engine_version is version_compare('1.12.4', '>=', strict=True)
   tags:
     - docker
     - docker-engine
@@ -43,12 +43,11 @@
 - name: set version greater then 1.13.9
   set_fact:
     docker_engine_package_version: '{{ docker_engine_version }}~ce-0~{{ docker_engine_distribution }}-{{ ansible_lsb.codename }}'
-  when: docker_engine_version | version_compare('1.13.9', '>=', strict=True)
+  when: docker_engine_version is version_compare('1.13.9', '>=', strict=True)
   tags:
     - docker
     - docker-engine
     - docker-engine-hold
-
 
 - name: set version greater then 17.06
   set_fact:
@@ -59,7 +58,17 @@
     docker_engine_package_version: '{{ docker_engine_version }}~ce-0~{{ docker_engine_distribution }}'
     docker_engine_old_packages:
       - docker-engine
-  when: docker_engine_version | version_compare('17.06', '>=', strict=True)
+  when: docker_engine_version is version_compare('17.06', '>=', strict=True)
+  tags:
+    - docker
+    - docker-engine
+    - docker-engine-hold
+
+
+- name: set version greater then 19.03
+  set_fact:
+    docker_engine_package_version: '5:{{ docker_engine_version }}~3-0~{{ docker_engine_distribution }}-{{ ansible_lsb.codename }}'
+  when: docker_engine_version is version_compare('19.03', '>=', strict=True)
   tags:
     - docker
     - docker-engine
@@ -68,9 +77,8 @@
 
 - name: required packages
   apt:
-    name: '{{ item }}'
+    name: '{{ docker_engine_packages }}'
     state: latest
-  with_items: '{{ docker_engine_packages }}'
   tags:
     - docker
     - docker-engine
@@ -106,10 +114,9 @@
 
 - name: remove old docker packages
   apt:
-    name: '{{ item }}'
+    name: '{{ docker_engine_old_packages }}'
     state: absent
     force: true
-  with_items: '{{ docker_engine_old_packages }}'
   tags:
     - docker
     - docker-engine

@@ -23,7 +23,7 @@
 {% if docker_engine_opts %}
 {% set DOCKER_OPTS = DOCKER_OPTS ~ ' ' ~ docker_engine_opts %}
 {% endif %}
-DOCKER_OPTS="{{ DOCKER_OPTS }}{% for k, v in docker_engine_labels.iteritems() %} --label {{ k }}={{ v }}{% endfor %}{% for r in docker_engine_insecure_registries %} --insecure-registry {{ r }}{% endfor %}"
+DOCKER_OPTS="{{ DOCKER_OPTS }}{% for k, v in docker_engine_labels.items() %} --label {{ k }}={{ v }}{% endfor %}{% for r in docker_engine_insecure_registries %} --insecure-registry {{ r }}{% endfor %}"
 
 # If you need Docker to use an HTTP proxy, it can also be specified here.
 #export http_proxy="http://127.0.0.1:3128/"
