@@ -7,19 +7,22 @@
 - name: binary list
   set_fact:
     binary_list:
-       - bridge
-       - dhcp
-       - host-device
-       - ipvlan
-       - macvlan
-       - ptp
-       - sample
-       - vlan
-       - flannel
-       - host-local
-       - loopback
-       - portmap
-       - tuning
+      - bandwidth
+      - bridge
+      - dhcp
+      - firewall
+      - flannel
+      - host-device
+      - host-local
+      - ipvlan
+      - loopback
+      - macvlan
+      - portmap
+      - ptp
+      - sbr
+      - static
+      - tuning
+      - vlan
 
 
 - name: '/opt/kubernetes/cni-{{ k8s_cni_release }} directory'
@@ -30,7 +33,7 @@
 
 - name: download
   unarchive:
-    src: 'https://github.com/containernetworking/plugins/releases/download/{{ k8s_cni_release }}/cni-plugins-{{ k8s_cni_arch }}-{{ k8s_cni_release }}.tgz'
+    src: 'https://github.com/containernetworking/plugins/releases/download/{{ k8s_cni_release }}/cni-plugins-linux-{{ k8s_cni_arch }}-{{ k8s_cni_release }}.tgz'
     dest: /opt/kubernetes/cni-{{ k8s_cni_release }}
     remote_src: yes
 
