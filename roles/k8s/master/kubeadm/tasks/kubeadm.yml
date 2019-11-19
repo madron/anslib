@@ -1,0 +1,37 @@
+- name: package list
+  set_fact:
+    package_list:
+      - kubeadm
+    package_list_version:
+      - "kubeadm={{ k8s_release|replace('v', '''') }}-00"
+
+
+- name: repository key
+  apt_key:
+    url: 'https://packages.cloud.google.com/apt/doc/apt-key.gpg'
+    state: present
+
+
+- name: repository
+  apt_repository:
+    repo: 'deb https://apt.kubernetes.io/ kubernetes-xenial main'
+    state: present
+
+
+- name: install packages
+  apt:
+    name: '{{ package_list_version }}'
+    force: yes
+    update_cache: '{{ update_cache }}'
+
+
+- name: held packages
+  command: apt-mark showhold
+  register: held_packages
+  changed_when: false
+
+
+- name: version hold
+  command: 'apt-mark hold {{ item }}'
+  when: item not in held_packages.stdout
+  with_items: '{{ package_list }}'
