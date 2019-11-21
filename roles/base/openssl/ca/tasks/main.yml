@@ -1,5 +1,10 @@
 - name: ca
-  include_tasks: ca.yml
+  include_tasks:
+    file: ca.yml
+    apply:
+      tags:
+        - openssl
+        - openssl-ca
   vars:
     name: '{{ openssl_prefix }}ca'
     subject: '{{ openssl_subject }}'

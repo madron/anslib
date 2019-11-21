@@ -103,7 +103,13 @@
     - s3sync-service
 
 
-- include_tasks: restore.yml
+- include_tasks:
+    file: restore.yml
+    apply:
+      tags:
+        - s3sync
+        - s3sync-restore
+        - s3sync-download
   vars:
     service: s3sync
   when: s3sync_restore or s3sync_download
@@ -143,7 +149,13 @@
     - s3sync-service
 
 
-- include_tasks: check.yml
+- include_tasks:
+    file: check.yml
+    apply:
+      tags:
+        - s3sync
+        - s3sync-service
+        - s3sync-service-check
   when: s3sync_download == false
   tags:
     - s3sync
@@ -151,7 +163,12 @@
     - s3sync-service-check
 
 
-- include_tasks: log.yml
+- include_tasks:
+    file: log.yml
+    apply:
+      tags:
+        - s3sync
+        - s3sync-service-log
   when: s3sync_download == false
   tags:
     - s3sync

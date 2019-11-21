@@ -1,4 +1,5 @@
 - name: set timezone
+  become: yes 
   timezone:
     name: '{{ timezone }}'
   tags:

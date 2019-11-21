@@ -1,4 +1,8 @@
-- include_tasks: ubuntu_precise.yml
+- include_tasks:
+    file: ubuntu_precise.yml
+    apply:
+      tags:
+        - pip
   when: ansible_lsb.id == 'Ubuntu' and ansible_lsb.codename == 'precise'
   tags:
     - pip

@@ -1,5 +1,10 @@
 - name: cert
-  include_tasks: cert.yml
+  include_tasks:
+    file: cert.yml
+    apply:
+      tags:
+        - openssl
+        - openssl-cert
   vars:
     name: '{{ openssl_prefix }}cert'
     subject: '{{ openssl_cert_subject }}'
