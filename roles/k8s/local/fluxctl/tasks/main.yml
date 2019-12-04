@@ -1,4 +1,12 @@
 - name: /usr/local/bin/fluxctl
+  get_url:
+    url: https://github.com/fluxcd/flux/releases/download/{{ k8s_local_fluxctl_version }}/fluxctl_linux_amd64
+    dest: /usr/local/bin/fluxctl_{{ k8s_local_fluxctl_version }}
+    mode: 0755
+  become: yes
+
+
+- name: /usr/local/bin/fluxctl
   template:
     src: fluxctl
     dest: /usr/local/bin/fluxctl
