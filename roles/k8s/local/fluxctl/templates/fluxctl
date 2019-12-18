@@ -1,2 +1,2 @@
 #!/bin/sh
-KUBECONFIG={{ playbook_dir }}/{{ k8s_config_dir }}/admin.conf exec fluxctl_{{ k8s_local_fluxctl_version }} --k8s-fwd-ns=kube-system $*
+KUBECONFIG=~/.kube/{{ k8s_cluster_name }}.conf exec fluxctl_{{ k8s_local_fluxctl_version }} --k8s-fwd-ns=kube-system $*
