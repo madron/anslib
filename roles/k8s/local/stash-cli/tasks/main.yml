@@ -1,0 +1,14 @@
+- name: /usr/local/bin/fluxctl
+  get_url:
+    url: https://github.com/stashed/cli/releases/download/{{ k8s_local_stash_cli_version }}/kubectl-stash-linux-amd64
+    dest: /usr/local/bin/stash_{{ k8s_local_stash_cli_version }}
+    mode: 0755
+  become: yes
+
+
+- name: /usr/local/bin/stash
+  template:
+    src: stash
+    dest: /usr/local/bin/stash
+    mode: 0755
+  become: yes

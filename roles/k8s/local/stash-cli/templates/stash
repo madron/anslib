@@ -1,0 +1,2 @@
+#!/bin/sh
+exec stash_{{ k8s_local_stash_cli_version }} --kubeconfig ~/.kube/{{ k8s_cluster_name }}.conf $*

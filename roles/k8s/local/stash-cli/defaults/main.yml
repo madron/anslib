@@ -1,0 +1,2 @@
+k8s_cluster_name: kubernetes
+k8s_local_stash_cli_version: v0.2.0
