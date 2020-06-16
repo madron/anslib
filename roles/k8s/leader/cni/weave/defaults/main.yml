@@ -1,3 +1,5 @@
+# curl https://cloud.weave.works/k8s/v1.16/net.yaml > 2.6.5.yml
+
 k8s_weave_password: changeme
-k8s_weave_release: 2.6.2
+k8s_weave_release: 2.6.5
 k8s_bin_dir: /usr/bin
