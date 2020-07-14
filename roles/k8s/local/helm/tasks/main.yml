@@ -1,0 +1,7 @@
+- import_tasks: install.yml
+  tags:
+    - k8s
+    - k8s-local
+    - k8s-local-helm
+
+

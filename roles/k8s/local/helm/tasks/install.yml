@@ -1,0 +1,19 @@
+- name: Apt key
+  apt_key:
+    url: https://helm.baltorepo.com/organization/signing.asc
+    state: present
+  become: yes
+
+
+- name: Apt repository
+  apt_repository:
+    repo: deb https://baltocdn.com/helm/stable/debian/ all main
+    state: present
+  become: yes
+
+
+- name: Helm package
+  apt:
+    name: helm={{ k8s_local_helm_version }}*
+    state: present
+  become: yes
