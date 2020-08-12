@@ -32,7 +32,7 @@ fi
 ipset destroy
 
 # Create ipsets
-{% for name, value in iptables_ipset.iteritems() %}
+{% for name, value in iptables_ipset.items() %}
 ipset create {{ name }} {{ value.type }}
 {% for member in value.members %}
 ipset add {{ name }} {{ member }}
